@@ -159,3 +159,12 @@ npm start          # → http://localhost:3001
 
 **保留所有权利（All Rights Reserved）。** 见上文《版权与使用声明》。
 本仓库不授予任何默认的商用、转载或再分发许可。
+
+### 相关文件
+
+| 文件 | 内容 |
+|---|---|
+| [`LICENSE`](LICENSE) | 版权条款（共同所有 / 禁止商用 / 禁止抄袭） |
+| [`AUTHORS.md`](AUTHORS.md) | 两位作者的参与确认与共同所有权约定（**待队友签署**） |
+| [`EVIDENCE.md`](EVIDENCE.md) | 创作时间与版本存证（2026-04-25 创作 → 2026-11-08 公开） |
+| [`MANIFEST.sha256`](MANIFEST.sha256) | 全部跟踪文件的 SHA-256 清单（`sha256sum -c` 可校验） |
