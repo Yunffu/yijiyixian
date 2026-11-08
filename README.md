@@ -1,32 +1,41 @@
-# 一季一鲜 · 助农电商平台（v1 · 小组项目）
+# 一季一鲜 · 助农电商平台
 
-> 产地直连的助农认养电商 Web 应用：用户浏览产地与农产品 → 认养果园 / 农田 / 海域 → 下单认养；
+> 产地直连的助农认养电商 Web 应用：浏览产地与农产品 → 认养果园 / 农田 / 海域 → 下单认养；
 > 配套产地地图与数据可视化。
 >
-> **本仓库是 v1 版本（小组合作完成时的状态快照），用于存档原始形态。**
-> 后续的缺陷修复与工程化改造在 [`Yunffu/yijiyixian-v2`](https://github.com/Yunffu/yijiyixian-v2) 进行。
+> **本仓库是项目的原始版本（v1）存档**，保留小组完成时的形态，不做改动。
 
 | | |
 |---|---|
 | 项目名称 | 一季一鲜 · 助农电商平台 |
 | 项目性质 | **小组项目（2 名成员共同完成）** |
 | 参赛经历 | **计算机设计大赛**参赛作品 |
-| 仓库归属 | **本仓库由两位作者共同拥有（co-owned）**，任何一方不得单独转让或商用 |
+| 仓库归属 | **由两位作者共同拥有（co-owned）**，任何一方不得单独转让或商用 |
 | 开发周期 | 2026.09 – 2026.11 |
 | 团队成员 | **Yunffu**（`@Yunffu`） · **<!-- TODO: 填队友昵称 -->**（`<!-- TODO: 填队友 GitHub ID -->`） |
-| 仓库 | [`Yunffu/yijiyixian`](https://github.com/Yunffu/yijiyixian)（v1 存档） · [`Yunffu/yijiyixian-v2`](https://github.com/Yunffu/yijiyixian-v2)（完善版） · [`Yunffu/yijiyixian-qa`](https://github.com/Yunffu/yijiyixian-qa)（测试工程） |
+| 后续工程 | 改造与完善版本：[`Yunffu/yijiyixian-v2`](https://github.com/Yunffu/yijiyixian-v2) |
 
 ---
 
-## 1. 团队成员与分工
+## 1. 项目来历与所属
+
+- 本项目是 **Yunffu 与队友两人小组**在 2026 年秋季完成的**助农电商 Web 应用**，
+  并作为**计算机设计大赛参赛作品**打磨过交互与视觉呈现。
+- 交互设计、页面实现、动效与数据可视化由成员主导完成；后端最小实现借助了 AI 辅助生成。
+- **本仓库为原始版本（v1）的状态快照**，用于存档与追溯作品的初始形态。
+  后续的缺陷修复、工程化改造与质量建设不在本仓库进行，见
+  [`yijiyixian-v2`](https://github.com/Yunffu/yijiyixian-v2)（改造完善版）
+  与 [`yijiyixian-qa`](https://github.com/Yunffu/yijiyixian-qa)（接口自动化测试工程）。
+
+### 团队分工
 
 | 成员 | 负责内容 |
 |---|---|
 | **Yunffu** | 产品定义与交互设计、前端全部页面与动效实现、数据可视化（GSAP / D3 v7）、前端 API 封装层 `js/api.js` |
 | **<!-- TODO: 填队友昵称 -->** | **<!-- TODO: 填队友负责的部分 -->** |
 
-> ⚠️ **口径说明（写简历 / 面试时用）**
-> 本项目为**两人小组合作完成**，后端实现借助了 AI 辅助生成，前端交互、视觉与产品设计由成员主导完成。
+> ⚠️ **对外表述口径**：本项目为**两人小组合作完成**，后端实现借助 AI 辅助生成，
+> 前端交互、视觉与产品设计由成员主导完成。
 > 表述时写「负责产品交互与前端设计，独立定义数据模型与接口契约」，
 > **不写「独立实现后端」**；涉及小组成果时明确写明「小组项目（2 人）」。
 
@@ -117,22 +126,7 @@ npm start          # → http://localhost:3001
 
 ---
 
-## 6. v1 已知问题（v2 修复）
-
-本仓库作为存档版本，保留以下已定位的问题。修复过程与验证见
-[`Yunffu/yijiyixian-v2`](https://github.com/Yunffu/yijiyixian-v2) 与
-[`Yunffu/yijiyixian-qa`](https://github.com/Yunffu/yijiyixian-qa)。
-
-| # | 问题 | 位置 |
-|---|---|---|
-| 1 | `quantity` 无正整数校验，传负数会令库存虚增 | `backend/server.js:329 / 377` |
-| 2 | `total_price` 返回单价而非「单价 × 数量」，且 `price` 为 TEXT 类型 | `backend/server.js:387` |
-| 3 | 库存扣减是「读-判-写」且未 await / 无事务 → 并发超卖 | `backend/server.js:329 / 377` |
-| 4 | 商品列表页 `products.html` 仍读 `data.js` 静态常量，未接后端 | `products.html:416` |
-
----
-
-## 7. 版权与使用声明
+## 6. 版权与使用声明
 
 > **本项目为计算机设计大赛参赛作品，由两位作者共同创作并共同拥有。**
 
@@ -161,7 +155,7 @@ npm start          # → http://localhost:3001
 
 ---
 
-## 8. License
+## 7. License
 
 **保留所有权利（All Rights Reserved）。** 见上文《版权与使用声明》。
 本仓库不授予任何默认的商用、转载或再分发许可。
