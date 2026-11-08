@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一季一鲜 · 加入我们</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.googleapis.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-dark:   #1a1510;
+      --c-green:  #4A7A38;
+      --c-millet: #E8D8A0;
+      --c-white:  #F8F5EF;
+      --c-text:   #EDE8DF;
+      --c-ink:    #2C2C2A;
+      --c-earth:  #A0846A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      background: #F8F5EF;
+      color: var(--c-text);
+      overflow-x: hidden;
+      font-family: "Noto Serif SC", serif;
+    }
+
+    /* 导航栏 */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 48px; height: 64px;
+      background: transparent;
+      transition: background 300ms, backdrop-filter 300ms;
+    }
+    .nav-left { display: flex; align-items: center; gap: 48px; }
+    #nav.scrolled {
+      background: rgba(26,21,16,0.75);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: 22px; letter-spacing: 0.2em; color: var(--c-text);
+      text-decoration: none; transition: color 400ms;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-link {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: 14px; letter-spacing: 0.15em;
+      text-decoration: none; opacity: 0.75;
+      transition: opacity 200ms, color 400ms;
+      color: var(--c-text);
+    }
+    .nav-link:hover { opacity: 1; }
+    .nav-link.active { opacity: 1; border-bottom: 1px solid currentColor; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    /* 搜索框 - 常驻显示 */
+    .nav-search-wrap {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 24px;
+      position: relative;
+    }
+    .nav-search-input {
+      width: 100%;
+      padding: 8px 16px 8px 40px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: 13px; letter-spacing: 0.1em;
+      color: var(--c-text);
+      outline: none; transition: all 250ms;
+    }
+    .nav-search-input::placeholder { color: rgba(237,232,223,0.4); }
+    .nav-search-input { color: var(--c-text); border-color: rgba(237,232,223,0.3); background: rgba(255,255,255,0.1); }
+    .nav-search-input:focus { background: rgba(255,255,255,0.2); }
+    .nav-search-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      width: 14px; height: 14px; pointer-events: none;
+      color: rgba(237,232,223,0.5);
+    }
+    .nav-search-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 24px; height: 24px;
+      border: none; background: transparent;
+      cursor: pointer; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 200ms;
+      color: rgba(237,232,223,0.5);
+    }
+    .nav-search-btn svg { width: 14px; height: 14px; }
+    .nav-search-btn:hover { color: var(--c-green); }
+
+    .nav-btn {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: 13px; letter-spacing: 0.12em;
+      padding: 8px 22px; border-radius: 24px;
+      text-decoration: none; transition: all 200ms; white-space: nowrap;
+      color: var(--c-text); border: 1px solid rgba(237,232,223,0.4);
+    }
+    .nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* 第一幕：农户形象登场 */
+    #scene1 { height: 500vh; }
+    .s1-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #1a1510; }
+    .s1-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.55) saturate(0.75); }
+    #v1 { opacity: 1; z-index: 1; object-position: center center; }
+    #v2 { opacity: 0; z-index: 2; object-position: center 60%; }
+    #v3 { opacity: 0; z-index: 3; }
+    .s1-overlay { position: absolute; inset: 0; background: rgba(10,10,8,0.58); z-index: 4; }
+
+    /* 左侧渐变阴影层 */
+    .s1-left-shadow {
+      position: absolute;
+      top: 0; left: 0;
+      width: 60%; height: 100%;
+      background: linear-gradient(to right, rgba(0,0,0,0.45), transparent);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* 品牌入场内容 */
+    .s1-brand {
+      position: absolute;
+      bottom: 120px;
+      left: 80px;
+      z-index: 6;
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+      gap: 24px; text-align: left;
+      pointer-events: none;
+    }
+    .s1-brand-name {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      letter-spacing: 0.3em; color: #EDE8DF;
+      text-shadow: 0 2px 30px rgba(0,0,0,0.5);
+      opacity: 0; filter: blur(20px);
+    }
+    .s1-brand-slogan {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      letter-spacing: 0.3em; color: rgba(237,232,223,0.7);
+      opacity: 0; filter: blur(12px);
+    }
+    .s1-brand-btn {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: 0.9rem; letter-spacing: 0.2em;
+      color: #EDE8DF; text-decoration: none;
+      border: 0.5px solid rgba(237,232,223,0.5);
+      padding: 10px 32px; border-radius: 40px;
+      opacity: 0; filter: blur(8px);
+      pointer-events: auto;
+      transition: background 300ms, border-color 300ms;
+    }
+    .s1-brand-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(237,232,223,0.9);
+    }
+
+    /* 滚动文案：铺满全屏，各自绝对定位 */
+    .s1-texts {
+      position: absolute; inset: 0;
+      z-index: 5; pointer-events: none;
+    }
+    /* 第一句：左下角，最大 */
+    .s1-t1 {
+      position: absolute;
+      left: 80px; bottom: 130px;
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2.4rem, 4.5vw, 4.5rem);
+      letter-spacing: 0.42em; color: #EDE8DF;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.45);
+      opacity: 0; filter: blur(16px);
+    }
+    /* 第二句：右侧垂直居中，中等 */
+    .s1-t2 {
+      position: absolute;
+      right: 80px; top: 50%;
+      transform: translateY(-50%);
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2rem, 3.8vw, 3.8rem);
+      letter-spacing: 0.55em; color: rgba(237,232,223,0.88);
+      text-align: right;
+      opacity: 0; filter: blur(16px);
+    }
+    /* 第三句：水平居中偏下，避开人脸 */
+    .s1-t3 {
+      position: absolute;
+      left: 50%; top: 65%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      letter-spacing: 0.3em; color: rgba(237,232,223,0.72);
+      text-align: center;
+      opacity: 0; filter: blur(16px);
+    }
+
+    /* 第二幕：揭示痛点 */
+    #scene2 { height: 200vh; background: #F8F5EF; }
+    .s2-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; }
+    .s2-bg { position: absolute; inset: 0; background: #F8F5EF; }
+    .s2-text-wrap { position: relative; z-index: 10; width: 38%; padding-left: 80px; display: flex; flex-direction: column; gap: 16px; }
+    .s2-text {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.6rem, 3vw, 3rem); line-height: 1.6; color: #2C2C2A;
+      opacity: 0; filter: blur(12px);
+    }
+    .s2-images { position: relative; z-index: 10; width: 55%; height: 100vh; display: flex; align-items: center; gap: 16px; padding: 40px 40px 40px 0; }
+    .s2-frame-left { position: relative; width: 48%; height: 58vh; border-radius: 12px; overflow: hidden; align-self: flex-start; margin-top: 80px; flex-shrink: 0; }
+    .s2-frame-right { position: relative; width: 48%; height: 58vh; border-radius: 12px; overflow: hidden; align-self: flex-end; margin-bottom: 80px; flex-shrink: 0; }
+    .s2-img-base, .s2-img-top { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .s2-img-base { z-index: 1; }
+    .s2-img-top { z-index: 2; }
+    #s2-reveal-left  { clip-path: inset(100% 0 0 0); }
+    #s2-reveal-right { clip-path: inset(0 0 100% 0); }
+
+    /* 第三幕：提出解法 */
+    #scene3 { height: 120vh; background: #F8F5EF; }
+    .s3-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #F8F5EF; }
+
+    /* 幕布：初始在右侧外面，推入后覆盖旧背景 */
+    .s3-curtain {
+      position: absolute; inset: 0;
+      background: #F8F5EF;
+      clip-path: inset(0 100% 0 0);
+      z-index: 20;
+    }
+
+    .s3-inner {
+      position: absolute; inset: 0;
+      display: flex;
+      opacity: 0;
+    }
+
+    .s3-left {
+      width: 40%; height: 100%;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 0 48px 0 80px;
+      gap: 24px;
+    }
+
+    .s3-label {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: 0.4em;
+      color: var(--c-green); opacity: 0; filter: blur(8px);
+    }
+
+    .s3-heading {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2rem, 3.5vw, 3.8rem);
+      letter-spacing: 0.12em; line-height: 1.8; color: var(--c-ink);
+      opacity: 0; filter: blur(12px);
+    }
+
+    .s3-body {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: clamp(1.05rem, 1.5vw, 1.4rem);
+      letter-spacing: 0.1em; line-height: 2; color: #5C5248;
+      opacity: 0; filter: blur(8px);
+    }
+
+    .s3-right {
+      width: 60%; height: 100%;
+      overflow: hidden;
+      padding: 24px 24px 24px 0;
+    }
+
+    .s3-photo-strip {
+      display: flex; flex-direction: column;
+      height: 100%; gap: 6px;
+    }
+
+    .s3-photo {
+      flex: 1; width: 100%; object-fit: cover;
+      border-radius: 8px;
+      opacity: 0; transform: translateX(40px);
+    }
+
+    /* 第四幕A：认养农场 */
+    #scene4a { height: 400vh; }
+    .s4a-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+
+    .s4a-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1); transform-origin: center center; }
+    .s4a-overlay1 { position: absolute; inset: 0; background: rgba(20,40,15,0.40); z-index: 1; }
+
+    .s4a-hero-text {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 80px 100px;
+      gap: 8px;
+    }
+    .s4a-hero-line {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2rem, 4vw, 4rem);
+      letter-spacing: 0.15em; color: #EDE8DF;
+      text-shadow: 0 2px 30px rgba(0,0,0,0.5);
+      opacity: 0; filter: blur(16px);
+    }
+
+    /* 幕布：米白从右推入 */
+    .s4a-curtain {
+      position: absolute; inset: 0;
+      background: #F8F5EF;
+      clip-path: inset(0 100% 0 0);
+      z-index: 3;
+    }
+
+    /* 分屏内容 */
+    .s4a-split {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; opacity: 0;
+    }
+
+    .s4a-left {
+      width: 42%; height: 100%;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 48px 0 80px; gap: 20px;
+    }
+    .s4a-label {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: 0.4em;
+      color: var(--c-green); opacity: 0; filter: blur(8px);
+    }
+    .s4a-heading {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      letter-spacing: 0.12em; line-height: 1.8; color: var(--c-ink);
+      opacity: 0; filter: blur(12px);
+    }
+    .s4a-body {
+      font-family: "Noto Serif SC", serif; font-weight: 300;
+      font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+      letter-spacing: 0.1em; line-height: 2; color: #5C5248;
+      opacity: 0; filter: blur(8px);
+    }
+
+    .s4a-right {
+      width: 58%; height: 100%;
+      padding: 24px 24px 24px 0;
+    }
+    .s4a-grid {
+      display: grid;
+      grid-template-columns: 58% 40%;
+      gap: 6px; height: 100%;
+    }
+    .s4a-grid-main { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; opacity: 0; transform: translateX(40px); }
+    .s4a-grid-col { display: flex; flex-direction: column; gap: 6px; }
+    .s4a-grid-sm { flex: 1; width: 100%; object-fit: cover; border-radius: 8px; opacity: 0; transform: translateX(40px); }
+    /* 第四幕A顶部过渡阴影 */
+    .s4a-shadow-top {
+      position: absolute; top: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to bottom, rgba(248,245,239,0.65), transparent);
+      z-index: 5; pointer-events: none;
+    }
+
+    /* 第四幕B1：手捧稻穗 */
+    #scene4b1 { height: 300vh; background: #F8F5EF; }
+    .s4b1-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .s4b1-bg { position: absolute; inset: 0; background: #F8F5EF; z-index: 0; }
+    .s4b1-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; clip-path: inset(0 0 0 0); }
+    /* 顶部过渡阴影 */
+    .s4b1-shadow-top {
+      position: absolute; top: 0; left: 0; right: 0; height: 160px;
+      background: linear-gradient(to bottom, rgba(248,245,239,0.7), transparent);
+      z-index: 5; pointer-events: none;
+    }
+    .s4b1-text {
+      position: absolute; top: 50%; right: 6%;
+      transform: translateY(-50%);
+      z-index: 10; width: 36%; text-align: right; opacity: 0;
+    }
+    .s4b-label {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: 0.4em;
+      color: var(--c-green); margin-bottom: 16px; display: block;
+    }
+    .s4b-line {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+      letter-spacing: 0.15em; line-height: 1.8; color: var(--c-ink);
+      filter: blur(12px); opacity: 0;
+    }
+
+    /* 第四幕B2：渔夫拿着鱼 */
+    #scene4b2 { height: 300vh; background: #F8F5EF; }
+    .s4b2-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .s4b2-bg { position: absolute; inset: 0; background: #F8F5EF; z-index: 0; }
+    .s4b2-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; clip-path: inset(0 0 0 0); }
+    /* 顶部过渡阴影 */
+    .s4b2-shadow-top {
+      position: absolute; top: 0; left: 0; right: 0; height: 160px;
+      background: linear-gradient(to bottom, rgba(248,245,239,0.7), transparent);
+      z-index: 5; pointer-events: none;
+    }
+    .s4b2-text {
+      position: absolute; top: 50%; left: 6%;
+      transform: translateY(-50%);
+      z-index: 10; width: 36%; text-align: left; opacity: 0;
+    }
+    .s4b-line-dark {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+      letter-spacing: 0.15em; line-height: 1.8; color: var(--c-ink);
+      filter: blur(12px); opacity: 0;
+    }
+
+    /* 第四幕C：滞留批发 */
+    #scene4c { height: 300vh; }
+    .s4c-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+    .s4c-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #s4c-img1 { z-index: 1; }
+    #s4c-img2 { z-index: 2; opacity: 0; }
+    .s4c-overlay { position: absolute; inset: 0; background: rgba(30,15,5,0.45); z-index: 3; }
+    /* 顶부과渡阴影 */
+    .s4c-shadow-top {
+      position: absolute; top: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to bottom, rgba(26,21,16,0.7), transparent);
+      z-index: 4; pointer-events: none;
+    }
+    .s4c-transition {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 180px;
+      background: linear-gradient(to bottom, transparent, rgba(26,21,16,0.95));
+      z-index: 4; pointer-events: none;
+    }
+    .s4c-text-wrap { position: absolute; bottom: 80px; left: 80px; z-index: 5; max-width: 45%; }
+    .s4c-label {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.5rem, 2vw, 2rem); letter-spacing: 0.4em; color: var(--c-millet);
+      margin-bottom: 16px; display: block; opacity: 0; filter: blur(8px);
+    }
+    .s4c-text {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2rem, 3.5vw, 4rem);
+      letter-spacing: 0.2em; line-height: 1.6; color: #EDE8DF;
+      text-shadow: 0 2px 30px rgba(0,0,0,0.7);
+      opacity: 0; filter: blur(16px);
+    }
+
+    /* 第五幕：发出邀请 */
+    #scene5 { height: 500vh; }
+    .s5-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+
+    /* 第一段：米白背景 */
+    .s5-ticker-bg {
+      position: absolute; inset: 0; background: #F8F5EF; z-index: 1;
+    }
+    .s5-ticker {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .s5-ticker-track {
+      display: flex; gap: 80px; align-items: center;
+      white-space: nowrap;
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2.5rem, 5vw, 5.5rem);
+      letter-spacing: 0.05em; color: var(--c-green);
+    }
+    .s5-dot { color: var(--c-green); font-size: 1.5rem; }
+
+    /* 第二段：深叶绿背景 */
+    .s5-green-bg {
+      position: absolute; inset: 0;
+      background: var(--c-green);
+      z-index: 3; opacity: 0;
+    }
+    .s5-ticker-white {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; align-items: center; overflow: hidden;
+      opacity: 0;
+    }
+    .s5-ticker-track-w {
+      display: flex; gap: 80px; align-items: center;
+      white-space: nowrap;
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(2.5rem, 5vw, 5.5rem);
+      letter-spacing: 0.05em; color: #EDE8DF;
+    }
+    .s5-dot-w { color: #EDE8DF; font-size: 1.5rem; }
+
+    /* 叶片剪切蒙版 */
+    .s5-leaf-mask {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px; height: 300px;
+      z-index: 5; opacity: 0;
+      /* 叶片形状：用clip-path多边形近似 */
+      clip-path: polygon(50% 0%, 80% 20%, 100% 50%, 80% 80%, 50% 100%, 20% 80%, 0% 50%, 20% 20%);
+      border-radius: 50% 30% 50% 30%;
+      overflow: hidden;
+    }
+    .s5-leaf-video { width: 100%; height: 100%; object-fit: cover; }
+
+    /* 第三段：视频全屏 */
+    .s5-fullvid {
+      position: absolute; inset: 0; z-index: 6; opacity: 0;
+    }
+    .s5-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .s5-vid-overlay { position: absolute; inset: 0; background: rgba(10,10,8,0.45); z-index: 1; }
+    .s5-top-transition {
+      position: absolute; top: 0; left: 0; right: 0; height: 160px;
+      background: linear-gradient(to bottom, rgba(26,21,16,0.85), transparent);
+      z-index: 2; pointer-events: none;
+    }
+    .s5-invite-content {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 80px 80px;
+      gap: 48px;
+    }
+    .s5-invite-title {
+      font-family: "Ma Shan Zheng", serif;
+      font-size: clamp(1.6rem, 3vw, 3rem);
+      letter-spacing: 0.1em; line-height: 1.8; color: #EDE8DF;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+      opacity: 0; filter: blur(12px);
+      max-width: 55%;
+    }
+    .s5-btns {
+      display: flex; gap: 24px;
+      opacity: 0; filter: blur(8px);
+    }
+    .s5-btn {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 48px;
+      border: 1px solid rgba(237,232,223,0.8);
+      border-radius: 100px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+      text-decoration: none;
+      transition: background 300ms, border-color 300ms, transform 150ms;
+      cursor: pointer;
+      letter-spacing: 0.15em;
+    }
+    .s5-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(237,232,223,1);
+      transform: translateY(-3px);
+    }
+    .s5-btn span:first-child {
+      font-family: "Noto Serif SC", serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      letter-spacing: 0.2em;
+      color: #EDE8DF;
+    }
+    .s5-btn-sub {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: rgba(237,232,223,0.55);
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav id="nav">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link">滞留物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link active">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+      </svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+      <button class="nav-search-btn" id="searchBtn" title="搜索">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="5"/>
+          <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- 第一幕：农户形象登场 -->
+  <section id="scene1">
+    <div class="s1-sticky">
+      <video id="v1" class="s1-video" autoplay muted loop playsinline>
+        <source src="./素材/农户耕作.mp4" type="video/mp4">
+      </video>
+      <video id="v2" class="s1-video" autoplay muted loop playsinline>
+        <source src="./素材/农户浇水.mp4" type="video/mp4">
+      </video>
+      <video id="v3" class="s1-video" autoplay muted loop playsinline>
+        <source src="./素材/农户耕作2.mp4" type="video/mp4">
+      </video>
+      <div class="s1-overlay"></div>
+      <div class="s1-left-shadow"></div>
+
+      <!-- 加载后自动出现的品牌入场内容 -->
+      <div class="s1-brand" id="s1brand">
+        <p class="s1-brand-name">一季一鲜</p>
+        <p class="s1-brand-slogan">我们只卖第一手农产品，我们切实保护农户和您的权益</p>
+        <a class="s1-brand-btn" href="#">加入我们 →</a>
+      </div>
+
+      <!-- 滚动驱动的文案 -->
+      <div class="s1-texts">
+        <p id="t1" class="s1-t1">山野有人，低头耕耘。</p>
+        <p id="t2" class="s1-t2">春种秋收，年年如是。</p>
+        <p id="t3" class="s1-t3">他们不善言辞，只是用心守护一方土地。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第二幕：揭示痛点 -->
+  <section id="scene2">
+    <div class="s2-sticky">
+      <div class="s2-bg"></div>
+      <div class="s2-text-wrap">
+        <p class="s2-text" id="s2t1">新鲜农产和您的距离</p>
+        <p class="s2-text" id="s2t2">不需要过度包装，</p>
+        <p class="s2-text" id="s2t3">它可以是一键上门。</p>
+      </div>
+      <div class="s2-images">
+        <div class="s2-frame s2-frame-left">
+          <img class="s2-img-base" src="./素材/过度包装.jpg" alt="" loading="lazy">
+          <img class="s2-img-top" id="s2-reveal-left" src="./素材/新鲜的菜3.jpg" alt="" loading="lazy">
+        </div>
+        <div class="s2-frame s2-frame-right">
+          <img class="s2-img-base" src="./素材/过度包装的果蔬.jpg" alt="" loading="lazy">
+          <img class="s2-img-top" id="s2-reveal-right" src="./素材/新鲜的菜2.jpg" alt="" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第三幕：提出解法 -->
+  <section id="scene3">
+    <div class="s3-sticky">
+      <!-- 幕布推入层 -->
+      <div class="s3-curtain" id="s3curtain"></div>
+
+      <div class="s3-inner">
+        <!-- 左侧文字 -->
+        <div class="s3-left">
+          <p class="s3-label" id="s3label">提出解法</p>
+          <p class="s3-heading" id="s3heading">自己挑选的，<br>才是饭桌上<br>安心的一口鲜。</p>
+          <p class="s3-body" id="s3body">从产地直达餐桌，没有中间商，没有隐瞒。<br>您看见它长在哪里，您才真的吃得安心。</p>
+        </div>
+
+        <!-- 右侧三张图竖向排列 -->
+        <div class="s3-right">
+          <div class="s3-photo-strip">
+            <img class="s3-photo" id="s3p1" src="./素材/第一手交易.jpg" alt="" loading="lazy">
+            <img class="s3-photo" id="s3p2" src="./素材/农户卖菜.jpg" alt="" loading="lazy">
+            <img class="s3-photo" id="s3p3" src="./素材/农户收成.jpg" alt="" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四幕A：认养农场 -->
+  <section id="scene4a">
+    <div class="s4a-sticky">
+      <!-- 第一段：全屏背景 -->
+      <img class="s4a-bg" src="./素材/果树认养.jpg" alt="">
+      <div class="s4a-overlay1"></div>
+      <div class="s4a-shadow-top"></div>
+      <div class="s4a-hero-text" id="s4ahero">
+        <p class="s4a-hero-line">从嫩芽到硕果，</p>
+        <p class="s4a-hero-line">它的茁壮成长</p>
+      </div>
+
+      <!-- 第二段：幕布+分屏 -->
+      <div class="s4a-curtain" id="s4acurtain"></div>
+      <div class="s4a-split" id="s4asplit">
+        <div class="s4a-left">
+          <p class="s4a-label" id="s4alabel">认养农场</p>
+          <p class="s4a-heading" id="s4aheading">离不开您的<br>支持与期望。</p>
+          <p class="s4a-body" id="s4abody">在它还是花苞的时候认下这一季，<br>看着它从发芽到成熟，最终送到您手里。<br>每一个认养者，都是这片土地的见证者。</p>
+        </div>
+        <div class="s4a-right">
+          <div class="s4a-grid">
+            <img class="s4a-grid-main" src="./素材/农户收菜2.jpg" alt="" loading="lazy">
+            <div class="s4a-grid-col">
+              <img class="s4a-grid-sm" src="./素材/果树认养2.jpg" alt="" loading="lazy">
+              <img class="s4a-grid-sm" src="./素材/农户收菜.jpg" alt="" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四幕B1：时令新鲜·手捧稻穗 -->
+  <section id="scene4b1">
+    <div class="s4b1-sticky">
+      <div class="s4b1-bg"></div>
+      <img id="s4b1-img" class="s4b1-img" src="./素材/手捧稻穗.jpg" alt="" loading="lazy">
+      <div class="s4b1-shadow-top"></div>
+      <div class="s4b1-text" id="s4b1tl">
+        <p class="s4b-label">时令新鲜</p>
+        <p class="s4b-line">每一份努力都值得被看见，</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四幕B2：时令新鲜·渔夫拿着鱼 -->
+  <section id="scene4b2">
+    <div class="s4b2-sticky">
+      <div class="s4b2-bg"></div>
+      <img id="s4b2-img" class="s4b2-img" src="./素材/渔夫拿着鱼.jpg" alt="" loading="lazy">
+      <div class="s4b2-shadow-top"></div>
+      <div class="s4b2-text" id="s4b2tr">
+        <p class="s4b-line-dark">每一滴汗水都不该被辜负。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四幕C：滞留批发 -->
+  <section id="scene4c">
+    <div class="s4c-sticky">
+      <img id="s4c-img1" class="s4c-img" src="./素材/农户收成.jpg" alt="" loading="lazy">
+      <img id="s4c-img2" class="s4c-img" src="./素材/滞销蔬菜.jpg" alt="" loading="lazy">
+      <div class="s4c-shadow-top"></div>
+      <div class="s4c-overlay"></div>
+      <div class="s4c-transition"></div>
+      <div class="s4c-text-wrap">
+        <p class="s4c-label" id="s4clabel">滞留批发</p>
+        <p class="s4c-text" id="s4ctext">而每一份收成<br>都需要被珍惜。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第五幕：发出邀请 -->
+  <section id="scene5">
+    <div class="s5-sticky">
+
+      <!-- 第一段：米白背景跑马灯 -->
+      <div class="s5-ticker-bg" id="s5tickerbg"></div>
+      <div class="s5-ticker" id="s5ticker">
+        <div class="s5-ticker-track" id="s5track">
+          <span>我们只卖第一手农产品</span>
+          <span class="s5-dot">·</span>
+          <span>我们切实保护农户和您的权益</span>
+          <span class="s5-dot">·</span>
+          <span>我们只卖第一手农产品</span>
+          <span class="s5-dot">·</span>
+          <span>我们切实保护农户和您的权益</span>
+          <span class="s5-dot">·</span>
+        </div>
+      </div>
+
+      <!-- 第二段：深叶绿背景+剪切蒙版 -->
+      <div class="s5-green-bg" id="s5greenbg"></div>
+      <div class="s5-ticker-white" id="s5tickerwhite">
+        <div class="s5-ticker-track-w" id="s5trackw">
+          <span>我们只卖第一手农产品</span>
+          <span class="s5-dot-w">·</span>
+          <span>我们切实保护农户和您的权益</span>
+          <span class="s5-dot-w">·</span>
+          <span>我们只卖第一手农产品</span>
+          <span class="s5-dot-w">·</span>
+          <span>我们切实保护农户和您的权益</span>
+          <span class="s5-dot-w">·</span>
+        </div>
+      </div>
+      <!-- 叶片剪切蒙版内的视频 -->
+      <div class="s5-leaf-mask" id="s5leaf">
+        <video class="s5-leaf-video" autoplay muted loop playsinline>
+          <source src="./素材/拿到新鲜的果子.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <!-- 第三段：视频全屏+邀请 -->
+      <div class="s5-fullvid" id="s5fullvid">
+        <video class="s5-bg-video" autoplay muted loop playsinline>
+          <source src="./素材/拿到新鲜的果子.mp4" type="video/mp4">
+        </video>
+        <div class="s5-vid-overlay"></div>
+        <div class="s5-top-transition"></div>
+        <div class="s5-invite-content" id="cta-anchor">
+          <p class="s5-invite-title" id="s5title">您守好的那方地，<br>我们来帮您带它去该去的地方。</p>
+          <div class="s5-btns" id="s5btns">
+            <a class="s5-btn" href="#">
+              <span>· 农户入驻 ·</span>
+              <span class="s5-btn-sub">悉心为您</span>
+            </a>
+            <a class="s5-btn" href="#">
+              <span>· 加入团队 ·</span>
+              <span class="s5-btn-sub">同行者招募</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 导航栏滚动效果
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    // 搜索框回车跳转
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html#q=${encodeURIComponent(q)}`;
+      }
+    });
+
+    // 视频无缝循环
+    ['v1','v2','v3'].forEach(id => {
+      const v = document.getElementById(id);
+      v.addEventListener('timeupdate', function() {
+        if (this.duration && this.currentTime > this.duration - 0.25) this.currentTime = 0;
+      });
+    });
+
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    var searchInputJoin = document.getElementById('searchInput');
+    searchInputJoin.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = this.value.trim();
+        if (q) {
+          window.location.href = 'products.html#q=' + encodeURIComponent(q);
+        }
+      }
+    });
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      var q = searchInputJoin.value.trim();
+      if (q) {
+        window.location.href = 'products.html#q=' + encodeURIComponent(q);
+      }
+    });
+
+    // 页面加载后自动入场（不需要滚动）
+    window.addEventListener('load', () => {
+      const brandTl = gsap.timeline({ delay: 0.2 });
+      brandTl
+        .to('.s1-brand-name',   { opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out' })
+        .to('.s1-brand-slogan', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        .to('.s1-brand-btn',    { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, '-=0.2');
+    });
+
+    // 第一幕滚动驱动timeline
+    const tl1 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene1', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl1
+      // 0~10%：品牌入场内容淡出，视频滤镜恢复
+      .to('#s1brand', { opacity: 0, filter: 'blur(12px)', duration: 0.10, ease: 'power2.in' }, 0)
+      .to('.s1-video', { filter: 'brightness(0.85) saturate(0.9)', duration: 0.20, ease: 'power1.out' }, 0.05)
+
+      // 10~25%：视频1，文案1从雾中浮现
+      .to('#t1', { opacity: 1, filter: 'blur(0px)', duration: 0.13, ease: 'power1.out' }, 0.10)
+
+      // 25~35%：文案1消散，视频1→2
+      .to('#t1', { opacity: 0, filter: 'blur(16px)', duration: 0.08, ease: 'power2.in' }, 0.27)
+      .to('#v1', { opacity: 0, duration: 0.10, ease: 'power1.inOut' }, 0.28)
+      .to('#v2', { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.28)
+
+      // 38~55%：视频2停留更长，文案2浮现
+      .to('#t2', { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'power1.out' }, 0.38)
+
+      // 57~67%：文案2消散，视频2→3
+      .to('#t2', { opacity: 0, filter: 'blur(16px)', duration: 0.08, ease: 'power2.in' }, 0.57)
+      .to('#v2', { opacity: 0, duration: 0.10, ease: 'power1.inOut' }, 0.58)
+      .to('#v3', { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.58)
+
+      // 68~88%：文案3从雾中浮现，最慢最轻
+      .to('#t3', { opacity: 1, filter: 'blur(0px)', duration: 0.20, ease: 'power1.out' }, 0.68)
+      .to({}, { duration: 0.12 });
+
+    // 第二幕：揭示痛点动画
+    const tl2 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene2', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl2
+      .to('#s2t1', { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.05)
+      .to('#s2t2', { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.14)
+      .to('#s2t3', { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.23)
+      .to('#s2-reveal-left',  { clipPath: 'inset(0% 0 0 0)',  duration: 0.40, ease: 'power2.inOut' }, 0.35)
+      .to('#s2-reveal-right', { clipPath: 'inset(0 0 0% 0)',  duration: 0.40, ease: 'power2.inOut' }, 0.35)
+      .to({}, { duration: 0.25 });
+
+    // 第三幕：提出解法动画
+    const tl3 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene3', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl3
+      // 0~20%：幕布从右侧推入
+      .to('#s3curtain', { clipPath: 'inset(0 0% 0 0)', duration: 0.20, ease: 'power2.inOut' }, 0)
+      // 幕布推入后，内容显示
+      .to('.s3-inner', { opacity: 1, duration: 0.01 }, 0.19)
+      // 20~30%：标签浮现
+      .to('#s3label', { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.22)
+      // 25~40%：标题浮现
+      .to('#s3heading', { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'power1.out' }, 0.28)
+      // 35~50%：说明文字浮现
+      .to('#s3body', { opacity: 1, filter: 'blur(0px)', duration: 0.12, ease: 'power1.out' }, 0.38)
+      // 30~60%：三张图stagger推入
+      .to('#s3p1', { opacity: 1, x: 0, duration: 0.15, ease: 'power3.out' }, 0.30)
+      .to('#s3p2', { opacity: 1, x: 0, duration: 0.15, ease: 'power3.out' }, 0.38)
+      .to('#s3p3', { opacity: 1, x: 0, duration: 0.15, ease: 'power3.out' }, 0.46);
+
+    // 第四幕A：认养农场动画
+    const tl4a = gsap.timeline({
+      scrollTrigger: { trigger: '#scene4a', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl4a
+      // Ken Burns效果：背景图随滚动缓慢放大
+      .to('.s4a-bg', { scale: 1.08, duration: 1, ease: 'none' }, 0)
+      // 0~15%：第一句文案从雾浮现
+      .to('.s4a-hero-line', { opacity: 1, filter: 'blur(0px)', duration: 0.15, stagger: 0.06, ease: 'power1.out' }, 0.05)
+      // 15~25%：文案消散，幕布从右推入
+      .to('.s4a-hero-line', { opacity: 0, filter: 'blur(12px)', duration: 0.08 }, 0.28)
+      .to('#s4acurtain', { clipPath: 'inset(0 0% 0 0)', duration: 0.18, ease: 'power2.inOut' }, 0.30)
+      // 幕布推入后分屏内容显示
+      .to('#s4asplit', { opacity: 1, duration: 0.01 }, 0.47)
+      // 文字依次浮现
+      .to('#s4alabel',   { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.50)
+      .to('#s4aheading', { opacity: 1, filter: 'blur(0px)', duration: 0.12, ease: 'power1.out' }, 0.57)
+      .to('#s4abody',    { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.65)
+      // 图片推入
+      .to('.s4a-grid-main', { opacity: 1, x: 0, duration: 0.15, ease: 'power3.out' }, 0.52)
+      .to('.s4a-grid-sm',   { opacity: 1, x: 0, duration: 0.12, stagger: 0.08, ease: 'power3.out' }, 0.60)
+      .to({}, { duration: 0.18 });
+
+    // 第四幕B1：手捧稻穗
+    const tl4b1 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene4b1', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl4b1
+      // 0~5%：全屏停留
+      .to({}, { duration: 0.05 })
+      // 5~30%：图片缩至左50%，右侧米白露出
+      .to('#s4b1-img', { clipPath: 'inset(0 50% 0 0)', duration: 0.25, ease: 'power2.inOut' }, 0.05)
+      // 32~50%：图缩完后文字浮现
+      .to('#s4b1tl',   { opacity: 1, duration: 0.05 }, 0.32)
+      .to('.s4b-line', { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'power1.out' }, 0.34)
+      // 定格
+      .to({}, { duration: 0.50 });
+
+    // 第四幕B2：渔夫拿着鱼
+    const tl4b2 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene4b2', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl4b2
+      // 0~5%：全屏停留
+      .to({}, { duration: 0.05 })
+      // 5~30%：图片缩至右50%，左侧米白露出
+      .to('#s4b2-img', { clipPath: 'inset(0 0 0 50%)', duration: 0.25, ease: 'power2.inOut' }, 0.05)
+      // 32~50%：图缩完后文字浮现
+      .to('#s4b2tr',        { opacity: 1, duration: 0.05 }, 0.32)
+      .to('.s4b-line-dark', { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'power1.out' }, 0.34)
+      // 定格
+      .to({}, { duration: 0.50 });
+
+    // 第四幕C：滞留批发动画
+    const tl4c = gsap.timeline({
+      scrollTrigger: { trigger: '#scene4c', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+    tl4c
+      .to({}, { duration: 0.22 })
+      .to('#s4c-img1', { opacity: 0, duration: 0.18, ease: 'power1.inOut' }, 0.22)
+      .to('#s4c-img2', { opacity: 1, duration: 0.18, ease: 'power1.inOut' }, 0.22)
+      .to('#s4clabel', { opacity: 1, filter: 'blur(0px)', duration: 0.12, ease: 'power1.out' }, 0.55)
+      .to('#s4ctext',  { opacity: 1, filter: 'blur(0px)', duration: 0.15, ease: 'power1.out' }, 0.62)
+      .to({}, { duration: 0.23 });
+
+    // 第五幕：发出邀请动画
+    const tl5 = gsap.timeline({
+      scrollTrigger: { trigger: '#scene5', start: 'top top', end: 'bottom bottom', scrub: 1 }
+    });
+
+    // 跑马灯：随滚动进度移动
+    tl5
+      // 0~25%：米白背景+跑马灯滚动
+      .to('#s5track',  { x: '-40%', duration: 0.25, ease: 'none' }, 0)
+      .to('#s5trackw', { x: '-40%', duration: 0.25, ease: 'none' }, 0)
+
+      // 25~35%：切换到深叶绿背景
+      .to('#s5greenbg',    { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.25)
+      .to('#s5tickerwhite',{ opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.25)
+      .to('.s5-ticker',    { opacity: 0, duration: 0.10 }, 0.25)
+
+      // 35~50%：叶片蒙版出现并扩大
+      .to('#s5leaf', { opacity: 1, duration: 0.08 }, 0.35)
+      .to('#s5leaf', { width: '500px', height: '500px', duration: 0.15, ease: 'power2.inOut' }, 0.40)
+
+      // 50~65%：叶片继续扩大到全屏，视频全屏登场
+      .to('#s5leaf', { width: '200vw', height: '200vh', duration: 0.15, ease: 'power2.inOut' }, 0.55)
+      .to('#s5fullvid', { opacity: 1, duration: 0.10 }, 0.62)
+      .to('#s5greenbg', { opacity: 0, duration: 0.08 }, 0.65)
+      .to('#s5tickerwhite', { opacity: 0, duration: 0.08 }, 0.65)
+      .to('#s5leaf', { opacity: 0, duration: 0.08 }, 0.65)
+
+      // 65~80%：标题浮现
+      .to('#s5title', { opacity: 1, filter: 'blur(0px)', duration: 0.12, ease: 'power1.out' }, 0.68)
+
+      // 75~90%：按钮浮现
+      .to('#s5btns', { opacity: 1, filter: 'blur(0px)', duration: 0.10, ease: 'power1.out' }, 0.78)
+
+      .to({}, { duration: 0.10 });
+
+    // 页面加载完成后刷新ScrollTrigger
+    window.addEventListener('load', () => {
+      setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+  </script>
+</body>
+</html>

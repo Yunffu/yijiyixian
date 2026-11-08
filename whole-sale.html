@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一季一鲜 · 滞留物批发</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.googleapis.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="css/wholesale.css">
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link active">滞留物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+      <button class="nav-search-btn" id="searchBtn" title="搜索">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="5"/>
+          <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- Hero区 -->
+  <section id="hero">
+     <video class="hero-video" autoplay muted loop playsinline>
+      <source src="素材/滞销/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-label">WHOLESALE · 滞留物批发</p>
+      <h1 class="hero-title">当季丰收，让利直销</h1>
+      <p class="hero-sub">每一份农产品，都来自土地最真实的馈赠</p>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-content">
+        <span>向下探索</span>
+        <div class="hero-scroll-arrow"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 定位提示条 -->
+  <div class="location-bar warn" id="locationBar">
+    <span class="location-bar-icon">⚠</span>
+    <span class="location-bar-text" id="locationText">您未开启定位，当前展示默认推流。外地货品存在变质风险，建议开启定位查看周边货源。</span>
+    <button class="location-btn" onclick="enableLocation()">开启定位</button>
+  </div>
+
+  <!-- 商品列表 -->
+  <section id="products">
+    <div class="prod-wrap">
+      <div class="prod-header">
+        <div>
+          <p class="prod-label-top">当季可采购项目</p>
+          <h2 class="prod-title">共 <span id="totalCount">0</span> 个项目在售</h2>
+        </div>
+      </div>
+      <div class="prod-filters" id="prodFilters">
+        <button class="prod-filter active" data-cat="all">全部</button>
+        <button class="prod-filter" data-cat="fruit">水果</button>
+        <button class="prod-filter" data-cat="vegetable">蔬菜</button>
+        <button class="prod-filter" data-cat="meat">肉蛋奶</button>
+        <button class="prod-filter" data-cat="fish">水产</button>
+        <button class="prod-filter" data-cat="other">其它</button>
+      </div>
+      <div class="prod-controls">
+        <div class="prod-sort">
+          <span class="prod-sort-label">排序</span>
+          <select class="prod-sort-select" id="sortSelect">
+            <option value="distance">距离最近</option>
+            <option value="discount">折扣最大</option>
+            <option value="newest">上架最新</option>
+          </select>
+        </div>
+      </div>
+      <div class="prod-grid" id="prodGrid"></div>
+    </div>
+  </section>
+
+  <!-- 购买弹窗 -->
+  <div id="modal">
+    <div class="modal-overlay" onclick="hideModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal()">×</button>
+      <div class="modal-product">
+        <div class="modal-product-img"><span id="modalProductName">产品图</span></div>
+        <div class="modal-product-info">
+          <h3 class="modal-product-name" id="modalName">云南高原苹果</h3>
+          <p class="modal-product-meta" id="modalMeta">📍 距您 32km · 已滞留 3 天</p>
+          <p class="modal-product-price" id="modalPrice">¥ 680 <small>/ 100斤</small></p>
+        </div>
+      </div>
+      <div class="modal-info">
+        <strong>起批说明：</strong>本次批发起批量为 <strong>50斤</strong>，低于起批量无法下单。
+        相比原价 <strong>¥12/斤</strong>，当前批发价 <strong>¥6.8/斤</strong>，节省 <strong>43%</strong>。
+      </div>
+      <div class="modal-stock-row">
+        <span style="font-size:12px;color:rgba(44,44,42,0.5)">剩余库存</span>
+        <span style="font-size:12px" id="modalStockLeft">200 斤</span>
+      </div>
+      <div class="modal-stock-bar"><div class="modal-stock-fill" id="modalStockFill" style="width:60%"></div></div>
+      <div class="modal-btns">
+        <button class="modal-btn modal-btn-secondary" onclick="hideModal()">取消</button>
+        <button class="modal-btn modal-btn-primary" onclick="doOrder()">立即下单</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 风险提示弹窗 -->
+  <div id="riskModal">
+    <div class="risk-overlay" onclick="hideRiskModal()"></div>
+    <div class="risk-content">
+      <div class="risk-icon">⚠️</div>
+      <h3 class="risk-title">外地货品风险提示</h3>
+      <p class="risk-text">外地货品存在农产品在途变质风险，请谨慎下单。<br>建议优先选择周边 50km 内的货源。</p>
+      <div class="risk-btns">
+        <button class="risk-btn risk-btn-primary" onclick="hideRiskModal()">我已知晓，继续</button>
+        <button class="risk-btn risk-btn-secondary" onclick="checkNearby()">查看周边货源</button>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div><p class="footer-logo">一季一鲜</p><p class="footer-slogan">我们只卖第一手农产品<br>我们切实保护农户和您的权益</p></div>
+      <div class="footer-links">
+        <div class="footer-col"><p class="footer-col-title">平台</p><a href="index.html">首页</a><a href="farm-adopt.html">认养农场</a><a href="whole-sale.html">滞留物批发</a></div>
+        <div class="footer-col"><p class="footer-col-title">加入</p><a href="join.html">农户入驻</a><a href="join.html">加入团队</a><a href="profile.html">我的账户</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 一季一鲜  ·  保护农户与消费者权益</p></div>
+  </footer>
+
+  <div id="toast">已加入购物车</div>
+
+  <script src="js/wholesale.js"></script>
+</body>
+</html>

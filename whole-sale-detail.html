@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一季一鲜 · 滞销详情</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="css/wholesale-styles.css">
+  <link rel="stylesheet" href="css/wholesale-detail.css">
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <nav id="nav" class="on-light">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link active">滞销物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+      </svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- 返回列表按钮 -->
+  <div class="back-list-wrap" id="backBtnWrap">
+    <a href="whole-sale.html" class="back-list-btn" id="backBtn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+      <span id="backBtnText">返回列表</span>
+    </a>
+  </div>
+
+  
+
+  <!-- 定位风险提示弹窗 -->
+  <div class="risk-modal" id="riskModal">
+    <div class="risk-modal-overlay" id="riskModalOverlay"></div>
+    <div class="risk-modal-content">
+      <div class="risk-modal-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <h3 class="risk-modal-title">风险提示</h3>
+      <p class="risk-modal-text">外地货品存在农产品变质风险，请谨慎下单</p>
+      <button class="risk-modal-btn" id="riskModalBtn">我知道了</button>
+    </div>
+  </div>
+
+  <!-- 页面内容 -->
+  <main id="detail-main">
+    <!-- 面包屑 -->
+    <div class="detail-breadcrumb">
+      <a href="index.html">首页</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="whole-sale.html">滞销物批发</a>
+      <span class="breadcrumb-sep">/</span>
+      <span id="breadcrumbName">商品详情</span>
+    </div>
+
+    <!-- 商品主体 -->
+    <section class="product-main">
+      <!-- 左侧：媒体展示 -->
+      <div class="product-media">
+        <div class="media-main" id="mediaMain">
+          <div class="media-placeholder" id="mediaPlaceholder">
+            <span id="mediaPlaceholderText">商品主图</span>
+          </div>
+          <div class="media-tags">
+            <span class="media-tag" id="mainTag">滞销特价</span>
+            <span class="media-tag discount-tag" id="discountTag">5折起</span>
+          </div>
+          <button class="media-zoom-btn" id="zoomBtn" title="点击预览">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="9" cy="9" r="7"/>
+              <line x1="14" y1="14" x2="18" y2="18"/>
+              <line x1="12.5" y1="7.5" x2="14.5" y1="7.5"/>
+              <line x1="9" y1="12.5" x2="9" y1="14.5"/>
+            </svg>
+          </button>
+        </div>
+        <div class="media-thumbs" id="mediaThumbs">
+          <button class="thumb-item active" data-index="0">
+            <span>主图</span>
+          </button>
+          <button class="thumb-item" data-index="1">
+            <span>存储</span>
+          </button>
+          <button class="thumb-item" data-index="2">
+            <span>近照</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 右侧：商品信息 -->
+      <div class="product-info">
+        <!-- 风险标签 - 移至商品标题上方 -->
+        <div class="risk-tag" id="riskTag" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>外地货源 · 变质风险中</span>
+        </div>
+
+        <h1 class="product-title" id="productTitle"></h1>
+        <div class="product-meta">
+          <span class="product-region" id="productRegion"></span>
+          <span class="product-farmer">农户：<span id="farmerName"></span></span>
+        </div>
+        
+        <!-- 物流预估 (普通文字样式) -->
+        <div class="delivery-text" id="deliverySection">
+          <!-- JS动态渲染 -->
+        </div>
+
+        <!-- 价格区域 -->
+        <div class="price-section">
+          <div class="price-main">
+            <span class="price-symbol">¥</span>
+            <span class="price-value" id="productPrice"></span>
+            <span class="price-unit">/ 件</span>
+          </div>
+          <div class="price-original">
+            原价：<span id="originalPrice"></span>
+            <span class="price-discount" id="priceDiscount"></span>
+          </div>
+        </div>
+
+        <!-- 起批件数 + 库存已售合并小卡片 -->
+        <div class="moq-stock-section">
+          <div class="moq-stock-block">
+            <div class="moq-block">
+              <div class="moq-label">起批</div>
+              <div class="moq-value" id="moqValue"></div>
+              <div class="moq-note">件享折扣价</div>
+            </div>
+            <div class="stock-block">
+              <div class="stock-label">剩余</div>
+              <div class="stock-count" id="stockCount"></div>
+              <div class="stock-unit">件</div>
+              <div class="stock-total" id="totalStock">总库存 - 件</div>
+              <div class="stock-progress-mini">
+                <div class="stock-progress-fill" id="stockProgressFill"></div>
+              </div>
+              <div class="stock-sold-text">已售 <span id="soldPercent">-</span>%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 滞销开始+建议储存合并小卡片 -->
+        <div class="stagnant-storage-section">
+          <div class="stagnant-mini">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="stagnant-label">滞销</span>
+            <span class="stagnant-time" id="stagnantTime"></span>
+            <span class="stagnant-duration" id="stagnantDuration"></span>
+          </div>
+          <div class="storage-mini">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22V12M12 12L6 6M12 12l6-6"/>
+              <rect x="3" y="12" width="18" height="8" rx="2"/>
+            </svg>
+            <span class="storage-label">储存</span>
+            <span class="storage-method" id="storageMethod"></span>
+          </div>
+        </div>
+
+        <!-- 售后保障 -->
+        <div class="guarantee-section" id="guaranteeSection">
+          <span class="guarantee-label">售后保障</span>
+          <!-- JS动态渲染 -->
+        </div>
+
+        <!-- 交互按钮 -->
+        <div class="action-buttons">
+          <button class="btn btn-cart" id="addCartBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            加入待付款
+          </button>
+          <button class="btn btn-buy" id="buyNowBtn">
+            立即购买
+          </button>
+          <button class="btn btn-favorite" id="favoriteBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 详情内容区 -->
+    <section class="detail-content">
+      <!-- Tab 导航 -->
+      <div class="detail-tabs">
+        <button class="tab-btn active" data-tab="product">产品详情</button>
+        <button class="tab-btn" data-tab="storage">存放说明</button>
+        <button class="tab-btn" data-tab="review">用户评价</button>
+      </div>
+
+      <!-- Tab 内容 -->
+      <div class="tab-contents">
+        <!-- 产品详情 -->
+        <div class="tab-content active" id="tab-product">
+          <div class="product-detail-content">
+            <h3>产品信息</h3>
+            <table class="detail-table" id="detailTable">
+              <!-- 由JS动态渲染 -->
+            </table>
+          </div>
+        </div>
+
+        <!-- 存放说明 -->
+        <div class="tab-content" id="tab-storage">
+          <div class="storage-detail">
+            <h3>滞留物存放说明</h3>
+            <div class="storage-info-card" id="storageInfoCard">
+              <!-- 由JS动态渲染 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 用户评价 -->
+        <div class="tab-content" id="tab-review">
+          <!-- 评分维度 -->
+          <div class="review-scores">
+            <div class="score-main">
+              <span class="score-value" id="avgScore">4.8</span>
+              <div class="score-stars" id="avgStars"></div>
+              <span class="score-label">综合评分</span>
+            </div>
+            <div class="score-dimensions">
+              <div class="score-dim">
+                <span class="dim-label">质量</span>
+                <span class="dim-value" id="qualityScore">4.8</span>
+                <span class="dim-stars" id="qualityStars"></span>
+                <span class="dim-bar"><span style="width: 96%"></span></span>
+              </div>
+              <div class="score-dim">
+                <span class="dim-label">包装</span>
+                <span class="dim-value" id="packageScore">4.6</span>
+                <span class="dim-stars" id="packageStars"></span>
+                <span class="dim-bar"><span style="width: 92%"></span></span>
+              </div>
+              <div class="score-dim">
+                <span class="dim-label">物流</span>
+                <span class="dim-value" id="deliveryScore">4.7</span>
+                <span class="dim-stars" id="deliveryStars"></span>
+                <span class="dim-bar"><span style="width: 94%"></span></span>
+              </div>
+            </div>
+            <div class="score-compare">
+              <span>高于平台</span>
+              <strong>85%</strong>
+              <span>的商品</span>
+            </div>
+          </div>
+
+          <!-- 评价列表 -->
+          <div class="review-list" id="reviewList">
+            <!-- 由JS动态渲染 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 店铺信息 -->
+    <section class="shop-detail-section">
+      <div class="shop-detail-card">
+        <div class="shop-detail-header">
+          <div class="shop-detail-avatar" id="shopDetailAvatar">
+            <span>-</span>
+          </div>
+          <div class="shop-detail-info">
+            <div class="shop-detail-name" id="shopDetailName">-</div>
+            <div class="shop-detail-rating">
+              <span class="trust-score">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="#E8A838">
+                  <path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/>
+                </svg>
+                <span id="shopDetailScore">-</span>
+              </span>
+              <span class="certified-badge" id="shopDetailBadge">已认证</span>
+            </div>
+          </div>
+          <button class="shop-detail-btn" id="detailShopBtn">进店逛逛</button>
+        </div>
+        <div class="shop-detail-stats">
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="shopProductCount">-</span>
+            <span class="shop-stat-label">在售商品</span>
+          </div>
+          <div class="shop-stat-divider"></div>
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="shopTotalSales">-</span>
+            <span class="shop-stat-label">总销量</span>
+          </div>
+          <div class="shop-stat-divider"></div>
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="shopFans">-</span>
+            <span class="shop-stat-label">粉丝数</span>
+          </div>
+        </div>
+        <div class="shop-detail-certifications" id="shopCertifications">
+          <!-- 由JS动态渲染 -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 购买弹窗 -->
+  <div class="purchase-modal" id="purchaseModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">×</button>
+      
+      <!-- 顶部风险/提示条 -->
+      <div class="modal-top-hint" id="modalTopHint">
+        <span id="modalTopHintText">请选择购买数量</span>
+      </div>
+      
+      <div class="modal-product">
+        <div class="modal-img" id="modalImg">
+          <span>商品图</span>
+        </div>
+        <div class="modal-info">
+          <h3 class="modal-title" id="modalTitle">-</h3>
+          <div class="modal-price" id="modalPrice">¥-</div>
+        </div>
+      </div>
+      <div class="modal-quantity">
+        <label>购买数量</label>
+        <div class="quantity-control">
+          <button class="qty-btn minus" id="qtyMinus">-</button>
+          <input type="number" class="qty-input" id="qtyInput" value="1" min="1">
+          <button class="qty-btn plus" id="qtyPlus">+</button>
+        </div>
+      </div>
+      <div class="modal-moq-hint" id="modalMoqHint">
+        起批<span id="modalMoqValue"></span>件享折扣价
+      </div>
+      <div class="modal-stock-bar">
+        <div class="modal-stock-label">剩余库存</div>
+        <div class="modal-stock-progress">
+          <div class="modal-stock-fill" id="modalStockFill"></div>
+        </div>
+        <div class="modal-stock-text" id="modalStockText">剩余 - 件</div>
+      </div>
+      <div class="modal-total">
+        <span>合计</span>
+        <span class="modal-total-price" id="modalTotalPrice">¥-</span>
+      </div>
+      <div class="modal-receiver">
+        <label>收货人信息</label>
+        <input type="text" id="modalReceiverName" placeholder="请输入收货人姓名" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px;">
+        <input type="tel" id="modalReceiverPhone" placeholder="请输入手机号" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px;">
+        <input type="text" id="modalReceiverAddress" placeholder="请输入详细地址" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <button class="modal-submit" id="modalSubmit">确认购买</button>
+    </div>
+  </div>
+
+  <!-- 购物车弹窗 -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-modal-overlay" id="cartModalOverlay"></div>
+    <div class="cart-modal-content">
+      <button class="cart-modal-close" id="cartModalClose">×</button>
+      
+      <div class="cart-modal-product">
+        <div class="cart-modal-img" id="cartModalImg">
+          <span>商品图</span>
+        </div>
+        <div class="cart-modal-info">
+          <h3 class="cart-modal-title" id="cartModalTitle">-</h3>
+          <div class="cart-modal-price" id="cartModalPrice">¥-</div>
+        </div>
+      </div>
+      <div class="cart-modal-quantity">
+        <label>购买数量</label>
+        <div class="cart-quantity-control">
+          <button class="cart-qty-btn cart-qty-minus" id="cartQtyMinus">-</button>
+          <input type="number" class="cart-qty-input" id="cartQtyInput" value="1" min="1">
+          <button class="cart-qty-btn cart-qty-plus" id="cartQtyPlus">+</button>
+        </div>
+      </div>
+      <div class="cart-modal-moq-hint" id="cartModalMoqHint">
+        起批<span id="cartModalMoqValue"></span>件享折扣价
+      </div>
+      <div class="cart-modal-stock-bar">
+        <div class="cart-modal-stock-label">剩余库存</div>
+        <div class="cart-modal-stock-progress">
+          <div class="cart-modal-stock-fill" id="cartModalStockFill"></div>
+        </div>
+        <div class="cart-modal-stock-text" id="cartModalStockText">剩余 - 件</div>
+      </div>
+      <div class="cart-modal-total">
+        <span>合计</span>
+        <span class="cart-modal-total-price" id="cartModalTotalPrice">¥-</span>
+      </div>
+      <button class="cart-modal-submit" id="cartModalBtnAdd">加入待付款</button>
+    </div>
+  </div>
+
+  <!-- 图片预览弹窗 -->
+  <div class="preview-modal" id="previewModal">
+    <button class="preview-close" id="previewClose">×</button>
+    <button class="preview-nav prev" id="previewPrev">‹</button>
+    <div class="preview-content" id="previewContent">
+      <div class="preview-img" id="previewImg"></div>
+    </div>
+    <button class="preview-nav next" id="previewNext">›</button>
+    <div class="preview-counter" id="previewCounter">1 / 3</div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div class="footer-brand">
+        <div class="footer-logo">一季一鲜</div>
+        <p class="footer-slogan">帮助农友 · 助农增收</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-col-title">平台</span>
+          <a href="index.html">首页</a>
+          <a href="farm-adopt.html">认养农场</a>
+          <a href="whole-sale.html">滞销物批发</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">关于</span>
+          <a href="join.html">加入我们</a>
+          <a href="#">联系我们</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 一季一鲜 · 帮助农友平台 版权所有
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script>
+    /* ══════════════════════════════
+       返回商铺按钮（从商铺跳转时显示）
+    ══════════════════════════════ */
+    (function initBackToStore() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('from') === 'store') {
+        const farmer = params.get('farmer');
+        const id = params.get('id');
+        if (farmer) {
+          const backBtn = document.getElementById('backBtn');
+          const backBtnText = document.getElementById('backBtnText');
+          backBtn.href = 'store.html?farmer=' + encodeURIComponent(farmer) + '&from=detail&id=' + encodeURIComponent(id);
+          backBtn.onclick = null;
+          backBtnText.textContent = '返回商铺';
+        }
+      }
+    })();
+  </script>
+  <script>
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    (function initSearch() {
+      var searchValue = '';
+      var searchInput = document.getElementById('searchInput');
+
+      function performSearch() {
+        var q = searchValue || searchInput.value;
+        if (q && q.trim()) {
+          window.location.href = './products.html#q=' + encodeURIComponent(q.trim());
+        }
+      }
+
+      searchInput.addEventListener('input', function() {
+        searchValue = this.value;
+      });
+
+      searchInput.onkeydown = function(e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+          performSearch();
+        }
+      };
+    })();
+  </script>
+  <script src="js/api.js"></script>
+  <script src="js/wholesale-detail.js"></script>
+</body>
+</html>

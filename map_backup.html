@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一季一鲜 · 产地数据可视化</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{--cdk:#4A4A35;--cg:#4A7A38;--cm:#E8D8A0;--cw:#F8F5EF;--ci:#2C2C2A;--ct:#EDE8DF}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:"Noto Serif SC",serif;background:var(--cw);color:var(--ci)}
+.page{display:flex;flex-direction:column;height:100vh}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 40px;border-bottom:1px solid rgba(74,74,53,0.1);flex-shrink:0}
+.hl .lbl{font-size:10px;letter-spacing:0.45em;color:var(--cg);margin-bottom:3px}
+.hl .ttl{font-family:"Ma Shan Zheng",serif;font-size:1.5rem;letter-spacing:0.12em}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 16px;border-radius:20px;background:var(--cg);color:var(--ct);font-size:11px;letter-spacing:0.18em;font-weight:300}
+.bd{width:5px;height:5px;border-radius:50%;background:var(--cm);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.main{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;min-height:0}
+.lp{display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;border-right:1px solid rgba(74,74,53,0.08);overflow:hidden}
+.ctabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;justify-content:center;flex-shrink:0}
+.ctb{font-family:"Noto Serif SC",serif;font-weight:300;font-size:12px;padding:5px 16px;border-radius:18px;border:1px solid rgba(74,74,53,0.2);background:transparent;color:var(--ci);cursor:pointer;transition:all 0.15s;letter-spacing:0.1em}
+.ctb:hover{border-color:var(--cg);color:var(--cg)}
+.ctb.act{color:#fff;border-color:transparent}
+.rv{position:relative;width:min(380px,42vw);height:min(420px,46vw);flex-shrink:0}
+.rv svg{position:absolute;inset:0;width:100%;height:100%}
+.ci{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;width:96px}
+.ci-c{font-family:"Ma Shan Zheng",serif;font-size:17px;letter-spacing:0.12em}
+.ci-s{font-size:11px;font-weight:400;margin-top:2px;letter-spacing:0.08em}
+.ci-n{font-size:9px;color:rgba(44,44,42,0.45);margin-top:2px;letter-spacing:0.06em}
+.rleg{display:flex;flex-wrap:wrap;gap:3px 10px;margin-top:8px;width:100%;max-width:380px;flex-shrink:0}
+.rli{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(44,44,42,0.55);letter-spacing:0.04em;white-space:nowrap}
+.rld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.ilist{width:100%;max-width:380px;margin-top:8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;min-height:0}
+.ir{display:flex;align-items:center;gap:7px;padding:4px 7px;border-radius:4px;cursor:pointer;transition:background 0.1s}
+.ir:hover{background:rgba(74,74,53,0.05)}
+.ir.hi{background:rgba(74,74,53,0.07)}
+.ir.dm{opacity:0.22}
+.ird{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.irn{font-size:11px;letter-spacing:0.06em;flex:1;color:rgba(44,44,42,0.65)}
+.ir.hi .irn{color:var(--ci);font-weight:400}
+.ibw{width:72px;height:3px;background:rgba(74,74,53,0.1);border-radius:2px;overflow:hidden}
+.ib{height:100%;border-radius:2px;transition:width 0.4s cubic-bezier(.4,0,.2,1)}
+.irv{font-size:10px;color:rgba(44,44,42,0.4);min-width:34px;text-align:right}
+.hint{font-size:9px;color:rgba(44,44,42,0.3);margin-top:6px;letter-spacing:0.1em;flex-shrink:0}
+.rp{display:flex;flex-direction:column;padding:14px 24px 10px;overflow:hidden}
+.rph{margin-bottom:8px;flex-shrink:0}
+.rpl{font-size:12px;letter-spacing:0.45em;color:var(--cg);margin-bottom:4px}
+.rpt{font-family:"Ma Shan Zheng",serif;font-size:1.4rem;letter-spacing:0.1em}
+.mw{position:relative;flex:1;min-height:0}
+#cmap{width:100%;height:100%}
+.pp{stroke:#F8F5EF;stroke-width:0.7;cursor:pointer;transition:fill 0.3s}
+.pp:hover{stroke-width:1.5;stroke:rgba(74,74,53,0.55)}
+.np{fill:none;stroke:rgba(74,74,53,0.2);stroke-width:0.5;stroke-dasharray:3,2}
+.rl{font-family:"Noto Serif SC",serif;font-size:10px;fill:rgba(248,245,239,0.9);pointer-events:none}
+.mt{position:absolute;pointer-events:none;background:var(--cdk);color:var(--ct);font-family:"Noto Serif SC",serif;font-weight:300;font-size:11px;letter-spacing:0.07em;padding:8px 12px;border-radius:7px;opacity:0;transition:opacity 0.12s;z-index:20;min-width:120px;white-space:nowrap}
+.mtn{font-size:12px;font-weight:400;margin-bottom:4px}
+.mtr{display:flex;justify-content:space-between;gap:16px;opacity:0.7;margin-top:2px;font-size:10px}
+.leg{display:flex;align-items:center;gap:7px;margin-top:7px;font-size:12px;color:rgba(44,44,42,0.4);letter-spacing:0.08em;flex-shrink:0}
+.lb{flex:1;height:4px;border-radius:2px}
+.ov{position:fixed;inset:0;background:rgba(74,74,53,0.2);opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:98}
+.ov.on{opacity:1;pointer-events:auto}
+.card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.93);background:var(--cw);border:1px solid rgba(74,74,53,0.12);border-radius:14px;padding:20px 24px;width:290px;box-shadow:0 14px 40px rgba(74,74,53,0.16);opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(.4,0,.2,1);z-index:99}
+.card.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.creg{font-family:"Ma Shan Zheng",serif;font-size:1.25rem;letter-spacing:0.12em;margin-bottom:3px}
+.csub{font-size:10px;letter-spacing:0.16em;color:rgba(44,44,42,0.4);margin-bottom:12px}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+.ct2{font-size:11px;letter-spacing:0.06em;padding:3px 10px;border-radius:12px;background:rgba(74,122,56,0.08);color:var(--cg);border:1px solid rgba(74,122,56,0.16)}
+.cftr{display:flex;gap:7px}
+.cgo{flex:1;font-family:"Noto Serif SC",serif;font-weight:300;font-size:11px;letter-spacing:0.14em;padding:8px 0;border-radius:20px;border:none;background:var(--cg);color:var(--ct);cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background 0.15s}
+.cgo:hover{background:#356028}
+.ccls{font-family:"Noto Serif SC",serif;font-weight:300;font-size:11px;letter-spacing:0.1em;padding:8px 12px;border-radius:20px;border:1px solid rgba(74,74,53,0.15);background:transparent;color:rgba(44,44,42,0.5);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hl">
+      <div class="lbl">实时产地数据</div>
+      <div class="ttl">全国农产品分布</div>
+    </div>
+    <div class="badge"><span class="bd"></span><span id="ml">3月 · 当季在售</span></div>
+  </div>
+  <div class="main">
+    <div class="lp">
+      <div class="ctabs" id="tabs"></div>
+      <div class="rv" id="rv">
+        <svg id="rsvg" viewBox="-200 -200 400 400"></svg>
+        <div class="ci">
+          <div class="ci-c" id="ci-c">水果</div>
+          <div class="ci-s" id="ci-s" style="display:none"></div>
+          <div class="ci-n" id="ci-n"></div>
+        </div>
+      </div>
+      <div class="rleg" id="rleg"></div>
+      <div class="ilist" id="ilist"></div>
+      <div class="hint">点击品种查看产地热力 · 再次点击取消</div>
+    </div>
+    <div class="rp">
+      <div class="rph">
+        <div class="rpl">七大区 · 上架热力</div>
+        <div class="rpt" id="rpt">全部品类</div>
+      </div>
+      <div class="leg">
+        <span>少</span>
+        <div class="lb" id="lb" style="background:linear-gradient(to right,#E8E8E5,#3A7235)"></div>
+        <span>多</span>
+        <span style="margin-left:6px;font-size:9px;opacity:0.6">点击省份跳转筛选</span>
+      </div>
+      <div class="mw">
+        <svg id="cmap" viewBox="0 0 860 720" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="mt" id="mt"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ov" id="ov" onclick="closeCard()"></div>
+<div class="card" id="card">
+  <div class="creg" id="creg"></div>
+  <div class="csub" id="csub"></div>
+  <div class="ctags" id="ctags"></div>
+  <div class="cftr">
+    <a class="cgo" id="cgo" href="#">前往查看 →</a>
+    <button class="ccls" onclick="closeCard()">关闭</button>
+  </div>
+</div>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const RMAP={
+  '东北':['黑龙江省','吉林省','辽宁省'],
+  '华北':['北京市','天津市','河北省','山西省','内蒙古自治区'],
+  '华东':['上海市','江苏省','浙江省','安徽省','福建省','江西省','山东省','台湾省'],
+  '华中':['河南省','湖北省','湖南省'],
+  '华南':['广东省','广西壮族自治区','海南省','香港特别行政区','澳门特别行政区'],
+  '西南':['四川省','重庆市','贵州省','云南省','西藏自治区'],
+  '西北':['陕西省','甘肃省','青海省','宁夏回族自治区','新疆维吾尔自治区'],
+};
+const P2R={};
+Object.entries(RMAP).forEach(([r,ps])=>ps.forEach(p=>{P2R[p]=r;}));
+const REGS=Object.keys(RMAP);
+
+// 七大区固定颜色（中国传统色）
+const regionColors=[
+  '#6B8E9F', // 东北 - 鸦青
+  '#C47D5D', // 华北 - 赫赤
+  '#8BA872', // 华东 - 柳黄
+  '#9B7B8C', // 华中 - 豆紫
+  '#D4A85A', // 华南 - 姜黄
+  '#6B9B7A', // 西南 - 竹青
+  '#B0857A', // 西北 - 赭石
+];
+
+const CC={
+  fruit:{m:'#C85A20',r:['#F5DDD0','#EDB898','#E09060','#C85A20','#A03A10','#782400','#501400']},
+  veg:  {m:'#3A7235',r:['#C8E2C0','#98C888','#68AC54','#3A7235','#285220','#183410','#0A1E06']},
+  meat: {m:'#96541E',r:['#EEDCCA','#DCBA8E','#C89454','#96541E','#703808','#4C2002','#300E00']},
+  fish: {m:'#1E6480',r:['#BED8EC','#84B4D8','#4892C0','#1E6480','#0E4862','#063044','#021C2C']},
+};
+
+/* B端API模拟数据 — 上线后替换为 fetch('/api/viz/stats') */
+const DATA={
+  fruit:{label:'水果',items:[
+    {name:'草莓', total:1360,regions:{东北:0,  华北:180,华东:640,华中:300,华南:120,西南:80, 西北:40}},
+    {name:'脐橙', total:2080,regions:{东北:0,  华北:60, 华东:480,华中:380,华南:920,西南:240,西北:0}},
+    {name:'苹果', total:2120,regions:{东北:280,华北:520,华东:260,华中:180,华南:0,  西南:200,西北:680}},
+    {name:'香蕉', total:1200,regions:{东北:0,  华北:0,  华东:0,  华中:0,  华南:860,西南:340,西北:0}},
+    {name:'柚子', total:1000,regions:{东北:0,  华北:0,  华东:160,华中:280,华南:440,西南:120,西北:0}},
+    {name:'砂糖橘',total:980, regions:{东北:0,  华北:0,  华东:100,华中:140,华南:680,西南:60, 西北:0}},
+  ]},
+  veg:{label:'蔬菜',items:[
+    {name:'菠菜', total:3120,regions:{东北:220,华北:900,华东:820,华中:480,华南:200,西南:200,西北:300}},
+    {name:'白菜', total:3260,regions:{东北:580,华北:1200,华东:600,华中:400,华南:100,西南:180,西北:200}},
+    {name:'莴笋', total:1800,regions:{东北:40, 华北:240,华东:380,华中:520,华南:80, 西南:440,西北:80}},
+    {name:'芹菜', total:1840,regions:{东北:180,华北:560,华东:420,华中:280,华南:60, 西南:140,西北:200}},
+    {name:'韭菜', total:1700,regions:{东北:180,华北:480,华东:280,华中:320,华南:120,西南:200,西北:120}},
+    {name:'豌豆苗',total:1100,regions:{东北:20, 华北:80, 华东:160,华中:200,华南:240,西南:360,西北:40}},
+  ]},
+  meat:{label:'蛋奶肉',items:[
+    {name:'土鸡蛋',total:2600,regions:{东北:200,华北:280,华东:480,华中:620,华南:360,西南:480,西北:180}},
+    {name:'猪肉',  total:2200,regions:{东北:140,华北:200,华东:320,华中:480,华南:580,西南:380,西北:100}},
+    {name:'牛奶',  total:1700,regions:{东北:320,华北:480,华东:200,华中:160,华南:80, 西南:80, 西北:380}},
+    {name:'羊肉',  total:1500,regions:{东北:260,华北:380,华东:60, 华中:80, 华南:20, 西南:120,西北:580}},
+    {name:'蜂蜜',  total:1100,regions:{东北:60, 华北:80, 华东:180,华中:220,华南:120,西南:280,西北:160}},
+  ]},
+  fish:{label:'水产',items:[
+    {name:'草鱼',  total:1800,regions:{东北:120,华北:120,华东:480,华中:520,华南:380,西南:180,西北:0}},
+    {name:'鲫鱼',  total:1280,regions:{东北:80, 华北:80, 华东:360,华中:400,华南:240,西南:120,西北:0}},
+    {name:'生蚝',  total:980, regions:{东北:80, 华北:0,  华东:280,华中:0,  华南:620,西南:0,  西北:0}},
+    {name:'虾',    total:1380,regions:{东北:120,华北:40, 华东:380,华中:200,华南:560,西南:80, 西北:0}},
+    {name:'带鱼',  total:1080,regions:{东北:160,华北:0,  华东:640,华中:0,  华南:280,西南:0,  西北:0}},
+  ]},
+};
+
+const curM=new Date().getMonth()+1;
+const MN=['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+document.getElementById('ml').textContent=MN[curM-1]+'月 · 当季在售';
+
+let catId='fruit', selItem=null;
+
+function getItems(){ return DATA[catId].items.slice().sort((a,b)=>a.total-b.total); }
+
+/* tabs */
+function renderTabs(){
+  const el=document.getElementById('tabs');
+  el.innerHTML='';
+  Object.keys(DATA).forEach(id=>{
+    const b=document.createElement('button');
+    b.className='ctb'+(id===catId?' act':'');
+    if(id===catId) b.style.background=CC[id].m;
+    b.textContent=DATA[id].label;
+    b.onclick=()=>{catId=id;selItem=null;render();};
+    el.appendChild(b);
+  });
+}
+
+/* 七大区图例 */
+function renderRLeg(){
+  const el=document.getElementById('rleg');
+  el.innerHTML='';
+  regionColors.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='rli';
+    d.innerHTML=`<span class="rld" style="background:${c}"></span><span>${REGS[i]}</span>`;
+    el.appendChild(d);
+  });
+}
+
+/* 径向图 */
+function drawR(anim=true){
+  const items=getItems();
+  const svg=document.getElementById('rsvg');
+  svg.innerHTML='';
+  const n=items.length; if(!n) return;
+  const maxT=Math.max(...items.map(d=>d.total));
+  const iR=60,oR=188,pad=n>6?0.02:0.03;
+  const band=(Math.PI*2/n)-pad;
+  const cols=regionColors, mc=CC[catId].m;
+
+  // 网格
+  [0.25,0.5,0.75,1].forEach(t=>{
+    const r=iR+(oR-iR)*t;
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r',r);c.setAttribute('cx','0');c.setAttribute('cy','0');
+    c.setAttribute('fill','none');c.setAttribute('stroke','rgba(74,74,53,0.07)');c.setAttribute('stroke-width','0.5');
+    svg.appendChild(c);
+  });
+  // 内圆
+  const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  bg.setAttribute('r',iR);bg.setAttribute('fill','#F8F5EF');
+  svg.appendChild(bg);
+
+  items.forEach((item,i)=>{
+    const sa=-Math.PI/2+i*(Math.PI*2/n), ea=sa+band;
+    const isH=selItem===item.name, isDm=selItem&&!isH;
+    const scR=d3.scaleLinear([0,item.total],[iR,iR+(item.total/maxT)*(oR-iR)]);
+    let cum=0;
+    REGS.forEach((reg,ri)=>{
+      const v=item.regions[reg]||0;
+      if(!v){cum+=v;return;}
+      const r0=scR(cum),r1=scR(cum+v); cum+=v;
+      const mk=(a,b)=>d3.arc().innerRadius(a).outerRadius(b)
+        .startAngle(sa).endAngle(ea).padAngle(pad*0.2).padRadius(iR)({});
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',anim?mk(iR,iR):mk(r0,r1));
+      p.setAttribute('fill',cols[ri]);
+      p.setAttribute('opacity',isDm?0.1:1);
+      p.setAttribute('stroke','#F8F5EF');p.setAttribute('stroke-width','0.5');
+      p.style.cursor='pointer';
+      p.onclick=()=>{selItem=selItem===item.name?null:item.name;drawR(false);renderList();updateMap();};
+      svg.appendChild(p);
+      if(anim){
+        const delay=i*55,dur=380,t0=performance.now()+delay;
+        (function step(now){
+          const el2=now-t0; if(el2<0){requestAnimationFrame(step);return;}
+          const t=Math.min(el2/dur,1),e=1-Math.pow(1-t,3);
+          p.setAttribute('d',mk(iR+(r0-iR)*e,iR+(r1-iR)*e));
+          if(t<1) requestAnimationFrame(step);
+        })(performance.now()+delay);
+      }
+    });
+    // 标签 - 按销量梯度放在扇形外侧，保持正确的角度偏移
+    const mA=(sa+ea)/2 - 1.57, lR=iR+(item.total/maxT)*(oR-iR)+20;
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',Math.cos(mA)*lR); txt.setAttribute('y',Math.sin(mA)*lR);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size',n>7?'8':'9.5');
+    txt.setAttribute('font-family','"Noto Serif SC",serif');
+    txt.setAttribute('fill',isDm?'rgba(44,44,42,0.15)':'rgba(44,44,42,0.6)');
+    txt.setAttribute('pointer-events','none');
+    txt.textContent=item.name;
+    svg.appendChild(txt);
+    // 高亮环
+    if(isH){
+      const hr=iR+(item.total/maxT)*(oR-iR)+4;
+      const ring=document.createElementNS('http://www.w3.org/2000/svg','path');
+      ring.setAttribute('d',d3.arc().innerRadius(hr).outerRadius(hr+2.5)
+        .startAngle(sa).endAngle(ea).padAngle(0).padRadius(iR)({}));
+      ring.setAttribute('fill',mc); ring.setAttribute('opacity','0.9');
+      svg.appendChild(ring);
+    }
+  });
+  // 中心
+  const cc=CC[catId].m;
+  document.getElementById('ci-c').textContent=DATA[catId].label;
+  document.getElementById('ci-c').style.color=cc;
+  const cs=document.getElementById('ci-s');
+  if(selItem){cs.style.display='block';cs.textContent=selItem;cs.style.color=cc;}
+  else cs.style.display='none';
+  document.getElementById('ci-n').textContent=items.length+'品种 · '+curM+'月在售';
+}
+
+/* 品种列表 */
+function renderList(){
+  const el=document.getElementById('ilist');
+  el.innerHTML='';
+  const items=[...getItems()].sort((a,b)=>b.total-a.total);
+  const maxT=items[0]?.total||1, mc=CC[catId].m;
+  items.forEach(item=>{
+    const isH=selItem===item.name, isDm=selItem&&!isH;
+    const row=document.createElement('div');
+    row.className='ir'+(isH?' hi':isDm?' dm':'');
+    const pct=Math.round(item.total/maxT*100);
+    row.innerHTML=`<span class="ird" style="background:${mc}"></span>
+      <span class="irn">${item.name}</span>
+      <div class="ibw"><div class="ib" style="width:0;background:${mc}"></div></div>
+      <span class="irv">${item.total.toLocaleString()}</span>`;
+    row.onclick=()=>{selItem=selItem===item.name?null:item.name;drawR(false);renderList();updateMap();};
+    el.appendChild(row);
+    requestAnimationFrame(()=>{row.querySelector('.ib').style.width=pct+'%';});
+  });
+}
+
+/* 地图 */
+let GEO=null;
+
+function getRT(reg){
+  const items=DATA[catId].items;
+  if(selItem){const it=items.find(i=>i.name===selItem);return it?(it.regions[reg]||0):0;}
+  return items.reduce((s,i)=>s+(i.regions[reg]||0),0);
+}
+function maxRT(){return Math.max(...REGS.map(r=>getRT(r)),1);}
+function lerp(c1,c2,t){
+  const r=h=>parseInt(h.slice(1,3),16),g=h=>parseInt(h.slice(3,5),16),b=h=>parseInt(h.slice(5,7),16);
+  const e=Math.pow(t,0.5);
+  return`rgb(${Math.round(r(c1)+(r(c2)-r(c1))*e)},${Math.round(g(c1)+(g(c2)-g(c1))*e)},${Math.round(b(c1)+(b(c2)-b(c1))*e)})`;
+}
+function pColor(name){
+  const reg=P2R[name]; if(!reg) return '#CDD5CA';
+  return lerp('#E8E8E5',CC[catId].m,getRT(reg)/maxRT());
+}
+
+function initMap(){
+  const svg=d3.select('#cmap');
+  const rect=document.querySelector('.mw').getBoundingClientRect();
+  const W=rect.width||860, H=rect.height||720;
+
+  // 用 geoIdentity+reflectY+fitExtent 自动适配，不依赖手动scale/translate
+  // 只用有名称的省份做 fitExtent，避免无名要素撑大投影
+  const provFeatures=GEO.features.filter(f=>f.properties.name);
+  const proj=d3.geoIdentity()
+    .reflectY(true)
+    .fitExtent([[20,20],[W-20,H-20]],{type:'FeatureCollection',features:provFeatures});
+  const path=d3.geoPath().projection(proj);
+
+  // 画省份
+  svg.selectAll('.pp').data(provFeatures).join('path')
+    .attr('class','pp')
+    .attr('data-p',d=>d.properties.name)
+    .attr('d',path)
+    .attr('fill',d=>pColor(d.properties.name))
+    .on('mouseenter',(ev,d)=>{if(d.properties.name) showTip(ev,d.properties.name);})
+    .on('mousemove',moveTip)
+    .on('mouseleave',()=>{document.getElementById('mt').style.opacity='0';})
+    .on('click',(ev,d)=>{if(!d.properties.name)return; const r=P2R[d.properties.name]; if(r) showCard(r);});
+
+  // 七大区标签
+  Object.entries(RMAP).forEach(([reg,provs])=>{
+    const fs=provFeatures.filter(f=>provs.includes(f.properties.name));
+    const cs=fs.map(f=>path.centroid(f)).filter(c=>!isNaN(c[0])&&c[0]>0&&c[1]>0);
+    if(!cs.length) return;
+    const cx=cs.reduce((s,c)=>s+c[0],0)/cs.length;
+    const cy=cs.reduce((s,c)=>s+c[1],0)/cs.length;
+    svg.append('text').attr('class','rl')
+      .attr('x',cx).attr('y',cy)
+      .attr('text-anchor','middle').attr('dominant-baseline','middle')
+      .attr('pointer-events','none').text(reg);
+  });
+}
+
+function updateMap(){
+  const mc=CC[catId].m;
+  document.getElementById('lb').style.background=`linear-gradient(to right,#E8E8E5,${mc})`;
+  document.getElementById('rpt').textContent=selItem?`${DATA[catId].label} · ${selItem}`:DATA[catId].label;
+  d3.select('#cmap').selectAll('.pp').transition().duration(320)
+    .attr('fill',function(){return pColor(d3.select(this).attr('data-p'));});
+}
+
+function showTip(ev,name){
+  const reg=P2R[name]||'—', t=getRT(reg);
+  const items=[...DATA[catId].items].sort((a,b)=>(b.regions[reg]||0)-(a.regions[reg]||0)).slice(0,3);
+  const tip=document.getElementById('mt');
+  const sn=name.replace(/省|市|自治区|特别行政区/g,'');
+  tip.innerHTML=`<div class="mtn">${sn} · ${reg}</div>
+    <div class="mtr"><span>上架合计</span><span>${t.toLocaleString()} 件</span></div>
+    ${items.filter(i=>(i.regions[reg]||0)>0).map(i=>`<div class="mtr"><span>${i.name}</span><span>${(i.regions[reg]||0).toLocaleString()}</span></div>`).join('')}`;
+  tip.style.opacity='1'; moveTip(ev);
+}
+function moveTip(ev){
+  const w=document.querySelector('.mw').getBoundingClientRect();
+  const tip=document.getElementById('mt');
+  let x=ev.clientX-w.left+12, y=ev.clientY-w.top-8;
+  if(x+145>w.width) x=ev.clientX-w.left-158;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+function showCard(reg){
+  const items=[...DATA[catId].items].sort((a,b)=>(b.regions[reg]||0)-(a.regions[reg]||0)).filter(i=>(i.regions[reg]||0)>0).slice(0,6);
+  const total=getRT(reg);
+  document.getElementById('creg').textContent=reg;
+  document.getElementById('csub').textContent=`${DATA[catId].label} · 当季在售 ${total.toLocaleString()} 件`;
+  const te=document.getElementById('ctags'); te.innerHTML='';
+  items.forEach(i=>{const t=document.createElement('span');t.className='ct2';t.textContent=`${i.name} ${(i.regions[reg]||0).toLocaleString()}`;te.appendChild(t);});
+  const rid={东北:'northeast',华北:'north',华东:'east',华中:'central',华南:'south',西南:'southwest',西北:'northwest'}[reg]||reg;
+  const qi=selItem?`&item=${encodeURIComponent(selItem)}`:'';
+  document.getElementById('cgo').href=`products.html?cat=${catId}${qi}&region=${rid}`;
+  document.getElementById('card').classList.add('on');
+  document.getElementById('ov').classList.add('on');
+}
+function closeCard(){
+  document.getElementById('card').classList.remove('on');
+  document.getElementById('ov').classList.remove('on');
+}
+
+function render(anim=true){
+  renderTabs(); renderRLeg(); drawR(anim); renderList(); updateMap();
+}
+
+/* 加载GeoJSON — 同目录下的 china.geojson */
+fetch('china_fixed.geojson')
+  .then(r=>{if(!r.ok) throw new Error('fetch failed'); return r.json();})
+  .then(geo=>{GEO=geo; initMap(); render(true);})
+  .catch(err=>{
+    document.querySelector('.mw').innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:rgba(74,74,53,0.4);text-align:center;letter-spacing:0.12em">地图加载失败<br><br>请用命令行进入文件夹<br>运行 npx serve .<br>再用浏览器打开</div>';
+    render(true);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* 本地字体 — 替代 Google Fonts */
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Noto Serif SC'), url('NotoSerifSC-300.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Noto Serif SC'), url('NotoSerifSC-400.ttf') format('truetype');
+}

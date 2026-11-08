@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一季一鲜 · 我的</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.googleapis.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --c-dark:   #4A4A35;
+      --c-green:  #4A7A38;
+      --c-millet: #E8D8A0;
+      --c-white:  #F8F5EF;
+      --c-text:   #EDE8DF;
+      --c-ink:    #2C2C2A;
+      --c-earth:  #A0846A;
+      --c-warm-gray: #F2EDE5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--c-white);
+      color: var(--c-ink);
+      overflow-x: hidden;
+      font-family: "Noto Serif SC", serif;
+    }
+
+    /* 导航栏 */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 2000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 48px; height: 64px;
+      background: rgba(248,245,239,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(74,74,53,0.1);
+    }
+    .nav-left { display: flex; align-items: center; gap: 48px; }
+    .nav-logo { font-family: "Ma Shan Zheng", serif; font-size: 22px; letter-spacing: 0.2em; text-decoration: none; color: var(--c-ink); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-link { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; text-decoration: none; opacity: 0.75; color: var(--c-ink); }
+    .nav-link:hover { opacity: 1; }
+    .nav-link.active { opacity: 1; border-bottom: 1px solid currentColor; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-search-wrap { flex: 1; max-width: 600px; margin: 0 24px; position: relative; }
+    .nav-search-input { width: 100%; padding: 8px 16px 8px 40px; border-radius: 24px; border: 1px solid rgba(74,74,53,0.25); background: var(--c-white); font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; color: var(--c-ink); outline: none; }
+    .nav-search-input::placeholder { color: rgba(74,74,53,0.4); }
+    .nav-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; pointer-events: none; color: rgba(74,74,53,0.5); }
+    .nav-search-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: color 200ms; color: rgba(74,74,53,0.5); }
+    .nav-search-btn svg { width: 14px; height: 14px; }
+    .nav-search-btn:hover { color: var(--c-green); }
+    .nav-btn { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; letter-spacing: 0.12em; padding: 8px 22px; border-radius: 24px; text-decoration: none; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.3); }
+    .nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* 未登录页 */
+    #guest-page {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--c-white); padding-top: 64px;
+    }
+    .guest-logo { font-family: "Ma Shan Zheng", serif; font-size: 3rem; letter-spacing: 0.3em; color: var(--c-ink); margin-bottom: 20px; }
+    .guest-sub { font-weight: 300; font-size: 14px; letter-spacing: 0.2em; color: rgba(44,44,42,0.5); margin-bottom: 48px; }
+    .guest-btns { display: flex; flex-direction: column; gap: 14px; width: 280px; }
+    .guest-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 24px; border-radius: 40px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; text-decoration: none; transition: all 200ms; cursor: pointer; border: none; }
+    .guest-btn-primary { background: var(--c-green); color: #fff; }
+    .guest-btn-primary:hover { background: #3A6A28; }
+    .guest-btn-secondary { background: transparent; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.25); }
+    .guest-btn-secondary:hover { border-color: var(--c-green); color: var(--c-green); }
+
+    /* 已登录布局 */
+    #profile-page { display: none; padding-top: 64px; min-height: 100vh; }
+
+    /* 顶部用户区域 */
+    .profile-header {
+      background: linear-gradient(135deg, #4A7A38 0%, #2D5A1E 100%);
+      padding: 40px 48px 60px;
+      color: var(--c-text);
+    }
+    .profile-header-wrap { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 40px; }
+    .profile-avatar-wrap { position: relative; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 32px; font-family: "Ma Shan Zheng", serif; }
+    .profile-level { position: absolute; bottom: -4px; right: -4px; background: var(--c-millet); color: var(--c-ink); font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 400; }
+    .profile-info { flex: 1; }
+    .profile-greeting { font-size: 13px; letter-spacing: 0.1em; opacity: 0.8; margin-bottom: 4px; }
+    .profile-name { font-family: "Ma Shan Zheng", serif; font-size: 2rem; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .profile-stats { display: flex; gap: 32px; }
+    .profile-stat { text-align: center; }
+    .profile-stat-num { font-family: "Ma Shan Zheng", serif; font-size: 1.4rem; color: var(--c-millet); }
+    .profile-stat-label { font-size: 11px; letter-spacing: 0.1em; opacity: 0.7; }
+    .profile-quick-actions { display: flex; gap: 12px; }
+    .quick-action-btn { padding: 10px 20px; border-radius: 24px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-family: "Noto Serif SC", serif; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; transition: all 200ms; }
+    .quick-action-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* 快捷入口卡片区 */
+    .profile-quick-grid {
+      max-width: 1400px; margin: -30px auto 0; padding: 0 48px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .quick-card {
+      background: #fff; border-radius: 12px; padding: 20px;
+      box-shadow: 0 4px 20px rgba(74,74,53,0.08);
+      cursor: pointer; transition: all 200ms;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .quick-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,74,53,0.12); }
+    .quick-card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .quick-card-icon.green { background: rgba(74,122,56,0.1); }
+    .quick-card-icon.orange { background: rgba(232,160,56,0.1); }
+    .quick-card-icon.red { background: rgba(232,90,90,0.1); }
+    .quick-card-icon.blue { background: rgba(74,122,122,0.1); }
+    .quick-card-content { flex: 1; }
+    .quick-card-title { font-size: 14px; letter-spacing: 0.05em; color: var(--c-ink); margin-bottom: 2px; }
+    .quick-card-count { font-size: 12px; color: rgba(44,44,42,0.5); }
+    .quick-card-arrow { color: rgba(44,44,42,0.3); font-size: 18px; }
+
+    /* 主内容区 */
+    .profile-main { max-width: 1400px; margin: 32px auto 0; padding: 0 48px 80px; display: flex; gap: 32px; }
+
+    /* 左侧边栏 */
+    .profile-sidebar { width: 200px; flex-shrink: 0; }
+    .sidebar-menu { display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; font-size: 13px; letter-spacing: 0.1em; color: rgba(44,44,42,0.65); cursor: pointer; transition: all 200ms; }
+    .sidebar-item:hover { background: rgba(74,122,56,0.06); color: var(--c-ink); }
+    .sidebar-item.active { background: rgba(74,122,56,0.1); color: var(--c-green); }
+    .sidebar-item-icon { font-size: 16px; }
+
+    /* 右侧内容 */
+    .profile-content { flex: 1; min-width: 0; }
+
+    /* 通用区块标题 */
+    .section-title { font-family: "Ma Shan Zheng", serif; font-size: 1.5rem; letter-spacing: 0.15em; color: var(--c-ink); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* 我的订单 */
+    .order-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
+    .order-tab { padding: 10px 20px; font-size: 13px; letter-spacing: 0.08em; color: rgba(44,44,42,0.6); cursor: pointer; border-radius: 20px; transition: all 200ms; white-space: nowrap; }
+    .order-tab:hover { color: var(--c-ink); }
+    .order-tab.active { background: var(--c-green); color: #fff; }
+    .order-list { display: flex; flex-direction: column; gap: 16px; }
+    .order-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 16px rgba(74,74,53,0.06); }
+    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(74,74,53,0.06); }
+    .order-shop { display: flex; align-items: center; gap: 8px; }
+    .order-shop-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--c-green); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; }
+    .order-shop-name { font-size: 13px; letter-spacing: 0.05em; color: var(--c-ink); }
+    .order-status { font-size: 12px; letter-spacing: 0.05em; padding: 4px 12px; border-radius: 12px; }
+    .order-status.pending { background: rgba(232,160,56,0.12); color: #E8A038; }
+    .order-status.shipped { background: rgba(74,122,56,0.12); color: var(--c-green); }
+    .order-status.received { background: rgba(74,122,122,0.12); color: #4A7A7A; }
+    .order-status.refund { background: rgba(232,90,90,0.12); color: #E85A5A; }
+    .order-items { display: flex; flex-direction: column; gap: 12px; }
+    .order-item { display: flex; gap: 16px; }
+    .order-item-img { width: 80px; height: 80px; border-radius: 10px; background: linear-gradient(135deg, #3A3A2A, #2A2A1A); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .order-item-img span { font-family: monospace; font-size: 8px; color: rgba(255,255,255,0.3); }
+    .order-item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .order-item-name { font-size: 14px; letter-spacing: 0.05em; color: var(--c-ink); margin-bottom: 4px; }
+    .order-item-spec { font-size: 12px; color: rgba(44,44,42,0.5); }
+    .order-item-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .order-item-price { font-size: 16px; color: var(--c-ink); font-weight: 400; }
+    .order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(74,74,53,0.06); }
+    .order-total { font-size: 13px; color: rgba(44,44,42,0.6); }
+    .order-total strong { font-size: 16px; color: var(--c-ink); margin-left: 4px; }
+    .order-actions { display: flex; gap: 10px; }
+    .order-btn { padding: 8px 18px; border-radius: 20px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 12px; letter-spacing: 0.08em; cursor: pointer; transition: all 200ms; }
+    .order-btn-primary { background: var(--c-green); color: #fff; border: none; }
+    .order-btn-primary:hover { background: #3A6A28; }
+    .order-btn-secondary { background: transparent; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.2); }
+    .order-btn-secondary:hover { border-color: var(--c-green); color: var(--c-green); }
+
+    /* 我的收藏 */
+    .fav-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .fav-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(74,74,53,0.08); cursor: pointer; transition: all 200ms; }
+    .fav-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(74,74,53,0.14); }
+    .fav-img { height: 140px; background: linear-gradient(135deg, #3A3A2A, #2A2A1A); display: flex; align-items: center; justify-content: center; position: relative; }
+    .fav-img span { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
+    .fav-tag-badge { position: absolute; top: 10px; left: 10px; background: var(--c-green); color: #fff; font-size: 10px; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.08em; }
+    .fav-remove { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.4); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: background 200ms; }
+    .fav-remove:hover { background: rgba(232,90,90,0.8); }
+    .fav-info { padding: 14px; }
+    .fav-name { font-family: "Ma Shan Zheng", serif; font-size: 1rem; color: var(--c-ink); margin-bottom: 6px; letter-spacing: 0.08em; }
+    .fav-meta { font-size: 11px; color: rgba(44,44,42,0.5); margin-bottom: 8px; }
+    .fav-price { font-size: 15px; color: var(--c-ink); font-weight: 400; }
+    .fav-empty { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(44,44,42,0.4); }
+    .fav-empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .fav-loading { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(44,44,42,0.4); }
+    .fav-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid rgba(74,74,53,0.1); }
+    .fav-tab { padding: 12px 24px; font-size: 14px; letter-spacing: 0.08em; color: rgba(44,44,42,0.5); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 200ms; }
+    .fav-tab:hover { color: var(--c-ink); }
+    .fav-tab.active { color: var(--c-green); border-bottom-color: var(--c-green); font-weight: 400; }
+    .follow-card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 2px 12px rgba(74,74,53,0.08); cursor: pointer; transition: all 200ms; }
+    .follow-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(74,74,53,0.14); }
+    .follow-card-info { display: flex; align-items: center; gap: 16px; }
+    .follow-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--c-green), #3A6A28); display: flex; align-items: center; justify-content: center; color: #fff; font-family: "Ma Shan Zheng", serif; font-size: 1.4rem; flex-shrink: 0; }
+    .follow-name { font-family: "Ma Shan Zheng", serif; font-size: 1.1rem; color: var(--c-ink); letter-spacing: 0.08em; }
+    .follow-meta { font-size: 12px; color: rgba(44,44,42,0.5); margin-top: 4px; }
+    .follow-remove { margin-left: auto; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(74,74,53,0.2); background: transparent; color: rgba(44,44,42,0.6); cursor: pointer; font-size: 12px; transition: all 200ms; }
+    .follow-remove:hover { border-color: #E85A5A; color: #E85A5A; }
+
+    /* 认养中心 - 日记式 */
+    .adopt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .adopt-diary-list { display: flex; flex-direction: column; gap: 24px; }
+    .adopt-diary-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(74,74,53,0.08); }
+    .adopt-diary-header { display: flex; align-items: center; padding: 16px 18px; border-bottom: 1px solid rgba(74,74,53,0.06); gap: 14px; }
+    .adopt-diary-img { width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #2A3A2A, #1A2A1A); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .adopt-diary-img span { font-size: 10px; color: rgba(255,255,255,0.3); }
+    .adopt-diary-title-wrap { flex: 1; min-width: 0; }
+    .adopt-diary-name { font-family: "Ma Shan Zheng", serif; font-size: 1.05rem; color: var(--c-ink); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .adopt-diary-meta { font-size: 11px; color: rgba(44,44,42,0.5); }
+    .adopt-diary-new-badge { background: var(--c-green); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 8px; margin-left: auto; flex-shrink: 0; }
+    .adopt-diary-logs { padding: 0 18px 16px; }
+    .adopt-diary-log-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px dashed rgba(74,74,53,0.08); cursor: pointer; transition: all 200ms; }
+    .adopt-diary-log-item:last-child { border-bottom: none; }
+    .adopt-diary-log-item:hover { background: rgba(74,74,53,0.02); margin: 0 -18px; padding-left: 18px; padding-right: 18px; }
+    .adopt-diary-log-item.unread .adopt-diary-log-dot { background: var(--c-green); box-shadow: 0 0 0 3px rgba(74,74,53,0.1); }
+    .adopt-diary-log-date { width: 60px; flex-shrink: 0; text-align: center; border-radius: 8px; padding: 6px 4px; transition: all 300ms ease; background: transparent; }
+    .adopt-diary-log-date.unread { background: rgba(231,76,60,0.25) !important; }
+    .adopt-diary-log-date.read { background: rgba(74,122,56,0.25) !important; }
+    .adopt-diary-log-date.today { border: 2px solid var(--c-green); border-radius: 50%; }
+    .adopt-diary-log-day { font-size: 22px; font-weight: 300; color: var(--c-ink); line-height: 1; }
+    .adopt-diary-log-month { font-size: 10px; color: rgba(44,44,42,0.5); margin-top: 2px; }
+    .adopt-diary-log-content { flex: 1; min-width: 0; }
+    .adopt-diary-log-title { font-size: 13px; font-weight: 500; color: var(--c-ink); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .adopt-diary-log-title .new-tag { background: #E8F5E9; color: var(--c-green); font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 400; }
+    .adopt-diary-log-text { font-size: 12px; color: rgba(44,44,42,0.6); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .adopt-diary-log-arrow { color: rgba(44,44,42,0.3); font-size: 14px; align-self: center; flex-shrink: 0; }
+    .adopt-diary-empty { text-align: center; padding: 48px; color: rgba(44,44,42,0.5); font-size: 14px; }
+    .adopt-diary-empty a { color: var(--c-green); text-decoration: none; }
+
+    /* 认养中心日志点击绿色高亮动效 */
+    @keyframes adoptHighlightFlash {
+      0% {
+        background-color: transparent;
+        box-shadow: none;
+      }
+      20% {
+        background-color: rgba(74, 122, 56, 0.2);
+        box-shadow: 0 0 20px rgba(74, 122, 56, 0.3);
+      }
+      80% {
+        background-color: rgba(74, 122, 56, 0.1);
+        box-shadow: 0 0 12px rgba(74, 122, 56, 0.2);
+      }
+      100% {
+        background-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    .adopt-diary-log-item.highlight-flash {
+      animation: adoptHighlightFlash 2s ease-in-out 1;
+      border-radius: 8px;
+    }
+
+    /* 认养中心日历样式 */
+    .adopt-diary-calendar { padding: 14px 18px; border-bottom: 1px solid rgba(74,74,53,0.06); }
+    .cal-header { display: flex; justify-content: center; margin-bottom: 10px; }
+    .cal-month-title { font-size: 12px; font-weight: 500; color: var(--c-ink); }
+    .cal-weekdays-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+    .cal-weekdays-row span { text-align: center; font-size: 10px; color: rgba(44,44,42,0.4); font-weight: 500; }
+    .cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-day-empty { aspect-ratio: 1; }
+    .cal-day-cell { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: rgba(44,44,42,0.3); cursor: default; transition: all 150ms; }
+    .cal-day-cell.has-log { background: rgba(74,122,56,0.20); color: var(--c-ink); font-weight: 400; cursor: pointer; }
+    .cal-day-cell.has-log:hover { background: rgba(74,122,56,0.35); }
+    .cal-day-cell.has-log.unread { background: rgba(231,76,60,0.15); color: #C0392B; font-weight: 600; }
+    .cal-day-cell.has-log.unread:hover { background: rgba(231,76,60,0.25); }
+    .cal-day-cell.today { border: 1px solid var(--c-green); }
+
+    /* 平台活动 */
+    .activity-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 16px rgba(74,74,53,0.07); margin-bottom: 20px; }
+    .activity-banner { height: 120px; background: linear-gradient(135deg, #4A6A3A, #2D5A1E); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .activity-banner.spring { background: linear-gradient(135deg, #4A6A3A, #2D5A1E); }
+    .activity-banner.summer { background: linear-gradient(135deg, #6A4A2A, #4A2A0A); }
+    .activity-banner.autumn { background: linear-gradient(135deg, #5A3A2A, #3A1A0A); }
+    .activity-banner::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); opacity: 0.3; }
+    .activity-banner-content { text-align: center; color: var(--c-text); position: relative; z-index: 1; }
+    .activity-name { font-family: "Ma Shan Zheng", serif; font-size: 1.8rem; letter-spacing: 0.15em; margin-bottom: 8px; }
+    .activity-time { font-size: 12px; letter-spacing: 0.1em; opacity: 0.8; }
+    .activity-body { padding: 20px; }
+    .activity-desc { font-size: 13px; color: rgba(44,44,42,0.7); letter-spacing: 0.05em; margin-bottom: 16px; line-height: 1.6; }
+    .activity-btn { display: inline-block; padding: 10px 24px; border-radius: 20px; background: var(--c-green); color: #fff; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; transition: all 200ms; border: none; }
+    .activity-btn:hover { background: #3A6A28; }
+
+    .activity-list-title { font-size: 12px; letter-spacing: 0.15em; color: rgba(44,44,42,0.4); margin-bottom: 12px; text-transform: uppercase; }
+    .activity-past-item { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(74,74,53,0.06); }
+    .activity-past-date { text-align: center; width: 44px; }
+    .activity-past-month { font-size: 10px; letter-spacing: 0.1em; color: var(--c-earth); }
+    .activity-past-day { font-family: "Ma Shan Zheng", serif; font-size: 1.4rem; color: var(--c-ink); }
+    .activity-past-name { flex: 1; font-size: 13px; letter-spacing: 0.05em; color: var(--c-ink); }
+    .activity-past-status { font-size: 11px; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 10px; background: rgba(74,74,53,0.06); color: rgba(44,44,42,0.4); }
+
+    /* 账户设置 */
+    .settings-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 2px 16px rgba(74,74,53,0.06); margin-bottom: 20px; }
+    .settings-card-title { font-size: 14px; letter-spacing: 0.1em; color: var(--c-ink); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(74,74,53,0.06); }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(74,74,53,0.04); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 13px; letter-spacing: 0.08em; color: rgba(44,44,42,0.6); display: flex; align-items: center; gap: 8px; }
+    .settings-value { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--c-ink); }
+    .settings-value .tag { font-size: 10px; padding: 2px 8px; border-radius: 8px; }
+    .settings-value .tag.green { background: rgba(74,122,56,0.12); color: var(--c-green); }
+    .settings-value .tag.gray { background: rgba(74,74,53,0.08); color: rgba(44,44,42,0.4); }
+    .settings-btn { padding: 6px 14px; border-radius: 16px; border: 1px solid rgba(74,74,53,0.15); background: transparent; font-family: "Noto Serif SC", serif; font-size: 11px; letter-spacing: 0.05em; color: var(--c-ink); cursor: pointer; transition: all 200ms; }
+    .settings-btn:hover { border-color: var(--c-green); color: var(--c-green); }
+
+    .settings-danger { margin-top: 24px; }
+    .settings-danger-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.08em; color: rgba(232,90,90,0.6); cursor: pointer; padding: 12px 0; }
+    .settings-danger-toggle:hover { color: #E85A5A; }
+    .settings-danger-content { display: none; margin-top: 16px; padding: 20px; background: rgba(232,90,90,0.05); border-radius: 12px; }
+    .settings-danger-content.show { display: block; }
+    .settings-danger-text { font-size: 12px; letter-spacing: 0.05em; line-height: 1.8; color: rgba(44,44,42,0.7); margin-bottom: 16px; }
+    .settings-danger-btn { padding: 10px 24px; border-radius: 20px; border: 1px solid #E85A5A; background: transparent; color: #E85A5A; font-family: "Noto Serif SC", serif; font-size: 12px; letter-spacing: 0.08em; cursor: pointer; transition: all 200ms; }
+    .settings-danger-btn:hover { background: #E85A5A; color: #fff; }
+
+    /* Footer */
+    #footer { background: #2D5A1E; padding: 40px 0 0; margin-top: 80px; }
+    .footer-wrap { max-width: 1400px; margin: 0 auto; padding: 0 64px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(237,232,223,0.08); }
+    .footer-logo { font-family: "Ma Shan Zheng", serif; font-size: 2rem; letter-spacing: 0.25em; color: var(--c-text); margin-bottom: 16px; }
+    .footer-slogan { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.8rem; letter-spacing: 0.2em; line-height: 2; color: rgba(237,232,223,0.7); }
+    .footer-links { display: flex; gap: 80px; }
+    .footer-col { display: flex; flex-direction: column; gap: 14px; }
+    .footer-col-title { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.4em; color: rgba(237,232,223,0.6); margin-bottom: 4px; }
+    .footer-col a { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.875rem; letter-spacing: 0.12em; color: rgba(237,232,223,0.85); text-decoration: none; }
+    .footer-col a:hover { color: var(--c-text); }
+    .footer-bottom { text-align: center; padding: 24px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.2em; color: rgba(237,232,223,0.5); }
+
+    #toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--c-ink); color: var(--c-text); padding: 14px 32px; border-radius: 40px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; box-shadow: 0 8px 32px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 300ms, transform 300ms; z-index: 9999; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* 空状态 */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state-text { font-size: 14px; color: rgba(44,44,42,0.4); letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link">滞留物批发</a>
+        <a href="profile.html" class="nav-link active">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+      <button class="nav-search-btn" id="searchBtn" title="搜索">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="5"/>
+          <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- 未登录页 -->
+  <div id="guest-page">
+    <p class="guest-logo">一季一鲜</p>
+    <p class="guest-sub">登录后查看您的农场与订单</p>
+    <div class="guest-btns">
+      <button class="guest-btn guest-btn-primary" onclick="login('phone')">📱 手机号登录</button>
+      <button class="guest-btn guest-btn-secondary" onclick="login('wechat')">💬 微信授权登录</button>
+      <button class="guest-btn guest-btn-secondary" onclick="login('alipay')">🪙 支付宝授权登录</button>
+    </div>
+  </div>
+
+  <!-- 已登录页 -->
+  <div id="profile-page">
+
+    <!-- 顶部用户区域 -->
+    <div class="profile-header">
+      <div class="profile-header-wrap">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar">王</div>
+          <span class="profile-level">Lv.3 田园会员</span>
+        </div>
+        <div class="profile-info">
+          <p class="profile-greeting" id="profileGreeting">下午好</p>
+          <h1 class="profile-name">王明远</h1>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-num" id="statOrders">0</div>
+              <div class="profile-stat-label">全部订单</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-num" id="statAdopts">0</div>
+              <div class="profile-stat-label">认养项目</div>
+            </div>
+            <div class="profile-stat" onclick="switchSection('favorites')" style="cursor:pointer">
+              <div class="profile-stat-num" id="statFavorites">0</div>
+              <div class="profile-stat-label">我的收藏</div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-quick-actions">
+          <button class="quick-action-btn" onclick="switchSection('orders')">我的订单</button>
+          <button class="quick-action-btn" onclick="switchSection('adopt')">认养管理</button>
+          <button class="quick-action-btn" onclick="doLogout()" style="background:rgba(232,90,90,0.3);border-color:rgba(232,90,90,0.5);">退出登录</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快捷入口卡片 -->
+    <div class="profile-quick-grid">
+      <div class="quick-card" onclick="filterOrders('pending')">
+        <div class="quick-card-icon orange">⏰</div>
+        <div class="quick-card-content">
+          <div class="quick-card-title">待付款</div>
+          <div class="quick-card-count" id="quickPendingCount">0 笔订单</div>
+        </div>
+        <div class="quick-card-arrow">›</div>
+      </div>
+      <div class="quick-card" onclick="filterOrders('shipped')">
+        <div class="quick-card-icon green">📦</div>
+        <div class="quick-card-content">
+          <div class="quick-card-title">待发货</div>
+          <div class="quick-card-count" id="quickShippedCount">0 笔订单</div>
+        </div>
+        <div class="quick-card-arrow">›</div>
+      </div>
+      <div class="quick-card" onclick="filterOrders('received')">
+        <div class="quick-card-icon blue">🚚</div>
+        <div class="quick-card-content">
+          <div class="quick-card-title">待收货</div>
+          <div class="quick-card-count" id="quickReceivedCount">0 笔订单</div>
+        </div>
+        <div class="quick-card-arrow">›</div>
+      </div>
+      <div class="quick-card" onclick="switchSection('adopt')">
+        <div class="quick-card-icon red">🌱</div>
+        <div class="quick-card-content">
+          <div class="quick-card-title">认养动态</div>
+          <div class="quick-card-count" id="quickAdoptCount">0 条新更新</div>
+        </div>
+        <div class="quick-card-arrow">›</div>
+      </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="profile-main">
+
+      <!-- 左侧边栏 -->
+      <div class="profile-sidebar">
+        <div class="sidebar-menu">
+          <div class="sidebar-item active" data-section="orders">
+            <span class="sidebar-item-icon">📦</span> 我的订单
+          </div>
+          <div class="sidebar-item" data-section="adopt">
+            <span class="sidebar-item-icon">🌱</span> 认养中心
+          </div>
+          <div class="sidebar-item" data-section="favorites">
+            <span class="sidebar-item-icon">❤️</span> 我的收藏
+          </div>
+          <div class="sidebar-item" data-section="activity">
+            <span class="sidebar-item-icon">🎯</span> 平台活动
+          </div>
+          <div class="sidebar-item" data-section="settings">
+            <span class="sidebar-item-icon">⚙</span> 账户设置
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧内容 -->
+      <div class="profile-content">
+
+        <!-- 我的订单 -->
+        <div class="section active" id="section-orders">
+          <h2 class="section-title">我的订单</h2>
+          <div class="order-tabs">
+            <div class="order-tab active" data-tab="all">全部</div>
+            <div class="order-tab" data-tab="pending">待付款</div>
+            <div class="order-tab" data-tab="shipped">待发货</div>
+            <div class="order-tab" data-tab="received">待收货</div>
+            <div class="order-tab" data-tab="review">待评价</div>
+            <div class="order-tab" data-tab="refund">退款售后</div>
+          </div>
+          <div class="order-list" id="orderList">
+            <!-- JS渲染 -->
+          </div>
+        </div>
+
+        <!-- 认养中心 -->
+        <div class="section" id="section-adopt">
+          <div class="adopt-header">
+            <h2 class="section-title">认养中心</h2>
+            <div style="display:flex;gap:8px;">
+              <button class="settings-btn" onclick="addDemoAdoptData()" style="background:#3a5a3a;color:#fff;border:none;">添加演示数据</button>
+              <button class="settings-btn" onclick="clearDemoAdoptData()" style="background:#fff;color:#999;border:1px solid #ddd;">清空</button>
+            </div>
+          </div>
+          <div class="adopt-diary-list" id="adoptDiaryList">
+            <!-- JS渲染日记式认养卡片 -->
+          </div>
+        </div>
+
+        <!-- 我的收藏 -->
+        <div class="section" id="section-favorites">
+          <h2 class="section-title">我的收藏</h2>
+          <div class="fav-tabs">
+            <div class="fav-tab active" data-tab="products">产品收藏</div>
+            <div class="fav-tab" data-tab="farmers">关注农户</div>
+          </div>
+          <div class="fav-list" id="favList">
+            <!-- JS渲染 -->
+          </div>
+          <div class="fav-list" id="followList" style="display:none">
+            <!-- JS渲染 -->
+          </div>
+        </div>
+
+        <!-- 平台活动 -->
+        <div class="section" id="section-activity">
+          <h2 class="section-title">平台活动</h2>
+          <div class="activity-card">
+            <div class="activity-banner spring">
+              <div class="activity-banner-content">
+                <h3 class="activity-name">🌸 春节特惠</h3>
+                <p class="activity-time">2026年1月25日 - 2月10日</p>
+              </div>
+            </div>
+            <div class="activity-body">
+              <p class="activity-desc">新年第一鲜，年货礼盒预售开启。认养指定农产品可获得额外优惠券，邀请好友双方都有好礼。</p>
+              <button class="activity-btn">查看详情</button>
+            </div>
+          </div>
+          <div class="activity-list-title">过往活动</div>
+          <div class="activity-past-item">
+            <div class="activity-past-date"><p class="activity-past-month">02月</p><p class="activity-past-day">14</p></div>
+            <p class="activity-past-name">情人节·有机玫瑰预订</p>
+            <span class="activity-past-status">已结束</span>
+          </div>
+          <div class="activity-past-item">
+            <div class="activity-past-date"><p class="activity-past-month">01月</p><p class="activity-past-day">25</p></div>
+            <p class="activity-past-name">春节·年货大街</p>
+            <span class="activity-past-status">已结束</span>
+          </div>
+        </div>
+
+        <!-- 账户设置 -->
+        <div class="section" id="section-settings">
+          <h2 class="section-title">账户设置</h2>
+          <div class="settings-card">
+            <div class="settings-card-title">账户信息</div>
+            <div class="settings-row">
+              <span class="settings-label">手机号</span>
+              <span class="settings-value">
+                ●●● ●●●● 1234
+                <button class="settings-btn">更换</button>
+              </span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">登录密码</span>
+              <span class="settings-value">
+                ●●●●●●
+                <button class="settings-btn">修改</button>
+              </span>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-title">授权绑定</div>
+            <div class="settings-row">
+              <span class="settings-label">微信</span>
+              <span class="settings-value">
+                <span class="tag green">● 已绑定</span>
+                <button class="settings-btn">解绑</button>
+              </span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">支付宝</span>
+              <span class="settings-value">
+                <span class="tag gray">未绑定</span>
+                <button class="settings-btn">去绑定</button>
+              </span>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-title">📦 收货地址管理</div>
+
+            <!-- 地址标签选择 -->
+            <div class="settings-row">
+              <span class="settings-label">地址类型</span>
+              <span class="settings-value" style="display:flex;gap:8px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="addrTag" value="home" checked style="accent-color:var(--c-green);"> 🏠 家
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="addrTag" value="school" style="accent-color:var(--c-green);"> 🏫 学校
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="addrTag" value="company" style="accent-color:var(--c-green);"> 🏢 公司
+                </label>
+              </span>
+            </div>
+
+            <!-- 联系人关系 -->
+            <div class="settings-row">
+              <span class="settings-label">关 系</span>
+              <span class="settings-value" style="display:flex;gap:8px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="relationTag" value="self" checked style="accent-color:var(--c-green);"> 👤 本人
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="relationTag" value="friend" style="accent-color:var(--c-green);"> 👥 朋友
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="relationTag" value="parent" style="accent-color:var(--c-green);"> 👴 父母
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="radio" name="relationTag" value="other" style="accent-color:var(--c-green);"> 其他
+                </label>
+              </span>
+            </div>
+
+            <!-- 收货人 -->
+            <div class="settings-row">
+              <span class="settings-label">收货人</span>
+              <span class="settings-value">
+                <input type="text" id="settingsReceiverName" placeholder="请输入收货人姓名" style="padding:6px 10px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;width:150px;">
+              </span>
+            </div>
+
+            <!-- 联系电话 -->
+            <div class="settings-row">
+              <span class="settings-label">联系电话</span>
+              <span class="settings-value">
+                <input type="tel" id="settingsReceiverPhone" placeholder="请输入手机号" style="padding:6px 10px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;width:180px;">
+              </span>
+            </div>
+
+            <!-- 详细地址 -->
+            <div class="settings-row">
+              <span class="settings-label">详细地址</span>
+              <span class="settings-value" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <input type="text" id="settingsReceiverAddress" placeholder="请输入详细地址（可手动输入或点击获取定位）" style="padding:6px 10px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;width:280px;">
+                <button class="settings-btn" onclick="getLocationForAddress()" style="background:#4A7A38;color:#fff;border:none;">📍 获取定位</button>
+              </span>
+            </div>
+
+            <!-- 保存按钮 -->
+            <div class="settings-row">
+              <span class="settings-label"></span>
+              <span class="settings-value">
+                <button class="settings-btn" onclick="saveAddressSettings()" style="background:#4A7A38;color:#fff;border:none;padding:8px 24px;font-size:14px;">保存收货地址</button>
+              </span>
+            </div>
+          </div>
+          <div class="settings-danger">
+            <div class="settings-danger-toggle" onclick="toggleDanger()">
+              <span>⚠</span> 注销账户
+            </div>
+            <div class="settings-danger-content" id="dangerContent">
+              <p class="settings-danger-text">注销账户后，您的所有数据将被永久删除，包括订单记录、认养信息、优惠券等。此操作不可恢复。</p>
+              <button class="settings-danger-btn" onclick="showToast('请致电客服完成注销')">确认注销</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div><p class="footer-logo">一季一鲜</p><p class="footer-slogan">我们只卖第一手农产品<br>我们切实保护农户和您的权益</p></div>
+      <div class="footer-links">
+        <div class="footer-col"><p class="footer-col-title">平台</p><a href="index.html">首页</a><a href="farm-adopt.html">认养农场</a><a href="whole-sale.html">滞留物批发</a></div>
+        <div class="footer-col"><p class="footer-col-title">加入</p><a href="join.html">农户入驻</a><a href="join.html">加入团队</a><a href="profile.html">我的账户</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 一季一鲜  ·  保护农户与消费者权益</p></div>
+  </footer>
+
+  <div id="toast">操作成功</div>
+
+  <script src="js/api.js"></script>
+  <script src="farm-detail-1/js/farm-data.js"></script>
+  <script>
+    /* ══════════════════════════════
+       认养日志同步（基于 FarmAdoptData）
+    ══════════════════════════════ */
+    function syncAdoptLogs() {
+      const allProducts = window.FarmAdoptData?.projects || [];
+      const allLogs = getGrowthLogs();
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      const todayStr = formatDateStr(today);
+
+      myAdopts.forEach(adopt => {
+        const productId = adopt.id;
+        let logs = allLogs[productId] || [];
+
+        // 获取该产品的公共日志
+        const publicLogs = allProducts.find(p => p.id === productId)?.growthLogs || [];
+
+        // 保存本地已读状态
+        const localReadDates = new Set();
+        logs.forEach(log => {
+          if (log.hasNew === false) localReadDates.add(log.date);
+        });
+
+        // 合并公共日志（不覆盖本地 hasNew 状态）
+        const mergedMap = new Map();
+        publicLogs.forEach(log => mergedMap.set(log.date, { ...log }));
+        logs.forEach(log => {
+          if (mergedMap.has(log.date)) {
+            mergedMap.get(log.date).hasNew = log.hasNew;
+          } else {
+            mergedMap.set(log.date, { ...log });
+          }
+        });
+        logs = Array.from(mergedMap.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // 过滤可见日志
+        const visibleLogs = logs.filter(log => new Date(log.date) <= today);
+        if (visibleLogs.length === 0) return;
+
+        // 计算间隔天数
+        const lastLog = visibleLogs[visibleLogs.length - 1];
+        const lastLogDate = lastLog.date;
+        const daysSinceUpdate = daysBetween(lastLogDate, todayStr);
+
+        // 间隔超过3天，生成2-3条随机日志
+        if (daysSinceUpdate >= 3) {
+          const startDate = new Date(lastLogDate);
+          startDate.setDate(startDate.getDate() + 1);
+          const intervalDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+          if (intervalDays >= 3) {
+            const logCount = 2 + Math.floor(Math.random() * 2);
+            const addedDates = [];
+
+            for (let i = 0; i < logCount; i++) {
+              let randomDays;
+              if (i === 0) {
+                randomDays = Math.floor(Math.random() * Math.floor(intervalDays / 2));
+              } else {
+                let attempts = 0;
+                do {
+                  randomDays = Math.floor(Math.random() * intervalDays);
+                  attempts++;
+                } while (addedDates.some(d => Math.abs(d - randomDays) < 2) && attempts < 10);
+              }
+
+              if (addedDates.includes(randomDays)) continue;
+              addedDates.push(randomDays);
+
+              const logDate = new Date(startDate);
+              logDate.setDate(logDate.getDate() + randomDays);
+              const logDateStr = formatDateStr(logDate);
+
+              const monthProgress = (logDate.getMonth() + 1 - 3) / 9;
+              const stageIndex = Math.min(Math.floor(monthProgress * 6), 5);
+              const stageContents = ['日常养护', '浇水施肥', '病虫害防治', '生长观察', '除草松土', '农事记录'];
+              const stageContentTexts = [
+                '进行日常田间管理，查看作物生长状况。',
+                '进行浇水和施肥作业，保证作物养分供应。',
+                '进行病虫害巡查，提前预防病虫害发生。',
+                '观察作物生长情况，记录生长数据。',
+                '进行除草松土作业，改善土壤通透性。',
+                '记录本周农事活动，完善种植档案。'
+              ];
+
+              logs.push({
+                date: logDateStr,
+                title: stageContents[stageIndex],
+                content: stageContentTexts[stageIndex],
+                hasNew: true,
+                images: []
+              });
+            }
+
+            // 重新排序并标记新日志为未读
+            logs.sort((a, b) => new Date(a.date) - new Date(b.date));
+            const generatedDates = addedDates.map(d => {
+              const dt = new Date(startDate);
+              dt.setDate(dt.getDate() + d);
+              return formatDateStr(dt);
+            });
+            logs.forEach(log => {
+              if (generatedDates.includes(log.date)) {
+                log.hasNew = true;
+              }
+            });
+          }
+        }
+
+        allLogs[productId] = logs;
+      });
+
+      localStorage.setItem('farmGrowthLogs', JSON.stringify(allLogs));
+    }
+
+    function formatDateStr(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function daysBetween(startStr, endStr) {
+      const [y1, m1, d1] = startStr.split('-').map(Number);
+      const [y2, m2, d2] = endStr.split('-').map(Number);
+      const start = new Date(y1, m1 - 1, d1);
+      const end = new Date(y2, m2 - 1, d2);
+      return Math.floor((end - start) / (1000 * 60 * 60 * 24));
+    }
+
+    /* ══════════════════════════════
+       登录认证
+    ══════════════════════════════ */
+    async function initProfile() {
+      const user = AuthAPI.getUser();
+
+      if (user) {
+        // 已登录，显示用户信息
+        document.getElementById('guest-page').style.display = 'none';
+        document.getElementById('profile-page').style.display = 'block';
+        updateUserUI(user);
+        loadOrders();
+        loadAddressSettings();
+        syncUserLocationToLocal(); // 同步账户定位到localStorage
+      } else {
+        document.getElementById('guest-page').style.display = 'flex';
+        document.getElementById('profile-page').style.display = 'none';
+      }
+    }
+
+    // 把账户保存的定位同步到localStorage，供其他页面使用
+    async function syncUserLocationToLocal() {
+      if (!AuthAPI.isLoggedIn()) return;
+
+      try {
+        const data = await UserAPI.getLocation();
+        if (data.latitude && data.longitude) {
+          localStorage.setItem('userLocation', JSON.stringify({
+            lat: data.latitude,
+            lng: data.longitude
+          }));
+        }
+      } catch (e) {
+      }
+    }
+
+    function updateUserUI(user) {
+      // 更新用户名称
+      const nameEl = document.querySelector('.profile-name');
+      if (nameEl) nameEl.textContent = user.nickname || user.username;
+
+      // 更新头像首字
+      const avatarEl = document.querySelector('.profile-avatar');
+      if (avatarEl && user.nickname) avatarEl.textContent = user.nickname.charAt(0);
+    }
+
+    async function loadOrders() {
+      try {
+        const data = await OrderAPI.list();
+        allOrders = data.orders || [];
+        renderOrders(allOrders);
+        updateQuickStats();
+      } catch (err) {
+        allOrders = [];
+        renderOrders([]);
+      }
+    }
+
+    // 更新快捷入口卡片统计
+    function updateQuickStats() {
+      const pending = allOrders.filter(o => o.status === 'pending').length;
+      const shipped = allOrders.filter(o => o.status === 'shipped').length;
+      const received = allOrders.filter(o => o.status === 'received').length;
+
+      const pendingEl = document.getElementById('quickPendingCount');
+      const shippedEl = document.getElementById('quickShippedCount');
+      const receivedEl = document.getElementById('quickReceivedCount');
+
+      if (pendingEl) pendingEl.textContent = `${pending} 笔订单`;
+      if (shippedEl) shippedEl.textContent = `${shipped} 笔订单`;
+      if (receivedEl) receivedEl.textContent = `${received} 笔订单`;
+
+      // 认养动态（未读日志数）
+      const allLogs = getGrowthLogs();
+      let unreadCount = 0;
+      myAdopts.forEach(adopt => {
+        const logs = allLogs[adopt.id] || [];
+        logs.forEach(log => {
+          if (log.hasNew !== false) unreadCount++;
+        });
+      });
+      const adoptEl = document.getElementById('quickAdoptCount');
+      if (adoptEl) adoptEl.textContent = `${unreadCount} 条新更新`;
+    }
+
+    function login(type) {
+      if (type === 'phone') {
+        showLoginModal();
+      } else {
+        showToast('其他登录方式暂未开放，请使用手机号登录');
+      }
+    }
+
+    function showLoginModal() {
+      const modal = document.getElementById('login-modal') || createLoginModal();
+      modal.style.display = 'flex';
+    }
+
+    function hideLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const nickname = document.getElementById('login-nickname').value.trim();
+      const isRegister = document.getElementById('login-title').textContent === '注册';
+
+      if (!username || !password) {
+        showToast('请输入用户名和密码');
+        return;
+      }
+
+      try {
+        if (isRegister) {
+          await AuthAPI.register(username, password, nickname);
+          showToast('注册成功');
+        } else {
+          await AuthAPI.login(username, password);
+          showToast('登录成功');
+        }
+        hideLoginModal();
+        initProfile();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function doLogout() {
+      AuthAPI.logout();
+      showToast('已退出登录');
+      initProfile();
+    }
+
+        function toggleLoginMode() {
+      const title = document.getElementById('login-title');
+      const nicknameWrap = document.getElementById('nickname-wrap');
+      const submitBtn = document.getElementById('login-submit');
+      const toggleBtn = document.getElementById('login-toggle');
+
+      if (title.textContent === '登录') {
+        title.textContent = '注册';
+        submitBtn.textContent = '注册';
+        nicknameWrap.style.display = 'block';
+        toggleBtn.textContent = '切换登录';
+      } else {
+        title.textContent = '登录';
+        submitBtn.textContent = '登录';
+        nicknameWrap.style.display = 'none';
+        toggleBtn.textContent = '切换注册';
+      }
+    }
+
+    function createLoginModal() {
+      const modal = document.createElement('div');
+      modal.id = 'login-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;';
+      modal.innerHTML = `
+        <div style="background:#F8F5EF;padding:40px;border-radius:16px;width:360px;max-width:90vw;">
+          <h2 id="login-title" style="font-family:Ma Shan Zheng;font-size:1.8rem;margin-bottom:24px;color:#4A4A35;text-align:center;">登录</h2>
+          <input id="login-username" type="text" placeholder="用户名" style="width:100%;padding:12px 16px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;font-size:14px;">
+          <input id="login-password" type="password" placeholder="密码" style="width:100%;padding:12px 16px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;font-size:14px;">
+          <div id="nickname-wrap" style="display:none;margin-bottom:12px;">
+            <input id="login-nickname" type="text" placeholder="昵称（选填）" style="width:100%;padding:12px 16px;border:1px solid #ddd;border-radius:8px;box-sizing:border-box;font-size:14px;">
+          </div>
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button id="login-toggle" onclick="toggleLoginMode()" style="flex:1;padding:12px;border:1px solid #4A7A38;color:#4A7A38;background:transparent;border-radius:8px;cursor:pointer;font-size:14px;">切换注册</button>
+            <button id="login-submit" onclick="doLogin()" style="flex:2;padding:12px;border:none;background:#4A7A38;color:#fff;border-radius:8px;cursor:pointer;font-size:14px;">登录</button>
+          </div>
+          <button onclick="hideLoginModal()" style="margin-top:16px;width:100%;padding:10px;border:none;background:transparent;color:#999;cursor:pointer;font-size:13px;">取消</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      // 点击外部关闭
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) hideLoginModal();
+      });
+
+      return modal;
+    }
+
+    /* ══════════════════════════════
+       侧边栏切换
+    ══════════════════════════════ */
+    function switchSection(section) {
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      document.querySelector(`.sidebar-item[data-section="${section}"]`).classList.add('active');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`section-${section}`).classList.add('active');
+      ScrollTrigger.refresh();
+
+      if (section === 'settings') {
+        loadAddressSettings();
+      } else if (section === 'favorites') {
+        loadFavorites();
+      }
+    }
+
+    // 收藏 tab 切换
+    document.querySelectorAll('.fav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.fav-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFavTab = tab.dataset.tab;
+        loadFavorites();
+      });
+    });
+
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const section = item.dataset.section;
+        switchSection(section);
+      });
+    });
+
+    /* ══════════════════════════════
+       订单数据（从API加载）
+    ══════════════════════════════ */
+    let allOrders = [];
+
+    function renderOrders(orders) {
+      const list = document.getElementById('orderList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><p class="empty-state-text">暂无相关订单</p></div>';
+        return;
+      }
+
+      const statusText = { pending: '待付款', shipped: '待发货', received: '待收货', review: '待评价', refund: '退款/售后', cancelled: '已取消' };
+
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        const productName = order.product_name || '商品';
+        const productPrice = order.product_price || '0';
+        const qty = order.quantity || 1;
+        card.innerHTML = `
+          <div class="order-header">
+            <div class="order-shop">
+              <div class="order-shop-icon">🏪</div>
+              <span class="order-shop-name">一季一鲜</span>
+            </div>
+            <span class="order-status ${order.status}">${statusText[order.status] || order.status}</span>
+          </div>
+          <div class="order-items">
+            <div class="order-item">
+              <div class="order-item-img"><span>[图片]</span></div>
+              <div class="order-item-info">
+                <p class="order-item-name">${productName}</p>
+                <p class="order-item-spec">${order.product_loc || ''} × ${qty}</p>
+              </div>
+            </div>
+          </div>
+          <div class="order-footer">
+            <p class="order-total">共 ${qty} 件商品，合计 <strong>¥${productPrice.replace('¥', '')}</strong></p>
+            <div class="order-actions">
+              ${order.status === 'pending' ? `<button class="order-btn order-btn-secondary" onclick="cancelOrder(${order.id})">取消订单</button><button class="order-btn order-btn-primary" onclick="showToast('支付功能待开通')">立即付款</button>` : ''}
+              ${order.status === 'shipped' ? '<button class="order-btn order-btn-secondary">查看物流</button><button class="order-btn order-btn-primary" onclick="showToast(\'已确认收货\')">确认收货</button>' : ''}
+              ${order.status === 'received' ? '<button class="order-btn order-btn-primary">去评价</button>' : ''}
+              ${order.status === 'review' ? '<button class="order-btn order-btn-secondary">查看详情</button><button class="order-btn order-btn-primary">去评价</button>' : ''}
+            </div>
+          </div>`;
+        list.appendChild(card);
+      });
+    }
+
+    async function cancelOrder(orderId) {
+      try {
+        await OrderAPI.cancel(orderId);
+        showToast('订单已取消');
+        loadOrders();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function filterOrders(tab) {
+      document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.order-tab[data-tab="${tab}"]`).classList.add('active');
+      switchSection('orders');
+      const filtered = tab === 'all' ? allOrders : allOrders.filter(o => o.status === tab);
+      setTimeout(() => renderOrders(filtered), 50);
+    }
+
+    document.querySelectorAll('.order-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        filterOrders(tab.dataset.tab);
+      });
+    });
+
+    /* ══════════════════════════════
+       认养数据 - GitHub风格更新方块
+    ══════════════════════════════ */
+    // 从 localStorage 加载已购买的认养订单
+    function getMyAdopts() {
+      try {
+        const saved = localStorage.getItem('myAdoptOrders');
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {}
+      return [];
+    }
+
+    // 保存认养订单到 localStorage
+    function saveMyAdoptOrder(order) {
+      try {
+        const orders = getMyAdopts();
+        // 检查是否已存在
+        const exists = orders.some(o => o.id === order.id);
+        if (!exists) {
+          orders.push({
+            id: order.product_id,
+            name: order.product_name,
+            startDate: order.create_time || new Date().toISOString().split('T')[0],
+            image: order.product_image || ''
+          });
+          localStorage.setItem('myAdoptOrders', JSON.stringify(orders));
+        }
+      } catch (e) {}
+    }
+
+    // 页面加载时读取
+    let myAdopts = getMyAdopts();
+
+    // 添加演示认养数据（无需支付即可演示）
+    function addDemoAdoptData() {
+      const allProducts = window.FarmAdoptData?.projects || [];
+      let orders = getMyAdopts();
+      const newProductIds = [];
+
+      allProducts.forEach(p => {
+        const exists = orders.some(o => o.id === p.id);
+        if (!exists) {
+          orders.push({
+            id: p.id,
+            name: p.name,
+            startDate: '2025-10-01',
+            image: ''
+          });
+          newProductIds.push(p.id);
+        }
+      });
+
+      localStorage.setItem('myAdoptOrders', JSON.stringify(orders));
+      myAdopts = orders;
+
+      // 从认养详情页生成的日志（farmGrowthLogs）复制到认养中心
+      const existingGrowthLogs = JSON.parse(localStorage.getItem('farmGrowthLogs') || '{}');
+      const allLogs = getGrowthLogs();
+
+      allProducts.forEach(p => {
+        // 如果认养详情页有日志，用认养详情页的
+        if (existingGrowthLogs[p.id] && existingGrowthLogs[p.id].length > 0) {
+          allLogs[p.id] = existingGrowthLogs[p.id];
+        } else if (p.growthLogs) {
+          // 否则从 FarmAdoptData 复制
+          allLogs[p.id] = p.growthLogs.map(log => ({ ...log }));
+        }
+      });
+      localStorage.setItem('farmGrowthLogs', JSON.stringify(allLogs));
+
+      renderAdopts();
+      showToast(`已添加 ${newProductIds.length} 条演示数据到认养中心`);
+    }
+
+    // 清空演示认养数据
+    function clearDemoAdoptData() {
+      try {
+        localStorage.removeItem('myAdoptOrders');
+        myAdopts = [];
+        renderAdopts();
+        showToast('已清空认养数据');
+      } catch (e) {}
+    }
+
+    // 获取认养详情页的生长日志数据（共用 farmGrowthLogs）
+    function getGrowthLogs() {
+      try {
+        return JSON.parse(localStorage.getItem('farmGrowthLogs') || '{}');
+      } catch (e) { return {}; }
+    }
+
+    // 初始化认养日志数据（从 FarmAdoptData 初始化 farmGrowthLogs）
+    const ADOPT_DATA_VERSION = '20260410';
+    function initAdoptLogs() {
+      try {
+        const savedVersion = localStorage.getItem('farmGrowthLogsVersion');
+        let logs = getGrowthLogs();
+
+        // 如果版本不匹配或数据不存在，从公共数据初始化
+        if (!logs || savedVersion !== ADOPT_DATA_VERSION) {
+          logs = {};
+          const publicProjects = window.FarmAdoptData?.projects;
+          if (publicProjects) {
+            publicProjects.forEach(project => {
+              if (project.growthLogs) {
+                // 深拷贝并重置hasNew标记（默认最新2条为未读）
+                const copiedLogs = project.growthLogs.map((log, idx, arr) => ({
+                  ...log,
+                  hasNew: idx >= arr.length - 2
+                }));
+                logs[project.id] = copiedLogs;
+              }
+            });
+          }
+          localStorage.setItem('farmGrowthLogs', JSON.stringify(logs));
+          localStorage.setItem('farmGrowthLogsVersion', ADOPT_DATA_VERSION);
+        }
+      } catch (e) {
+      }
+    }
+
+    // 获取某产品某日志是否未读（从 farmGrowthLogs 读取 hasNew 属性）
+    function isLogUnread(productId, logDate) {
+      const allLogs = getGrowthLogs();
+      const productLogs = allLogs[productId];
+
+      // 如果 farmGrowthLogs 中没有该产品数据，从 FarmAdoptData 获取并检查
+      if (!productLogs || productLogs.length === 0) {
+        const farmData = window.FarmAdoptData?.getProjectById(productId);
+        const publicLogs = farmData?.growthLogs || [];
+        const log = publicLogs.find(l => l.date === logDate);
+        // 公共数据中，默认最新2条为未读
+        if (!log) return true;
+        const idx = publicLogs.findIndex(l => l.date === logDate);
+        return idx >= publicLogs.length - 2;
+      }
+
+      // 从 farmGrowthLogs 读取
+      // hasNew === false 表示已读，其他情况（true 或 undefined）都视为未读
+      const log = productLogs.find(l => l.date === logDate);
+      return log ? log.hasNew !== false : true;
+    }
+
+    // 获取已读日志记录
+    function getReadLogs() {
+      try {
+        return JSON.parse(localStorage.getItem('readAdoptLogs') || '[]');
+      } catch (e) { return []; }
+    }
+
+    // 标记日志为已读（同时更新 farmGrowthLogs）
+    function markLogAsRead(productId, logDate) {
+      try {
+        // 更新 farmGrowthLogs
+        const allLogs = getGrowthLogs();
+        const productLogs = allLogs[productId] || [];
+        const log = productLogs.find(l => l.date === logDate);
+        if (log) {
+          log.hasNew = false;
+          localStorage.setItem('farmGrowthLogs', JSON.stringify(allLogs));
+        }
+      } catch (e) {}
+    }
+
+    // 标记该产品所有日志为已读
+    function markAllLogsAsRead(productId, logs) {
+      try {
+        const allLogs = getGrowthLogs();
+        const productLogs = allLogs[productId] || [];
+        logs.forEach(log => {
+          const existingLog = productLogs.find(l => l.date === log.date);
+          if (existingLog) {
+            existingLog.hasNew = false;
+          }
+        });
+        allLogs[productId] = productLogs;
+        localStorage.setItem('farmGrowthLogs', JSON.stringify(allLogs));
+      } catch (e) {}
+    }
+
+    // 日记式渲染认养中心
+    function renderAdopts() {
+      const list = document.getElementById('adoptDiaryList');
+      if (!list) return;
+
+      if (myAdopts.length === 0) {
+        list.innerHTML = '<div class="adopt-diary-empty">暂无认养记录，<a href="farm-adopt.html">去挑选</a></div>';
+        return;
+      }
+
+      let html = '';
+
+      myAdopts.forEach(adopt => {
+        // 从 localStorage 获取对应的生长日志（与 GrowthLogAPI 同步）
+        const allLogs = getGrowthLogs();
+        const logs = allLogs[adopt.id] || [];
+        const unreadCount = logs.filter(log => isLogUnread(adopt.id, log.date)).length;
+
+        // 构建日志日期映射（用于日历显示）
+        const logsByDate = {};
+        logs.forEach(log => {
+          const dateParts = log.date.split('-');
+          const day = dateParts[2]; // '08' -> '08'
+          logsByDate[day] = log;
+        });
+
+        html += `
+          <div class="adopt-diary-card">
+            <div class="adopt-diary-header">
+              <div class="adopt-diary-img"><span>${adopt.name.slice(0, 2)}</span></div>
+              <div class="adopt-diary-title-wrap">
+                <div class="adopt-diary-name">${adopt.name}</div>
+                <div class="adopt-diary-meta">认养开始：${adopt.startDate}</div>
+              </div>
+              ${unreadCount > 0 ? `<span class="adopt-diary-new-badge">${unreadCount}条新动态</span>` : ''}
+            </div>
+            <div class="adopt-diary-logs">
+        `;
+
+        if (logs.length === 0) {
+          html += `<div class="adopt-diary-log-item" style="justify-content:center;color:rgba(44,44,42,0.4);font-size:12px;">暂无生长日志</div>`;
+        } else {
+          // 只显示最近5条日志（倒序，最新的在最上面）
+          const today = new Date();
+          const todayStr = formatDateStr(today);
+          const recentLogs = logs.slice(-5).reverse();
+          recentLogs.forEach(log => {
+            const isUnread = isLogUnread(adopt.id, log.date);
+            const dateObj = new Date(log.date);
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            const isToday = log.date === todayStr;
+
+            html += `
+              <div class="adopt-diary-log-item ${isUnread ? 'unread' : ''}"
+                   onclick="goToLog('${adopt.id}', '${log.date}', this)">
+                <div class="adopt-diary-log-date ${isUnread ? 'unread' : 'read'}${isToday ? ' today' : ''}">
+                  <div class="adopt-diary-log-day">${day}</div>
+                  <div class="adopt-diary-log-month">${month}月</div>
+                </div>
+                <div class="adopt-diary-log-content">
+                  <div class="adopt-diary-log-title">
+                    ${log.title}
+                    ${isUnread ? '<span class="new-tag">NEW</span>' : ''}
+                  </div>
+                  <div class="adopt-diary-log-text">${log.content}</div>
+                </div>
+                <div class="adopt-diary-log-arrow">›</div>
+              </div>
+            `;
+          });
+
+          // 如果有更多日志，添加查看全部的入口
+          if (logs.length > 5) {
+            html += `
+              <div class="adopt-diary-log-item" style="justify-content:center;">
+                <a href="farm-detail.html?id=${adopt.id}" style="color:var(--c-green);font-size:12px;text-decoration:none;">查看全部 ${logs.length} 条日志 ›</a>
+              </div>
+            `;
+          }
+        }
+
+        html += `</div></div>`;
+      });
+
+      list.innerHTML = html;
+    }
+
+    // 跳转到指定日志
+    function goToLog(productId, logDate, element) {
+      markLogAsRead(productId, logDate);
+      // 如果有传入元素，先进行本地状态更新（红变绿）
+      if (element) {
+        const dateEl = element.querySelector('.adopt-diary-log-date');
+        if (dateEl && dateEl.classList.contains('unread')) {
+          dateEl.classList.remove('unread');
+          dateEl.classList.add('read');
+        }
+      }
+      // 跳转，让用户看到红变绿的效果
+      setTimeout(() => {
+        window.location.href = `farm-detail.html?id=${productId}&log=${logDate}`;
+      }, 300);
+    }
+
+    /* ══════════════════════════════
+       账户设置
+    ══════════════════════════════ */
+    async function loadAddressSettings() {
+      if (!AuthAPI.isLoggedIn()) return;
+
+      try {
+        const data = await UserAPI.getAddress();
+        document.getElementById('settingsReceiverName').value = data.receiver_name || '';
+        document.getElementById('settingsReceiverPhone').value = data.receiver_phone || '';
+        document.getElementById('settingsReceiverAddress').value = data.receiver_address || '';
+
+        // 如果有保存的定位，也加载到地址字段
+        if (data.latitude && data.longitude) {
+          const addrField = document.getElementById('settingsReceiverAddress');
+          if (!addrField.value) {
+            addrField.value = `📍${data.latitude.toFixed(4)},${data.longitude.toFixed(4)} `;
+            addrField.placeholder = '定位已获取，请补充详细地址';
+          }
+        }
+      } catch (e) {
+      }
+    }
+
+    async function saveAddressSettings() {
+      const name = document.getElementById('settingsReceiverName').value.trim();
+      const phone = document.getElementById('settingsReceiverPhone').value.trim();
+      const address = document.getElementById('settingsReceiverAddress').value.trim();
+      const addrTag = document.querySelector('input[name="addrTag"]:checked')?.value || 'home';
+      const relationTag = document.querySelector('input[name="relationTag"]:checked')?.value || 'self';
+
+      if (!name || !phone) {
+        showToast('请填写收货人姓名和联系电话');
+        return;
+      }
+
+      if (!address || address.trim() === '') {
+        showToast('请填写详细地址或获取定位');
+        return;
+      }
+
+      // 从地址中解析GPS坐标（格式：📍34.2304,108.9871 详细地址）
+      let latitude = null;
+      let longitude = null;
+      const coordMatch = address.match(/📍([-\d.]+),([-\d.]+)/);
+      if (coordMatch) {
+        latitude = parseFloat(coordMatch[1]);
+        longitude = parseFloat(coordMatch[2]);
+      }
+
+      try {
+        await UserAPI.updateAddress(name, phone, address);
+
+        // 如果有坐标，同时保存定位到账户
+        if (latitude && longitude) {
+          await UserAPI.updateLocation(latitude, longitude, address);
+          // 同步到 localStorage 供其他页面使用
+          localStorage.setItem('userLocation', JSON.stringify({ lat: latitude, lng: longitude }));
+        }
+
+        // 标签提示（前端友好，不影响保存）
+        const addrTagText = { home: '家', school: '学校', company: '公司' }[addrTag] || '家';
+        const relationText = { self: '本人', friend: '朋友', parent: '父母', other: '其他' }[relationTag] || '本人';
+
+        showToast(`收货地址已保存（${addrTagText} · ${relationText}）`);
+      } catch (e) {
+        showToast('保存失败：' + e.message);
+      }
+    }
+
+    // 获取定位并填充到收货地址（不自动保存，由用户点击保存按钮）
+    function getLocationForAddress() {
+      if (!navigator.geolocation) {
+        showToast('您的浏览器不支持定位功能');
+        return;
+      }
+
+      showToast('正在获取定位...');
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          const addressField = document.getElementById('settingsReceiverAddress');
+
+          // 如果已有地址，在前面插入定位坐标
+          if (addressField.value && addressField.value.trim() !== '') {
+            addressField.value = `📍${lat.toFixed(4)},${lng.toFixed(4)} ` + addressField.value;
+          } else {
+            addressField.value = `📍${lat.toFixed(4)},${lng.toFixed(4)} `;
+            addressField.placeholder = '定位已获取，请补充详细地址（如xx市xx区xx路xx号）';
+          }
+
+          showToast('定位已获取，请在地址前补充完整信息');
+        },
+        (error) => {
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              showToast('定位权限被拒绝，请开启定位权限');
+              break;
+            case error.POSITION_UNAVAILABLE:
+              showToast('无法获取位置信息');
+              break;
+            case error.TIMEOUT:
+              showToast('定位请求超时');
+              break;
+            default:
+              showToast('定位失败');
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    }
+
+    function toggleDanger() {
+      document.getElementById('dangerContent').classList.toggle('show');
+    }
+
+    /* ══════════════════════════════
+       Toast
+    ══════════════════════════════ */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    /* ══════════════════════════════
+       搜索
+    ══════════════════════════════ */
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `products.html#q=${encodeURIComponent(q)}`;
+      }
+    });
+
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    var searchInputProfile = document.getElementById('searchInput');
+    searchInputProfile.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = this.value.trim();
+        if (q) {
+          window.location.href = 'products.html#q=' + encodeURIComponent(q);
+        }
+      }
+    });
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      var q = searchInputProfile.value.trim();
+      if (q) {
+        window.location.href = 'products.html#q=' + encodeURIComponent(q);
+      }
+    });
+
+/* ══════════════════════════════
+       动态时间问候
+    ══════════════════════════════ */
+    function updateGreeting() {
+      const hour = new Date().getHours();
+      let greeting = '晚上好';
+      if (hour >= 5 && hour < 12) {
+        greeting = '早上好';
+      } else if (hour >= 12 && hour < 14) {
+        greeting = '中午好';
+      } else if (hour >= 14 && hour < 18) {
+        greeting = '下午好';
+      } else if (hour >= 18 && hour < 22) {
+        greeting = '傍晚好';
+      } else {
+        greeting = '夜深了';
+      }
+      const el = document.getElementById('profileGreeting');
+      if (el) el.textContent = greeting;
+    }
+
+    /* ══════════════════════════════
+       我的收藏
+    ══════════════════════════════ */
+    let currentFavTab = 'products';
+
+    async function loadFavorites() {
+      const list = document.getElementById('favList');
+      const followList = document.getElementById('followList');
+      if (!list || !followList) return;
+
+      if (currentFavTab === 'products') {
+        list.style.display = '';
+        followList.style.display = 'none';
+        await loadProductFavorites(list);
+      } else {
+        list.style.display = 'none';
+        followList.style.display = '';
+        await loadFarmerFollows(followList);
+      }
+    }
+
+    async function loadProductFavorites(list) {
+      list.innerHTML = '<div class="fav-loading">加载中...</div>';
+
+      if (!window.AuthAPI?.isLoggedIn()) {
+        list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">🔒</div><p>请先登录后查看收藏</p></div>';
+        return;
+      }
+
+      try {
+        const data = await FavoriteAPI.list();
+        const items = data.favorites || [];
+
+        if (items.length === 0) {
+          list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">❤️</div><p>暂无产品收藏，去看看喜欢的商品吧</p></div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'fav-card';
+          card.onclick = () => { window.location.href = `product-detail.html?id=${item.product_id}&from=profile`; };
+          card.innerHTML = `
+            <div class="fav-img" style="background: linear-gradient(135deg, ${getGradient(item.cat || 'other')})">
+              <span>[图片] ${item.product_name || item.name || '商品'}.jpg</span>
+              ${item.tag ? `<span class="fav-tag-badge">${item.tag}</span>` : ''}
+              <button class="fav-remove" onclick="event.stopPropagation(); removeFavorite('${item.product_id}')">✕</button>
+            </div>
+            <div class="fav-info">
+              <div class="fav-name">${item.product_name || item.name || '商品'}</div>
+              <div class="fav-meta">📍 ${item.product_loc || item.loc || '未知产地'}</div>
+              <div class="fav-price">${item.product_price || item.price || '-'}</div>
+            </div>`;
+          list.appendChild(card);
+        });
+      } catch (e) {
+        list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">❌</div><p>加载失败，请稍后重试</p></div>';
+      }
+    }
+
+    async function loadFarmerFollows(list) {
+      list.innerHTML = '<div class="fav-loading">加载中...</div>';
+
+      if (!window.AuthAPI?.isLoggedIn()) {
+        list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">🔒</div><p>请先登录后查看关注</p></div>';
+        return;
+      }
+
+      try {
+        const data = await FarmerFollowAPI.list();
+        const items = data.follows || [];
+
+        if (items.length === 0) {
+          list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">🏠</div><p>暂无关注的农户，去店铺页关注吧</p></div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'follow-card';
+          card.onclick = () => { window.location.href = `store.html?farmer=${encodeURIComponent(item.farmer_id)}`; };
+          card.innerHTML = `
+            <div class="follow-card-info">
+              <div class="follow-avatar">${(item.farmer_name || '农').charAt(0)}</div>
+              <div>
+                <div class="follow-name">${item.farmer_name || '农户'}</div>
+                <div class="follow-meta">关注于 ${new Date(item.created_at).toLocaleDateString()}</div>
+              </div>
+              <button class="follow-remove" onclick="event.stopPropagation(); unfollowFarmer('${item.farmer_id}')">取消关注</button>
+            </div>`;
+          list.appendChild(card);
+        });
+      } catch (e) {
+        list.innerHTML = '<div class="fav-empty"><div class="fav-empty-icon">❌</div><p>加载失败，请稍后重试</p></div>';
+      }
+    }
+
+    async function removeFavorite(id) {
+      if (!confirm('确定取消收藏吗？')) return;
+      try {
+        await FavoriteAPI.toggle(id);
+        showToast('已取消收藏');
+        loadFavorites();
+        // 更新收藏数
+        const favEl = document.getElementById('statFavorites');
+        if (favEl) {
+          favEl.textContent = Math.max(0, parseInt(favEl.textContent || '0') - 1);
+        }
+      } catch (e) {
+        showToast('操作失败');
+      }
+    }
+
+    async function unfollowFarmer(farmerId) {
+      if (!confirm('确定取消关注吗？')) return;
+      try {
+        await FarmerFollowAPI.unfollow(farmerId);
+        showToast('已取消关注');
+        loadFavorites();
+      } catch (e) {
+        showToast('操作失败');
+      }
+    }
+
+    function getGradient(cat) {
+      const gradients = {
+        fruit: '#C85A20,#8B4513',
+        veg: '#3A7235,#2A5A25',
+        meat: '#96541E,#6B3A14',
+        fish: '#1E6480,#144A60',
+        other: '#7A6A8A,#5A4A6A'
+      };
+      return gradients[cat] || '#4A7A38,#3A6A28';
+    }
+
+    /* ══════════════════════════════
+       用户统计（订单数、认养数、收藏数）
+    ══════════════════════════════ */
+    async function loadUserStats() {
+      // 订单数
+      try {
+        const data = await OrderAPI.list();
+        const orders = data.orders || [];
+        const el = document.getElementById('statOrders');
+        if (el) el.textContent = orders.length;
+      } catch (e) {}
+
+      // 认养数
+      const myAdopts = getMyAdopts();
+      const adoptEl = document.getElementById('statAdopts');
+      if (adoptEl) adoptEl.textContent = myAdopts.length;
+
+      // 收藏数
+      try {
+        const data = await FavoriteAPI.count();
+        const favEl = document.getElementById('statFavorites');
+        if (favEl) favEl.textContent = data.count || 0;
+      } catch (e) {}
+    }
+
+    /* ══════════════════════════════
+       初始化
+    ══════════════════════════════ */
+    // 页面加载时检查登录状态
+    initProfile();
+    updateGreeting(); // 动态时间问候
+    loadUserStats(); // 动态加载用户统计
+
+    // 监听收藏数变化事件
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'favoriteCountUpdate') {
+        try {
+          const { delta } = JSON.parse(e.newValue);
+          const favEl = document.getElementById('statFavorites');
+          if (favEl) {
+            favEl.textContent = Math.max(0, parseInt(favEl.textContent || '0') + delta);
+          }
+        } catch (ex) {}
+      }
+    });
+
+    // 统一日志同步：GrowthLogAPI.checkAndSyncAll 会正确处理 hasNew 状态
+    // 它会合并公共数据和本地数据，并只对没有在本地标记为已读的日志设置 hasNew
+    if (window.GrowthLogAPI) {
+      GrowthLogAPI.checkAndSyncAll();
+    }
+    initAdoptLogs(); // 新用户或数据初始化时确保日志状态正确（默认最新2条未读）
+    syncAdoptLogs(); // 基于 FarmAdoptData 同步并生成缺失日志
+    renderAdopts(); // 渲染认养中心（使用模拟数据）
+
+    /* ══════════════════════════════
+       缓入动画
+    ══════════════════════════════ */
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initAnimations() {
+      // 顶部用户区域 - 从上往下淡入
+      gsap.fromTo('.profile-header',
+        { opacity: 0, y: -30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+      );
+
+      // 快捷入口卡片 - 依次淡入
+      gsap.fromTo('.quick-card',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1, delay: 0.3 }
+      );
+
+      // 左侧边栏 - 从左淡入
+      gsap.fromTo('.profile-sidebar',
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', delay: 0.4 }
+      );
+
+      // 右侧内容区 - 从右淡入
+      gsap.fromTo('.profile-content',
+        { opacity: 0, x: 20 },
+        { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', delay: 0.5 }
+      );
+
+      // 订单卡片 - 依次淡入
+      document.querySelectorAll('.order-card').forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', delay: i * 0.05 }
+        );
+      });
+
+      // 认养日记卡片 - 滚动时淡入
+      document.querySelectorAll('.adopt-diary-card').forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out',
+            scrollTrigger: { trigger: card, start: 'top 85%' }
+          }
+        );
+      });
+
+      // 活动卡片 - 滚动时淡入
+      document.querySelectorAll('.activity-card').forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+            scrollTrigger: { trigger: card, start: 'top 85%' }
+          }
+        );
+      });
+
+      // 设置卡片 - 滚动时淡入
+      document.querySelectorAll('.settings-card').forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+            scrollTrigger: { trigger: card, start: 'top 85%' }
+          }
+        );
+      });
+    }
+
+    // 执行动画（等待页面加载完成）
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        initAnimations();
+        ScrollTrigger.refresh();
+      }, 200);
+    });
+  </script>
+</body>
+</html>

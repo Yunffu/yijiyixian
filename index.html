@@ -1,0 +1,1197 @@
+?<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一季一鲜 · 首页</title>
+  <!-- 本地字体（已下载到素材文件夹） -->
+  <style>
+    @font-face {
+      font-family: 'Ma Shan Zheng';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: local('Ma Shan Zheng'), url('素材/MaShanZheng.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'Noto Serif SC';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: local('Noto Serif SC'), url('素材/NotoSerifSC-300.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'Noto Serif SC';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: local('Noto Serif SC'), url('素材/NotoSerifSC-400.ttf') format('truetype');
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --c-dark:   #4A4A35;
+      --c-green:  #4A7A38;
+      --c-millet: #E8D8A0;
+      --c-white:  #F8F5EF;
+      --c-text:   #EDE8DF;
+      --c-ink:    #2C2C2A;
+      --c-earth:  #A0846A;
+      /* 四季主色 */
+      --s-spring: #C4856A;
+      --s-summer: #2A4A35;
+      --s-autumn: #8A4A2A;
+      --s-winter: #2A3A5A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--c-white);
+      color: var(--c-ink);
+      overflow-x: hidden;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif;
+    }
+
+    /* ═══════════════════════════════
+       导航栏
+    ═══════════════════════════════ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 2000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 48px; height: 64px;
+      transition: background 400ms, backdrop-filter 400ms;
+    }
+    #nav.on-dark {
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(8px);
+    }
+    #nav.on-light {
+      background: rgba(248,245,239,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(74,74,53,0.1);
+    }
+    .nav-left { display: flex; align-items: center; gap: 48px; }
+    .nav-logo {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: 22px; letter-spacing: 0.2em;
+      text-decoration: none; transition: color 400ms;
+    }
+    #nav.on-dark .nav-logo { color: var(--c-text); }
+    #nav.on-light .nav-logo { color: var(--c-ink); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-link {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 14px; letter-spacing: 0.15em;
+      text-decoration: none; opacity: 0.75;
+      transition: opacity 200ms, color 400ms;
+    }
+    #nav.on-dark .nav-link { color: var(--c-text); }
+    #nav.on-light .nav-link { color: var(--c-ink); }
+    .nav-link:hover { opacity: 1; }
+    .nav-link.active { opacity: 1; border-bottom: 1px solid currentColor; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    /* 搜索框 - 常驻显示 */
+    .nav-search-wrap {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 24px;
+      position: relative;
+    }
+    .nav-search-input {
+      width: 100%;
+      padding: 8px 40px 8px 40px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 13px; letter-spacing: 0.1em;
+      color: var(--c-text);
+      outline: none; transition: all 250ms;
+    }
+    .nav-search-input::placeholder { color: rgba(237,232,223,0.4); }
+    #nav.on-dark .nav-search-input { color: var(--c-text); border-color: rgba(237,232,223,0.3); background: rgba(255,255,255,0.1); }
+    #nav.on-light .nav-search-input { color: var(--c-ink); border-color: rgba(74,74,53,0.25); background: var(--c-white); }
+    .nav-search-input:focus { background: rgba(255,255,255,0.2); }
+    #nav.on-light .nav-search-input:focus { background: var(--c-white); border-color: var(--c-green); }
+    .nav-search-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      width: 14px; height: 14px; pointer-events: none;
+    }
+    #nav.on-dark .nav-search-icon { color: rgba(237,232,223,0.5); }
+    #nav.on-light .nav-search-icon { color: rgba(74,74,53,0.5); }
+    .nav-search-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 24px; height: 24px;
+      border: none; background: transparent;
+      cursor: pointer; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 200ms;
+    }
+    .nav-search-btn svg { width: 14px; height: 14px; }
+    #nav.on-dark .nav-search-btn { color: rgba(237,232,223,0.5); }
+    #nav.on-light .nav-search-btn { color: rgba(74,74,53,0.5); }
+    .nav-search-btn:hover { color: var(--c-green); }
+
+    .nav-btn {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 13px; letter-spacing: 0.12em;
+      padding: 8px 22px; border-radius: 24px;
+      text-decoration: none; transition: all 200ms; white-space: nowrap;
+    }
+    #nav.on-dark .nav-btn { color: var(--c-text); border: 1px solid rgba(237,232,223,0.4); }
+    #nav.on-light .nav-btn { color: var(--c-ink); border: 1px solid rgba(74,74,53,0.3); }
+    .nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+
+    /* ═══════════════════════════════
+       Hero 区：视频背景
+    ═══════════════════════════════ */
+    #hero {
+      position: relative; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      margin-top: -35px;
+    }
+    /* 视频背景 */
+    #heroVideo {
+      position: absolute; inset: 0;
+      width: 100%; height: calc(100% + 70px);
+      object-fit: cover; z-index: 1;
+    }
+    /* 遮罩 */
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: rgba(0,0,0,0.55);
+    }
+    /* 底部渐变衔接农户专区 */
+    .hero-bottom-fade {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 220px; z-index: 3; pointer-events: none;
+      background: linear-gradient(to bottom, transparent, var(--c-white));
+    }
+
+    /* 品牌内容 */
+    .hero-content {
+      position: relative; z-index: 4;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center; gap: 20px;
+    }
+    .hero-season-badge {
+      font-size: 10px; letter-spacing: 0.6em;
+      color: rgba(255,255,255,0.75);
+      opacity: 0; filter: blur(8px);
+    }
+    .hero-title {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(4.5rem, 10.5vw, 10rem);
+      letter-spacing: 0.3em; color: #fff;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5), 0 0 60px rgba(0,0,0,0.3);
+      opacity: 0; filter: blur(20px);
+      line-height: 1;
+    }
+    .hero-sub {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+      letter-spacing: 0.3em; line-height: 2.2;
+      color: rgba(255,255,255,0.9);
+      opacity: 0; filter: blur(12px);
+    }
+    .hero-season-copy {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: clamp(0.75rem, 1.1vw, 0.95rem);
+      letter-spacing: 0.25em;
+      color: rgba(255,255,255,0.7);
+      opacity: 0; filter: blur(8px);
+      margin-top: -8px;
+    }
+    .hero-scroll-hint {
+      position: absolute; bottom: 40px; left: 50%;
+      z-index: 4; display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      opacity: 0; animation: fadeInUp 1s ease 1.8s forwards;
+    }
+    .hero-scroll-hint .scroll-content {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      animation: scrollBounce 1.5s ease infinite 1.8s;
+    }
+    .hero-scroll-hint span {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 600;
+      font-size: 1rem; letter-spacing: 0.35em;
+      color: #fff;
+    }
+    .hero-scroll-arrow {
+      width: 2px; height: 48px;
+      background: linear-gradient(to bottom, #fff, transparent);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes scrollBounce {
+      0%,100% { transform: translateY(0); opacity: 0.6; }
+      50%      { transform: translateY(-10px); opacity: 1; }
+    }
+
+    /* ═══════════════════════════════
+       农户专区：全幅单张海报轮播
+    ═══════════════════════════════ */
+    #farmers {
+      position: relative;
+      background: var(--c-white);
+      padding-top: 80px;
+    }
+    .farmers-header {
+      position: relative; z-index: 5;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 0 64px 36px;
+    }
+    .farmers-label {
+      font-size: 16px; letter-spacing: 0.4em; color: var(--c-green);
+      margin-bottom: 12px;
+    }
+    .farmers-title {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing: 0.12em; color: var(--c-ink);
+    }
+    .farmers-nav { display: flex; gap: 12px; align-items: center; }
+    .farmers-nav-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid rgba(74,74,53,0.2);
+      background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--c-ink);
+      transition: all 200ms;
+    }
+    .farmers-nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+    .farmers-progress {
+      font-size: 11px; letter-spacing: 0.2em;
+      color: rgba(44,44,42,0.35);
+    }
+
+    /* 海报轨道：一次显示一张，全幅 */
+    .farmers-track-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 0 64px 64px;
+    }
+    .farmers-track {
+      position: relative;
+      width: 100%;
+      height: 72vh; min-height: 500px;
+    }
+    .farmer-poster {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px; overflow: hidden;
+      opacity: 0;
+      transition: opacity 650ms cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+    .farmer-poster.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* 三个专区背景 */
+    .farmer-poster[data-zone="tech-farming"] {
+      background: url('./素材/kejigengyang.jpg') center/cover no-repeat;
+    }
+    .farmer-poster[data-zone="light-diet"] {
+      background: url('./素材/轻盈控卡.jpg') center/cover no-repeat;
+    }
+    .farmer-poster[data-zone="wellness"] {
+      background: url('./素材/药食同源.jpg') center/cover no-repeat;
+    }
+
+    /* 海报内容 */
+    .poster-content {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 36px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 45%, transparent 65%);
+    }
+    .poster-zone-en {
+      font-size: 15px; letter-spacing: 0.4em;
+      color: rgba(237,232,223,0.75);
+      margin-bottom: 12px;
+    }
+    .poster-zone-name {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: 0.15em; color: var(--c-text);
+      margin-bottom: 14px;
+    }
+    .poster-tags {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+    }
+    .poster-tag {
+      font-size: 14px; letter-spacing: 0.08em;
+      padding: 6px 16px; border-radius: 12px;
+      border: 1px solid #3A6A28;
+      color: #fff;
+      background: #4A7A38;
+    }
+    .poster-copy {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 16px; letter-spacing: 0.1em; line-height: 1.9;
+      color: rgba(237,232,223,0.85);
+      margin-bottom: 24px;
+    }
+    .poster-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: 15px; letter-spacing: 0.15em;
+      color: #fff; text-decoration: none;
+      padding: 12px 28px; border-radius: 24px;
+      border: 1px solid #3A6A28;
+      background: #4A7A38;
+      background: rgba(74,122,56,0.15);
+      backdrop-filter: blur(8px);
+      transition: all 250ms; align-self: flex-start;
+    }
+    .poster-cta:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* ═══════════════════════════════
+       引导语过渡带
+    ═══════════════════════════════ */
+    #transition-band {
+      background: linear-gradient(135deg, rgba(74,122,56,0.06) 0%, rgba(74,122,56,0.02) 40%, rgba(58,106,40,0.04) 100%);
+      padding: 80px 64px 72px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(74,122,56,0.1);
+      border-bottom: 1px solid rgba(74,122,56,0.08);
+    }
+    .tb-left {}
+    .tb-label {
+      font-size: 16px; letter-spacing: 0.4em;
+      color: var(--c-green); margin-bottom: 14px;
+    }
+    .tb-question {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      letter-spacing: 0.1em; line-height: 1.6; color: var(--c-ink);
+      opacity: 0; filter: blur(12px);
+    }
+    .tb-right { display: flex; gap: 56px; }
+    .tb-stat { text-align: center; }
+    .tb-stat-num {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(2.4rem, 4vw, 3.5rem);
+      letter-spacing: 0.05em; color: var(--c-green);
+      opacity: 0; filter: blur(8px);
+      display: block;
+    }
+    .tb-stat-label {
+      font-size: 15px; letter-spacing: 0.28em;
+      color: rgba(44,44,42,0.7); margin-top: 8px;
+    }
+    .tb-arrow {
+      font-size: 15px; letter-spacing: 0.2em;
+      color: rgba(44,44,42,0.6); margin-top: 24px;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0; filter: blur(8px);
+    }
+    .tb-arrow-line { flex: 0 0 40px; height: 1px; background: rgba(74,122,56,0.3); }
+
+    /* ═══════════════════════════════
+       数据可视化
+    ═══════════════════════════════ */
+    #data-viz {
+      height: 100vh; background: var(--c-white); padding: 0;
+    }
+    #data-viz iframe {
+      width: 100%; height: 100%; border: none; display: block;
+    }
+
+    /* ═══════════════════════════════
+       今日推荐
+    ═══════════════════════════════ */
+    #products { padding: 100px 0 120px; background: var(--c-white); }
+    .prod-wrap { max-width: 1400px; margin: 0 auto; padding: 0 64px; }
+    .prod-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 40px;
+    }
+    .prod-header-left {}
+    .prod-label-top {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 16px; letter-spacing: 0.4em; color: var(--c-green); margin-bottom: 10px;
+      padding-left: 16px;
+    }
+    .prod-title {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      letter-spacing: 0.15em; color: var(--c-ink);
+    }
+    .prod-header-right { display: flex; align-items: center; gap: 12px; }
+
+    /* 刷新按钮 */
+    .prod-refresh-btn {
+      display: flex; align-items: center; gap: 7px;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 14px; letter-spacing: 0.15em;
+      padding: 9px 20px; border-radius: 20px;
+      border: 1px solid rgba(74,74,53,0.2);
+      background: transparent; color: rgba(44,44,42,0.6);
+      cursor: pointer; transition: all 200ms;
+    }
+    .prod-refresh-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+    .prod-refresh-btn.spinning svg { animation: spin 0.6s linear; }
+    @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+    /* 七大区筛选 */
+    .prod-filters {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .prod-filter {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 14px; letter-spacing: 0.12em;
+      padding: 7px 18px; border-radius: 20px;
+      border: 1px solid rgba(74,74,53,0.18);
+      background: transparent; color: rgba(44,44,42,0.65);
+      cursor: pointer; transition: all 180ms;
+    }
+    .prod-filter:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+    .prod-filter.active { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* 商品网格 */
+    .prod-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      margin-top: 32px;
+    }
+    .prod-card {
+      border-radius: 14px; overflow: hidden;
+      background: #fff; box-shadow: 0 2px 16px rgba(74,74,53,0.07);
+      transition: transform 280ms ease, box-shadow 280ms ease;
+      cursor: pointer; opacity: 0; transform: translateY(20px);
+    }
+    .prod-card:hover { transform: translateY(-6px); box-shadow: 0 10px 32px rgba(74,74,53,0.14); }
+    .prod-img-wrap { position: relative; height: 220px; overflow: hidden; }
+    .prod-img-placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 300ms;
+    }
+    .prod-img-placeholder span {
+      font-family: monospace; font-size: 10px;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.06em;
+      text-align: center; padding: 0 12px;
+    }
+    /* 七大区各自配色 */
+    .prod-card[data-region="东北"]  .prod-img-p1 { background: linear-gradient(135deg,#2A3A4A,#1A2A3A); }
+    .prod-card[data-region="华北"]  .prod-img-p1 { background: linear-gradient(135deg,#3A3A2A,#2A2A1A); }
+    .prod-card[data-region="华东"]  .prod-img-p1 { background: linear-gradient(135deg,#2A4A3A,#1A3A2A); }
+    .prod-card[data-region="华中"]  .prod-img-p1 { background: linear-gradient(135deg,#4A3A2A,#3A2A1A); }
+    .prod-card[data-region="华南"]  .prod-img-p1 { background: linear-gradient(135deg,#3A2A4A,#2A1A3A); }
+    .prod-card[data-region="西南"]  .prod-img-p1 { background: linear-gradient(135deg,#2A4A4A,#1A3A3A); }
+    .prod-card[data-region="西北"]  .prod-img-p1 { background: linear-gradient(135deg,#4A4A2A,#3A3A1A); }
+    .prod-img-p1 { background: linear-gradient(135deg,#3A4A2A,#2A3A1A); }
+    .prod-img-p2 { background: var(--c-green); opacity: 0; }
+    .prod-card:hover .prod-img-p1 { opacity: 0; }
+    .prod-card:hover .prod-img-p2 { opacity: 1; }
+    .prod-tag-badge {
+      position: absolute; top: 12px; left: 12px;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 10px; letter-spacing: 0.15em;
+      padding: 4px 10px; border-radius: 20px;
+      background: rgba(74,74,53,0.7); color: var(--c-text);
+      backdrop-filter: blur(4px);
+    }
+    .prod-region-badge {
+      position: absolute; top: 12px; right: 12px;
+      font-size: 10px; letter-spacing: 0.1em;
+      padding: 3px 9px; border-radius: 12px;
+      background: rgba(255,255,255,0.15); color: rgba(237,232,223,0.8);
+      backdrop-filter: blur(4px);
+    }
+    .prod-card-body { padding: 18px 20px 20px; }
+    .prod-region {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 11px; letter-spacing: 0.15em;
+      color: var(--c-earth); margin-bottom: 6px;
+    }
+    .prod-name {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: 1.2rem; letter-spacing: 0.12em; color: var(--c-ink);
+      margin-bottom: 8px;
+    }
+    .prod-desc {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.8rem; letter-spacing: 0.06em; line-height: 1.7;
+      color: rgba(44,44,42,0.55); margin-bottom: 14px;
+    }
+    .prod-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+    }
+    .prod-farmer {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.75rem; letter-spacing: 0.08em;
+      color: var(--c-earth);
+    }
+    .prod-rating {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: 0.78rem; letter-spacing: 0.05em;
+      color: var(--c-green);
+    }
+    .prod-footer { display: flex; justify-content: space-between; align-items: center; }
+    .prod-price {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: 1.05rem; letter-spacing: 0.05em; color: var(--c-ink);
+    }
+    .prod-cart-btn {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.78rem; letter-spacing: 0.15em;
+      padding: 7px 16px; border-radius: 20px;
+      border: 1px solid rgba(74,122,56,0.35);
+      background: transparent; color: var(--c-green);
+      cursor: pointer; transition: all 200ms;
+    }
+    .prod-cart-btn:hover { background: var(--c-green); color: var(--c-text); }
+    .prod-more { text-align: center; margin-top: 56px; }
+    .prod-more-btn {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.9rem; letter-spacing: 0.25em;
+      padding: 14px 48px; border-radius: 40px;
+      border: 1px solid rgba(74,74,53,0.22);
+      color: var(--c-ink); text-decoration: none;
+      transition: all 250ms; display: inline-block;
+    }
+    .prod-more-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* ═══════════════════════════════
+       CTA 横幅
+    ═══════════════════════════════ */
+    #cta-banner {
+      position: relative;
+      padding: 0;
+      overflow: visible;
+    }
+    .cta-banner-bg {
+      position: absolute;
+      inset: -80px 0;
+      background: url('./素材/index2.jpg') center/cover no-repeat;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+    }
+    .cta-banner-content {
+      position: relative;
+      z-index: 1;
+      padding: 140px 80px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 48px;
+    }
+    .cta-left {}
+    .cta-label {
+      font-size: 10px; letter-spacing: 0.5em;
+      color: var(--c-green); margin-bottom: 16px;
+    }
+    .cta-title {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+      letter-spacing: 0.1em; line-height: 1.7; color: var(--c-text);
+      opacity: 0; filter: blur(12px);
+    }
+    .cta-btns { display: flex; gap: 14px; flex-shrink: 0; }
+    .cta-btn-primary {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: 14px; letter-spacing: 0.2em;
+      padding: 14px 40px; border-radius: 40px;
+      background: var(--c-green); color: #fff;
+      text-decoration: none; border: 1px solid var(--c-green);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+      transition: background 250ms, box-shadow 250ms;
+    }
+    .cta-btn-primary:hover { background: #356028; box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
+    .cta-btn-secondary {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 400;
+      font-size: 14px; letter-spacing: 0.2em;
+      padding: 14px 40px; border-radius: 40px;
+      background: rgba(255,255,255,0.12); color: #fff;
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+      backdrop-filter: blur(8px);
+      transition: background 250ms, box-shadow 250ms;
+    }
+    .cta-btn-secondary:hover { background: rgba(255,255,255,0.22); box-shadow: 0 6px 24px rgba(0,0,0,0.45); }
+
+    /* ═══════════════════════════════
+       Footer
+    ═══════════════════════════════ */
+    #footer { position: relative; background: #2D5A1E; padding: 40px 0 0; border-top: 1px solid rgba(237,232,223,0.06); }
+    .footer-wrap {
+      max-width: 1400px; margin: 0 auto; padding: 0 64px 40px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 1px solid rgba(237,232,223,0.08);
+    }
+    .footer-logo {
+      font-family: "Ma Shan Zheng", "楷体", "Microsoft YaHei", serif;
+      font-size: 2rem; letter-spacing: 0.25em; color: var(--c-text); margin-bottom: 16px;
+    }
+    .footer-slogan {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.8rem; letter-spacing: 0.2em; line-height: 2;
+      color: rgba(237,232,223,0.7);
+    }
+    .footer-links { display: flex; gap: 80px; }
+    .footer-col { display: flex; flex-direction: column; gap: 14px; }
+    .footer-col-title {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.75rem; letter-spacing: 0.4em;
+      color: rgba(237,232,223,0.6); margin-bottom: 4px;
+    }
+    .footer-col a {
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.875rem; letter-spacing: 0.12em;
+      color: rgba(237,232,223,0.85); text-decoration: none; transition: color 200ms;
+    }
+    .footer-col a:hover { color: var(--c-text); }
+    .footer-bottom {
+      text-align: center; padding: 24px;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      color: rgba(237,232,223,0.5);
+    }
+
+    /* ═══════════════════════════════
+       Toast 提示
+    ═══════════════════════════════ */
+    #toast {
+      position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--c-ink); color: var(--c-text);
+      padding: 14px 32px; border-radius: 40px;
+      font-family: "Noto Serif SC", "宋体", "SimSun", serif; font-weight: 300;
+      font-size: 14px; letter-spacing: 0.15em;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      opacity: 0; pointer-events: none;
+      transition: opacity 300ms, transform 300ms;
+      z-index: 9999;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ 导航栏 ═══ -->
+  <nav id="nav" class="on-dark">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link">滞留物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+      </svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+      <button class="nav-search-btn" id="searchBtn" title="搜索">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="5"/>
+          <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- ═══ Hero 区 ═══ -->
+  <section id="hero">
+    <video id="heroVideo" autoplay muted playsinline>
+      <source src="./素材/spring.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-bottom-fade"></div>
+    <div class="hero-content">
+      <p class="hero-season-badge" id="seasonBadge">SPRING · 春</p>
+      <h1 class="hero-title">一季一鲜</h1>
+      <p class="hero-sub">我们只卖第一手农产品<br>我们切实保护农户和您的权益</p>
+      <p class="hero-season-copy" id="seasonCopy">万物生长，第一口鲜从这里开始</p>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-content">
+        <span>向下探索</span>
+        <div class="hero-scroll-arrow"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 农户专区 ═══ -->
+  <section id="farmers">
+    <div class="farmers-header">
+      <div>
+        <p class="farmers-label">农户专区</p>
+        <h2 class="farmers-title fade-in">聆听他们的故事</h2>
+      </div>
+      <div class="farmers-nav">
+        <span class="farmers-progress" id="farmersProgress">1 / 3</span>
+        <button class="farmers-nav-btn" id="farmersPrev" onclick="movePoster(-1)">‹</button>
+        <button class="farmers-nav-btn" id="farmersNext" onclick="movePoster(1)">›</button>
+      </div>
+    </div>
+    <div class="farmers-track-wrap">
+      <div class="farmers-track" id="farmersTrack">
+
+        <!-- 科技耕养·臻选鲜品 -->
+        <div class="farmer-poster active" data-zone="tech-farming">
+          <div class="poster-deco"></div>
+          <div class="poster-content">
+            <p class="poster-zone-en">Smart Farming · Premium Selection</p>
+            <h3 class="poster-zone-name">科技耕养·臻选鲜品</h3>
+            <div class="poster-tags">
+              <span class="poster-tag">智慧种养</span>
+              <span class="poster-tag">严选臻品</span>
+              <span class="poster-tag">洁净安心</span>
+              <span class="poster-tag">品质可控</span>
+            </div>
+            <p class="poster-copy">以现代智慧耕养，严选洁净好食材，<br>呈现稳定如一的高品质本味。</p>
+            <a href="products.html?zone=tech-farming&region=all" class="poster-cta">浏览专区产品 →</a>
+          </div>
+        </div>
+
+        <!-- 轻盈控卡·减脂轻食 -->
+        <div class="farmer-poster" data-zone="light-diet">
+          <div class="poster-deco"></div>
+          <div class="poster-content">
+            <p class="poster-zone-en">Light &amp; Healthy</p>
+            <h3 class="poster-zone-name">轻盈控卡·减脂轻食</h3>
+            <div class="poster-tags">
+              <span class="poster-tag">低脂轻卡</span>
+              <span class="poster-tag">高纤优蛋</span>
+              <span class="poster-tag">控卡友好</span>
+              <span class="poster-tag">清爽无负</span>
+            </div>
+            <p class="poster-copy">精选低脂高纤食材，控卡无负担，<br>让每一餐都轻盈自在、健康无压。</p>
+            <a href="products.html?zone=light-diet&region=all" class="poster-cta">浏览专区产品 →</a>
+          </div>
+        </div>
+
+        <!-- 药食同源·养生鲜材 -->
+        <div class="farmer-poster" data-zone="wellness">
+          <div class="poster-deco"></div>
+          <div class="poster-content">
+            <p class="poster-zone-en">Medicinal &amp; Edible</p>
+            <h3 class="poster-zone-name">药食同源·养生鲜材</h3>
+            <div class="poster-tags">
+              <span class="poster-tag">药食同源</span>
+              <span class="poster-tag">煲汤滋补</span>
+              <span class="poster-tag">温和调养</span>
+              <span class="poster-tag">应季食补</span>
+            </div>
+            <p class="poster-copy">顺应时节甄选食补鲜材，药食同源温和滋养，<br>为日常调养添一份自然安康。</p>
+            <a href="products.html?zone=wellness&region=all" class="poster-cta">浏览专区产品 →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 引导语过渡带 ═══ -->
+  <div id="transition-band">
+    <div class="tb-left">
+      <div class="tb-label">实时数据</div>
+      <div class="tb-question fade-in">现在，全国有多少农户<br>正在出售什么？</div>
+      <div class="tb-arrow fade-in" style="transition-delay:0.2s">
+        <div class="tb-arrow-line"></div>
+        <span>向下探索产地分布</span>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-stat">
+        <span class="tb-stat-num" id="statFarmers" data-target="2847">0</span>
+        <div class="tb-stat-label">在售农户</div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-num" id="statItems" data-target="186">0</span>
+        <div class="tb-stat-label">当季品种</div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-num" id="statOrders" data-target="34921">0</span>
+        <div class="tb-stat-label">本月成交件</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 数据可视化 ═══ -->
+  <section id="data-viz">
+    <iframe src="map.html" title="产地数据可视化" loading="lazy"></iframe>
+  </section>
+
+  <!-- ═══ 今日推荐 ═══ -->
+  <section id="products">
+    <div class="prod-wrap">
+      <div class="prod-header">
+        <div class="prod-header-left">
+          <p class="prod-label-top">精选农产 · 今日推荐</p>
+          <h2 class="prod-title">好物推荐</h2>
+        </div>
+        <div class="prod-header-right">
+          <button class="prod-refresh-btn" id="refreshBtn" onclick="refreshProducts()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M11 6.5A4.5 4.5 0 1 1 6.5 2"/>
+              <polyline points="6.5,2 9,2 9,4.5"/>
+            </svg>
+            换一批
+          </button>
+        </div>
+      </div>
+      <div class="prod-filters" id="prodFilters">
+        <button class="prod-filter active" data-region="all">全部</button>
+        <button class="prod-filter" data-region="东北">东北</button>
+        <button class="prod-filter" data-region="华北">华北</button>
+        <button class="prod-filter" data-region="华东">华东</button>
+        <button class="prod-filter" data-region="华中">华中</button>
+        <button class="prod-filter" data-region="华南">华南</button>
+        <button class="prod-filter" data-region="西南">西南</button>
+        <button class="prod-filter" data-region="西北">西北</button>
+      </div>
+      <div class="prod-grid" id="prodGrid"></div>
+      <div class="prod-more">
+        <a href="#data-viz" class="prod-more-btn" onclick="scrollToViz(event)">查看更多 · 探索产地分布</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA 横幅 ═══ -->
+  <section id="cta-banner">
+    <div class="cta-banner-bg"></div>
+    <div class="cta-banner-content">
+      <div class="cta-left">
+        <h2 class="cta-title fade-in">您守好的那方地，<br>我们来帮您带它去该去的地方。</h2>
+      </div>
+      <div class="cta-btns">
+        <a href="join.html#cta-anchor" class="cta-btn-primary">农户入驻</a>
+        <a href="join.html#cta-anchor" class="cta-btn-secondary">加入团队 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Toast 提示 ═══ -->
+  <div id="toast">已加入购物车</div>
+
+  <!-- ═══ Footer ═══ -->
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div class="footer-brand">
+        <p class="footer-logo">一季一鲜</p>
+        <p class="footer-slogan">我们只卖第一手农产品<br>我们切实保护农户和您的权益</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <p class="footer-col-title">平台</p>
+          <a href="index.html">首页</a>
+          <a href="farm-adopt.html">认养农场</a>
+          <a href="whole-sale.html">滞留物批发</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">加入</p>
+          <a href="join.html">农户入驻</a>
+          <a href="join.html">加入团队</a>
+          <a href="profile.html">我的账户</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 一季一鲜  ·  保护农户与消费者权益</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ══════════════════════════════
+       四季配置
+    ══════════════════════════════ */
+    const SEASONS = {
+      spring: {
+        cls: 'spring', badge: 'SPRING · 春',
+        copy: '万物生长，第一口鲜从这里开始'
+      },
+      summer: {
+        cls: 'summer', badge: 'SUMMER · 夏',
+        copy: '烈日下的汗水，是最诚实的调味'
+      },
+      autumn: {
+        cls: 'autumn', badge: 'AUTUMN · 秋',
+        copy: '丰收的季节，我们只做第一手'
+      },
+      winter: {
+        cls: 'winter', badge: 'WINTER · 冬',
+        copy: '寒冬里的温暖，来自一方好土地'
+      },
+    };
+
+    function getSeason() {
+      const m = new Date().getMonth() + 1;
+      if (m >= 3 && m <= 5)  return 'spring';
+      if (m >= 6 && m <= 8)  return 'summer';
+      if (m >= 9 && m <= 11) return 'autumn';
+      return 'winter';
+    }
+
+    const curSeason = getSeason();
+    const s = SEASONS[curSeason];
+
+    /* ══════════════════════════════
+       Hero 视频无缝循环
+    ══════════════════════════════ */
+    const heroVideo = document.getElementById('heroVideo');
+    heroVideo.addEventListener('timeupdate', function() {
+      if (this.currentTime >= this.duration - 3) {
+        this.currentTime = 0;
+        this.play();
+      }
+    });
+
+    // 应用四季
+    document.getElementById('hero').className = s.cls;
+    document.getElementById('seasonBadge').textContent = s.badge;
+    document.getElementById('seasonCopy').textContent = s.copy;
+
+
+    /* ══════════════════════════════
+       导航栏状态切换
+    ══════════════════════════════ */
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('nav');
+      if (window.scrollY > window.innerHeight * 0.85) {
+        nav.classList.remove('on-dark');
+        nav.classList.add('on-light');
+      } else {
+        nav.classList.remove('on-light');
+        nav.classList.add('on-dark');
+      }
+    });
+
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    var searchValue = '';
+    var searchInput = document.getElementById('searchInput');
+
+    function performSearch() {
+      var q = searchValue || searchInput.value;
+      if (q && q.trim()) {
+        window.location.href = './products.html#q=' + encodeURIComponent(q.trim());
+      }
+    }
+
+    searchInput.addEventListener('input', function() {
+      searchValue = this.value;
+    });
+
+    searchInput.onkeydown = function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        performSearch();
+      }
+    };
+
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      performSearch();
+    });
+
+    /* ══════════════════════════════
+       Hero 入场动效
+    ══════════════════════════════ */
+    window.addEventListener('load', () => {
+      const tl = gsap.timeline({ delay: 0.2 });
+      tl.to('.hero-season-badge', { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' })
+        .to('.hero-title',        { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, '-=0.2')
+        .to('.hero-sub',          { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, '-=0.3')
+        .to('.hero-season-copy',  { opacity: 1, filter: 'blur(0px)', duration: 0.4, ease: 'power2.out' }, '-=0.2');
+
+      // 如果 URL 有锚点，滚动到对应位置
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+      }
+    });
+
+    /* ══════════════════════════════
+       农户专区海报轮播
+    ══════════════════════════════ */
+    let posterIdx = 0;
+    const posters = document.querySelectorAll('.farmer-poster');
+    const totalPosters = posters.length;
+    let autoTimer = null;
+
+    function movePoster(dir) {
+      posters[posterIdx].classList.remove('active');
+      posterIdx = (posterIdx + dir + totalPosters) % totalPosters;
+      posters[posterIdx].classList.add('active');
+      document.getElementById('farmersProgress').textContent = `${posterIdx + 1} / ${totalPosters}`;
+      resetAutoPlay();
+    }
+
+    function startAutoPlay() {
+      autoTimer = setInterval(() => movePoster(1), 5000);
+    }
+    function resetAutoPlay() {
+      clearInterval(autoTimer);
+      startAutoPlay();
+    }
+    startAutoPlay();
+
+    /* ══════════════════════════════
+       过渡带数字跳动
+    ══════════════════════════════ */
+    document.querySelectorAll('.tb-stat-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      gsap.fromTo(el,
+        { opacity: 0, filter: 'blur(8px)', innerText: 0 },
+        {
+          opacity: 1, filter: 'blur(0px)', duration: 1.4, ease: 'power2.out',
+          innerText: target, snap: { innerText: 1 },
+          onUpdate() { el.textContent = Math.round(parseFloat(el.innerText)).toLocaleString(); },
+          scrollTrigger: { trigger: '#transition-band', start: 'top 75%', once: true }
+        }
+      );
+    });
+
+    // 过渡带文字
+    gsap.to('.tb-question', {
+      opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: '#transition-band', start: 'top 80%', once: true }
+    });
+    gsap.to('.tb-arrow', {
+      opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out', delay: 0.3,
+      scrollTrigger: { trigger: '#transition-band', start: 'top 80%', once: true }
+    });
+
+    // CTA 标题
+    gsap.to('.cta-title', {
+      opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: '#cta-banner', start: 'top 80%', once: true }
+    });
+
+    // 通用 fade-in
+    gsap.utils.toArray('.fade-in').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, filter: 'blur(12px)', y: 20 },
+        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true } }
+      );
+    });
+
+    /* ══════════════════════════════
+       今日推荐
+    ══════════════════════════════ */
+    let currentRegion = 'all';
+    let currentPool = [...PRODUCTS];
+
+    function getPool(region) {
+      return region === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.region === region);
+    }
+
+    function pickSix(pool) {
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, Math.min(6, shuffled.length));
+    }
+
+    function renderProducts(list) {
+      const grid = document.getElementById('prodGrid');
+      grid.innerHTML = '';
+      list.forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = 'prod-card';
+        card.dataset.region = p.region;
+        card.innerHTML = `
+          <div class="prod-img-wrap">
+            <div class="prod-img-placeholder prod-img-p1">
+              <span>[图片占位] ${p.name}.jpg</span>
+            </div>
+            <div class="prod-img-placeholder prod-img-p2"></div>
+            <span class="prod-tag-badge">${p.tag}</span>
+            <span class="prod-region-badge">${p.region}</span>
+          </div>
+          <div class="prod-card-body">
+            <p class="prod-region">📍 ${p.loc}</p>
+            <h3 class="prod-name">${p.name}</h3>
+            <p class="prod-desc">${p.desc}</p>
+            <div class="prod-footer">
+              <span class="prod-price">${p.price} <small style="font-size:0.7em;opacity:0.5">/斤</small></span>
+              <button class="prod-cart-btn">查看详情</button>
+            </div>
+          </div>`;
+        // 查看详情按钮点击事件
+        card.querySelector('.prod-cart-btn').addEventListener('click', e => {
+          e.stopPropagation();
+          // 存储当前页URL到sessionStorage，供后续返回列表使用
+          sessionStorage.setItem('originListUrl', window.location.href);
+          window.location.href = 'product-detail.html?id=' + p.id + '&from=index&anchor=products';
+        });
+        grid.appendChild(card);
+        gsap.to(card, {
+          opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: i * 0.06,
+          scrollTrigger: { trigger: card, start: 'top 92%', once: true }
+        });
+      });
+    }
+
+    function refreshProducts() {
+      const btn = document.getElementById('refreshBtn');
+      btn.classList.add('spinning');
+      setTimeout(() => btn.classList.remove('spinning'), 600);
+      const pool = getPool(currentRegion);
+      renderProducts(pickSix(pool));
+    }
+
+    // 七大区筛选
+    document.getElementById('prodFilters').addEventListener('click', e => {
+      if (!e.target.classList.contains('prod-filter')) return;
+      const region = e.target.dataset.region;
+      currentRegion = region;
+      document.querySelectorAll('.prod-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.region === region);
+      });
+      var currentQ = '';
+      document.getElementById('searchInput').value = '';
+      const url = new URL(window.location);
+      url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+      const pool = getPool(currentRegion);
+      renderProducts(pickSix(pool));
+    });
+
+    // 查看更多 → 滚动到数据可视化
+    function scrollToViz(e) {
+      e.preventDefault();
+      document.getElementById('data-viz').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ══════════════════════════════
+       Toast 提示
+    ══════════════════════════════ */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // 初始渲染
+    renderProducts(pickSix(PRODUCTS));
+
+    window.addEventListener('load', () => {
+      setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+  </script>
+</body>
+</html>

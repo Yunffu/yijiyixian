@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>店铺 · 一季一鲜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.googleapis.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --c-dark:   #4A4A35;
+      --c-green:  #4A7A38;
+      --c-millet: #E8D8A0;
+      --c-white:  #F8F5EF;
+      --c-text:   #EDE8DF;
+      --c-ink:    #2C2C2A;
+      --c-earth:  #A0846A;
+      --c-warm-gray: #F2EDE5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--c-white);
+      color: var(--c-ink);
+      overflow-x: hidden;
+      font-family: "Noto Serif SC", serif;
+    }
+
+    /* 导航栏 */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 2000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 48px; height: 64px;
+      background: rgba(248,245,239,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(74,74,53,0.1);
+    }
+    .nav-left { display: flex; align-items: center; gap: 48px; }
+    .nav-logo { font-family: "Ma Shan Zheng", serif; font-size: 22px; letter-spacing: 0.2em; text-decoration: none; color: var(--c-ink); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-link { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; text-decoration: none; opacity: 0.75; transition: opacity 200ms; color: var(--c-ink); }
+    .nav-link:hover { opacity: 1; }
+    .nav-link.active { opacity: 1; border-bottom: 1px solid currentColor; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-search-wrap { flex: 1; max-width: 600px; margin: 0 24px; position: relative; }
+    .nav-search-input { width: 100%; padding: 8px 16px 8px 40px; border-radius: 24px; border: 1px solid rgba(74,74,53,0.25); background: var(--c-white); font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; letter-spacing: 0.1em; color: var(--c-ink); outline: none; }
+    .nav-search-input::placeholder { color: rgba(74,74,53,0.4); }
+    .nav-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; pointer-events: none; color: rgba(74,74,53,0.5); }
+    .nav-search-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: color 200ms; color: rgba(74,74,53,0.5); }
+    .nav-search-btn svg { width: 14px; height: 14px; }
+    .nav-search-btn:hover { color: var(--c-green); }
+    .nav-btn { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; letter-spacing: 0.12em; padding: 8px 22px; border-radius: 24px; text-decoration: none; transition: all 200ms; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.3); }
+    .nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+    /* 主内容 */
+    #main { padding-top: 64px; }
+
+    /* 店铺头部 */
+    .store-header {
+      background: linear-gradient(135deg, #2D5A1E 0%, #1A3A10 100%);
+      padding: 60px 64px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .store-header::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    .store-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--c-millet), var(--c-earth));
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Ma Shan Zheng", serif; font-size: 2.5rem; color: var(--c-ink);
+      flex-shrink: 0; border: 4px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .store-info { flex: 1; }
+    .store-name { font-family: "Ma Shan Zheng", serif; font-size: 2rem; letter-spacing: 0.1em; color: var(--c-text); margin-bottom: 8px; }
+    .store-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .store-tag { font-size: 11px; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 12px; background: rgba(255,255,255,0.15); color: var(--c-text); }
+    .store-tag认证 { background: rgba(232,168,56,0.3); }
+    .store-meta { display: flex; gap: 24px; font-size: 12px; color: rgba(255,255,255,0.6); }
+    .store-meta-item { display: flex; align-items: center; gap: 6px; }
+    .store-meta-item svg { width: 14px; height: 14px; fill: currentColor; }
+    .store-actions { display: flex; flex-direction: column; gap: 12px; }
+    .store-action-btn { padding: 10px 24px; border-radius: 24px; font-family: "Noto Serif SC", serif; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; transition: all 200ms; border: none; }
+    .store-action-follow { background: var(--c-millet); color: var(--c-ink); }
+    .store-action-follow:hover { background: #d4c48c; }
+    .store-action-contact { background: transparent; color: var(--c-text); border: 1px solid rgba(255,255,255,0.3); }
+    .store-action-contact:hover { background: rgba(255,255,255,0.1); }
+    .back-detail-btn { display: none; padding: 10px 24px; border-radius: 24px; background: rgba(248,245,239,0.12); border: 1px solid rgba(248,245,239,0.3); color: rgba(248,245,239,0.85); font-family: "Noto Serif SC", serif; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; transition: all 200ms; flex-shrink: 0; }
+    .back-detail-btn:hover { background: rgba(248,245,239,0.2); color: #fff; border-color: rgba(248,245,239,0.4); }
+    .back-detail-btn.show { display: inline-flex; }
+    .store-header-content { position: relative; max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+
+    /* 店铺统计 */
+    .store-stats-bar {
+      background: rgba(44,44,42,0.08);
+      padding: 20px 64px;
+      position: relative;
+    }
+    .store-stats-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: center; gap: 60px; }
+    .store-stat { text-align: center; }
+    .store-stat-value { font-family: "Ma Shan Zheng", serif; font-size: 1.8rem; color: #C8922A; margin-bottom: 4px; }
+    .store-stat-label { font-size: 11px; letter-spacing: 0.15em; color: rgba(44,44,42,0.55); text-transform: uppercase; }
+
+    /* 认证信息 */
+    .store-certs { max-width: 1400px; margin: 0 auto; padding: 24px 64px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; border-bottom: 1px solid rgba(74,74,53,0.08); }
+    .store-cert { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--c-warm-gray); border-radius: 20px; font-size: 12px; color: var(--c-ink); }
+    .store-cert svg { width: 14px; height: 14px; fill: var(--c-green); }
+
+    /* 在售商品 */
+    .store-products { max-width: 1400px; margin: 0 auto; padding: 48px 64px 80px; }
+    .store-products-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .store-products-title { font-family: "Ma Shan Zheng", serif; font-size: 1.8rem; letter-spacing: 0.15em; color: var(--c-ink); }
+    .store-products-count { font-size: 13px; color: rgba(44,44,42,0.5); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .product-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 16px rgba(74,74,53,0.06);
+      transition: all 300ms; cursor: pointer;
+      text-decoration: none; color: inherit;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(74,74,53,0.12); }
+    .product-card-img { height: 180px; background: linear-gradient(135deg, #3A2A2A, #2A1A1A); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .product-card-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%);
+    }
+    .product-card-img span { font-family: monospace; font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; z-index: 1; }
+    .product-card-tag { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 10px; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 10px; background: rgba(74,122,56,0.9); color: #fff; }
+    .product-card-body { padding: 16px; }
+    .product-card-name { font-family: "Noto Serif SC", serif; font-size: 14px; letter-spacing: 0.08em; color: var(--c-ink); margin-bottom: 6px; }
+    .product-card-region { font-size: 11px; color: rgba(44,44,42,0.5); margin-bottom: 12px; display: flex; align-items: center; gap: 4px; }
+    .product-card-region::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--c-green); }
+    .product-card-footer { display: flex; justify-content: space-between; align-items: center; }
+    .product-card-price { font-family: "Ma Shan Zheng", serif; font-size: 1.3rem; color: var(--c-green); }
+    .product-card-price small { font-family: "Noto Serif SC", serif; font-size: 0.5em; color: rgba(44,44,42,0.5); }
+    .product-card-rating { font-size: 12px; color: var(--c-earth); display: flex; align-items: center; gap: 4px; }
+    .product-card-rating svg { width: 12px; height: 12px; fill: #E8A838; }
+
+    /* 空状态 */
+    .store-empty { text-align: center; padding: 80px 0; }
+    .store-empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.3; }
+    .store-empty-text { font-size: 14px; color: rgba(44,44,42,0.5); letter-spacing: 0.1em; }
+
+    /* 返回农户商铺按钮 */
+
+    /* Footer */
+    #footer { background: #2D5A1E; padding: 40px 0 0; margin-top: 80px; }
+    .footer-wrap { max-width: 1400px; margin: 0 auto; padding: 0 64px 40px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(237,232,223,0.08); }
+    .footer-logo { font-family: "Ma Shan Zheng", serif; font-size: 2rem; letter-spacing: 0.25em; color: var(--c-text); margin-bottom: 16px; }
+    .footer-slogan { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.8rem; letter-spacing: 0.2em; line-height: 2; color: rgba(237,232,223,0.7); }
+    .footer-links { display: flex; gap: 80px; }
+    .footer-col { display: flex; flex-direction: column; gap: 14px; }
+    .footer-col-title { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.4em; color: rgba(237,232,223,0.6); margin-bottom: 4px; }
+    .footer-col a { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.875rem; letter-spacing: 0.12em; color: rgba(237,232,223,0.85); text-decoration: none; }
+    .footer-col a:hover { color: var(--c-text); }
+    .footer-bottom { text-align: center; padding: 24px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.2em; color: rgba(237,232,223,0.5); }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--c-ink); color: var(--c-text); padding: 14px 32px; border-radius: 40px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; box-shadow: 0 8px 32px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 300ms, transform 300ms; z-index: 9999; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* 响应式 */
+    @media (max-width: 900px) {
+      .store-header { padding: 40px 24px 32px; }
+      .store-header-content { flex-direction: column; text-align: center; }
+      .store-meta { justify-content: center; }
+      .store-stats-content { gap: 40px; }
+      .store-products { padding: 32px 24px 60px; }
+      .store-certs { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="products.html" class="nav-link">农产品</a>
+        <a href="whole-sale.html" class="nav-link">滞留物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+      <button class="nav-search-btn" id="searchBtn" title="搜索">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="5"/>
+          <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <div id="main">
+    <!-- 店铺头部 -->
+    <div class="store-header">
+      <div class="store-header-content">
+        <button class="back-detail-btn" id="backDetailBtn" onclick="goBackToDetail()">← 返回详情</button>
+        <div class="store-avatar" id="storeAvatar">农</div>
+        <div class="store-info">
+          <h1 class="store-name" id="storeName">农户店铺</h1>
+          <div class="store-tags" id="storeTags">
+            <span class="store-tag">平台认证农户</span>
+          </div>
+          <div class="store-meta">
+            <div class="store-meta-item">
+              <svg viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+              <span id="storeRating">4.8</span> 评分
+            </div>
+            <div class="store-meta-item">
+              <svg viewBox="0 0 16 16"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+              <span id="storeSales">0</span> 总销量
+            </div>
+            <div class="store-meta-item">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 3-5 6-5s6 2 6 5"/></svg>
+              <span id="storeProducts">0</span> 在售商品
+            </div>
+          </div>
+        </div>
+        <div class="store-actions">
+          <button class="store-action-btn store-action-follow" id="followBtn" onclick="toggleFollow()">+ 关注店铺</button>
+          <button class="store-action-btn store-action-contact">联系农户</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 店铺统计 -->
+    <div class="store-stats-bar">
+      <div class="store-stats-content">
+        <div class="store-stat">
+          <div class="store-stat-value" id="statProducts">0</div>
+          <div class="store-stat-label">在售商品</div>
+        </div>
+        <div class="store-stat">
+          <div class="store-stat-value" id="statSales">0</div>
+          <div class="store-stat-label">总销量</div>
+        </div>
+        <div class="store-stat">
+          <div class="store-stat-value" id="statFans">0</div>
+          <div class="store-stat-label">粉丝数</div>
+        </div>
+        <div class="store-stat">
+          <div class="store-stat-value" id="statRating">4.8</div>
+          <div class="store-stat-label">店铺评分</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 认证信息 -->
+    <div class="store-certs" id="storeCerts">
+      <div class="store-cert">
+        <svg viewBox="0 0 16 16"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+        平台认证农户
+      </div>
+      <div class="store-cert">
+        <svg viewBox="0 0 16 16"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+        产地直发保障
+      </div>
+      <div class="store-cert">
+        <svg viewBox="0 0 16 16"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+        产品质量保证
+      </div>
+    </div>
+
+    <!-- 在售商品 -->
+    <div class="store-products">
+      <div class="store-products-header">
+        <h2 class="store-products-title">在售商品</h2>
+        <span class="store-products-count" id="productCount">共 0 件商品</span>
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <!-- JS 渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div><p class="footer-logo">一季一鲜</p><p class="footer-slogan">我们只卖第一手农产品<br>我们切实保护农户和您的权益</p></div>
+      <div class="footer-links">
+        <div class="footer-col"><p class="footer-col-title">平台</p><a href="index.html">首页</a><a href="farm-adopt.html">认养农场</a><a href="whole-sale.html">滞留物批发</a></div>
+        <div class="footer-col"><p class="footer-col-title">加入</p><a href="join.html">农户入驻</a><a href="join.html">加入团队</a><a href="profile.html">我的账户</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 一季一鲜  ·  保护农户与消费者权益</p></div>
+  </footer>
+
+  <div id="toast">操作成功</div>
+
+  <script src="js/api.js"></script>
+  <script src="data.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = this.value.trim();
+        if (q) {
+          window.location.href = 'products.html#q=' + encodeURIComponent(q);
+        }
+      }
+    });
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      var q = document.getElementById('searchInput').value.trim();
+      if (q) {
+        window.location.href = 'products.html#q=' + encodeURIComponent(q);
+      }
+    });
+
+    /* ══════════════════════════════
+       获取店铺数据
+    ══════════════════════════════ */
+    const farmerName = new URLSearchParams(window.location.search).get('farmer');
+    const fromDetail = new URLSearchParams(window.location.search).get('from');
+    const detailId = new URLSearchParams(window.location.search).get('id');
+
+    // 保存原始列表页URL（用于从商铺进入详情页后，点击"返回列表"能回到正确的地方）
+    if (!sessionStorage.getItem('originListUrl')) {
+      sessionStorage.setItem('originListUrl', document.referrer || 'products.html');
+    }
+
+    // 滞销商品数据（从 wholesale-detail.js 中的 wholesaleProducts 复制）
+    const wholesaleProducts = {
+      'ws001': { id: 'ws001', name: '云南高原苹果', price: '¥6.8', originalPrice: '¥12', tag: '滞销特价', tagZone: 'eco', cat: 'fruit', quantity: 300, farmer: '云南果农老王', rating: '4.7', loc: '云南·昆明', desc: '云南高原苹果，因物流受阻滞销，果品完好' },
+      'ws002': { id: 'ws002', name: '山东大棚番茄', price: '¥2.6', originalPrice: '¥4', tag: '滞销特价', tagZone: 'eco', cat: 'veg', quantity: 800, farmer: '山东菜农老李', rating: '4.5', loc: '山东·寿光', desc: '山东大棚番茄，新鲜采摘，因物流受阻滞销' },
+      'ws003': { id: 'ws003', name: '内蒙古草原羊肉', price: '¥32', originalPrice: '¥45', tag: '滞销特价', tagZone: 'eco', cat: 'meat', quantity: 150, farmer: '锡盟牧民合作社', rating: '4.9', loc: '内蒙古·锡盟', desc: '内蒙古草原羊肉，新鲜宰杀，因物流受阻滞销' },
+      'ws004': { id: 'ws004', name: '舟山带鱼', price: '¥14', originalPrice: '¥28', tag: '滞销特价', tagZone: 'eco', cat: 'fish', quantity: 200, farmer: '舟山渔民老张', rating: '4.6', loc: '浙江·舟山', desc: '舟山带鱼，新鲜捕获，因销路受阻滞销' },
+      'ws005': { id: 'ws005', name: '东北优质大豆', price: '¥3.8', originalPrice: '¥6.2', tag: '滞销特价', tagZone: 'eco', cat: 'other', quantity: 1500, farmer: '东北粮农老赵', rating: '4.8', loc: '黑龙江·哈尔滨', desc: '东北优质大豆，因批发商取消订单滞销' },
+      'ws006': { id: 'ws006', name: '四川耙耙柑', price: '¥3.2', originalPrice: '¥5.8', tag: '滞销特价', tagZone: 'eco', cat: 'fruit', quantity: 400, farmer: '四川果农老陈', rating: '4.4', loc: '四川·成都', desc: '四川耙耙柑，时令水果，因物流受阻滞销' },
+      'ws007': { id: 'ws007', name: '河北鸡蛋批发', price: '¥5.5', originalPrice: '¥7.3', tag: '滞销特价', tagZone: 'eco', cat: 'meat', quantity: 800, farmer: '河北养殖户老王', rating: '4.6', loc: '河北·邯郸', desc: '河北鸡蛋，新鲜土鸡蛋，因物流受阻滞销' },
+      'ws008': { id: 'ws008', name: '江苏大闸蟹', price: '¥28', originalPrice: '¥46', tag: '滞销特价', tagZone: 'eco', cat: 'fish', quantity: 80, farmer: '苏州蟹农老周', rating: '4.7', loc: '江苏·苏州', desc: '江苏大闸蟹，阳澄湖产区，因季节性滞销' }
+    };
+
+    // 合并普通商品和滞销商品，统一过滤
+    const allProducts = [...PRODUCTS, ...Object.values(wholesaleProducts)];
+    const storeProducts = farmerName ? allProducts.filter(p => p.farmer === farmerName) : [];
+
+    // 计算店铺统计
+    function calcStoreStats() {
+      const stats = {
+        productCount: storeProducts.length,
+        totalSales: storeProducts.reduce((sum, p) => sum + (p.quantity || 0) * 0.7, 0),
+        avgRating: storeProducts.length > 0
+          ? (storeProducts.reduce((sum, p) => sum + parseFloat(p.rating || 0), 0) / storeProducts.length).toFixed(1)
+          : '4.8',
+        fans: Math.floor(Math.random() * 1000 + 500)
+      };
+      return stats;
+    }
+
+    /* ══════════════════════════════
+       渲染店铺信息
+    ══════════════════════════════ */
+    function renderStoreInfo() {
+      const stats = calcStoreStats();
+
+      document.getElementById('storeName').textContent = farmerName || '未知店铺';
+      document.getElementById('storeAvatar').textContent = farmerName ? farmerName.charAt(0) : '农';
+      document.title = `${farmerName} 的店铺 · 一季一鲜`;
+
+      // 评分取商品平均
+      document.getElementById('storeRating').textContent = stats.avgRating;
+      document.getElementById('statRating').textContent = stats.avgRating;
+
+      // 统计
+      document.getElementById('storeProducts').textContent = stats.productCount;
+      document.getElementById('statProducts').textContent = stats.productCount;
+      document.getElementById('statSales').textContent = Math.floor(stats.totalSales);
+      document.getElementById('statFans').textContent = stats.fans;
+      document.getElementById('storeSales').textContent = Math.floor(stats.totalSales);
+
+      // 标签（根据 tagZone 分类）
+      const tagsContainer = document.getElementById('storeTags');
+      const tagZones = [...new Set(storeProducts.map(p => p.tagZone))];
+      const tagLabels = { mountain: '深山守望者', eco: '生态新动力', heritage: '非遗老手艺' };
+      const zones = [...new Set(storeProducts.map(p => p.tagZone))].map(z => tagLabels[z] || z);
+      if (zones.length > 0) {
+        tagsContainer.innerHTML = zones.map(z => `<span class="store-tag">${z}</span>`).join('');
+      }
+    }
+
+    /* ══════════════════════════════
+       渲染商品列表
+    ══════════════════════════════ */
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      const countEl = document.getElementById('productCount');
+
+      countEl.textContent = `共 ${storeProducts.length} 件商品`;
+
+      if (storeProducts.length === 0) {
+        grid.innerHTML = `
+          <div class="store-empty" style="grid-column: 1 / -1;">
+            <div class="store-empty-icon">📦</div>
+            <p class="store-empty-text">暂无在售商品</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = storeProducts.map(p => {
+        const priceNum = parseInt(p.price?.replace('¥', '') || '0');
+        // 根据商品ID前缀决定详情页链接：ws=滞销商品, fa=认养商品, 其他=普通商品
+        let detailUrl = 'product-detail.html';
+        if (p.id?.startsWith('ws')) {
+          detailUrl = 'whole-sale-detail.html';
+        } else if (p.id?.startsWith('fa')) {
+          detailUrl = 'farm-detail.html';
+        }
+        return `
+          <a href="${detailUrl}?id=${p.id}&from=store&farmer=${encodeURIComponent(farmerName || '')}" class="product-card">
+            <div class="product-card-img" style="background: linear-gradient(135deg, #2A3A2A, #1A2A1A);">
+              <span>${p.name}</span>
+              <span class="product-card-tag">${p.tag}</span>
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-card-name">${p.name}</h3>
+              <p class="product-card-region">${p.loc}</p>
+              <div class="product-card-footer">
+                <span class="product-card-price">¥${priceNum}<small>/斤</small></span>
+                <span class="product-card-rating">
+                  <svg viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+                  ${p.rating}
+                </span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    /* ══════════════════════════════
+       关注按钮
+    ══════════════════════════════ */
+    let isFollowing = false;
+
+    async function toggleFollow() {
+      if (!window.AuthAPI?.isLoggedIn()) {
+        showToast('请先登录');
+        return;
+      }
+
+      try {
+        const result = await FarmerFollowAPI.toggle(farmerName, farmerName);
+        isFollowing = result.followed;
+        const btn = document.getElementById('followBtn');
+        if (isFollowing) {
+          btn.textContent = '已关注';
+          btn.style.background = 'rgba(255,255,255,0.2)';
+          btn.style.color = '#fff';
+          showToast('关注成功');
+        } else {
+          btn.textContent = '+ 关注店铺';
+          btn.style.background = '';
+          btn.style.color = '';
+          showToast('取消关注');
+        }
+      } catch (e) {
+        showToast('操作失败');
+      }
+    }
+
+    // 页面加载时检查关注状态
+    async function checkFollowStatus() {
+      if (!window.AuthAPI?.isLoggedIn() || !farmerName) return;
+      try {
+        const { followed } = await FarmerFollowAPI.check(farmerName);
+        isFollowing = followed;
+        const btn = document.getElementById('followBtn');
+        if (isFollowing) {
+          btn.textContent = '已关注';
+          btn.style.background = 'rgba(255,255,255,0.2)';
+          btn.style.color = '#fff';
+        }
+      } catch (e) {
+      }
+    }
+    checkFollowStatus();
+
+    /* ══════════════════════════════
+       Toast 提示
+    ══════════════════════════════ */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    /* ══════════════════════════════
+       初始化
+    ══════════════════════════════ */
+    function init() {
+      renderStoreInfo();
+      renderProducts();
+
+      // 从详情页进入时显示返回按钮
+      if ((fromDetail === 'detail' || fromDetail === 'wholesale') && detailId) {
+        document.getElementById('backDetailBtn').classList.add('show');
+      }
+
+      // 动效
+      gsap.from('.store-header', { opacity: 0, y: -20, duration: 0.6, ease: 'power2.out' });
+      gsap.from('.store-stats-bar', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out', delay: 0.2 });
+      gsap.from('.store-certs', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out', delay: 0.3 });
+      gsap.from('.products-grid', { opacity: 0, y: 30, duration: 0.6, ease: 'power2.out', delay: 0.4 });
+    }
+    init();
+
+    function goBackToDetail() {
+      if (detailId) {
+        // 根据商品ID前缀判断返回到哪个详情页：ws=滞销商品, fa=认养商品, 其他=普通商品
+        let detailUrl = 'product-detail.html';
+        if (detailId.startsWith('ws')) {
+          detailUrl = 'whole-sale-detail.html';
+        } else if (detailId.startsWith('fa')) {
+          detailUrl = 'farm-detail.html';
+        }
+        // 传递完整参数：from=store, farmer, originListUrl
+        const originListUrl = sessionStorage.getItem('originListUrl') || 'products.html';
+        window.location.href = detailUrl + '?id=' + encodeURIComponent(detailId) + '&from=store&farmer=' + encodeURIComponent(farmerName || '') + '&originListUrl=' + encodeURIComponent(originListUrl);
+      } else {
+        window.history.back();
+      }
+    }
+  </script>
+</body>
+</html>

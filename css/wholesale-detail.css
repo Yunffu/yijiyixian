@@ -1,0 +1,1883 @@
+/* ═══════════════════════════════
+   滞销物批发详情页样式
+   一季一鲜 · Wholesale Detail
+═══════════════════════════════ */
+
+body {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 滚动浮现动画初始状态 */
+.review-item, .detail-content, .shop-detail-section {
+  will-change: transform, opacity;
+}
+
+/* ═══════════════════════════════
+   面包屑/返回列表
+═══════════════════════════════ */
+.detail-breadcrumb {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 64px 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+.detail-breadcrumb a {
+  color: rgba(44,44,42,0.5);
+  text-decoration: none;
+  transition: color 200ms;
+}
+.detail-breadcrumb a:hover { color: var(--c-orange); }
+.breadcrumb-sep { margin: 0 8px; }
+
+.back-list-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #e8e8e0 !important;
+  border: 1px solid rgba(74,74,53,0.3);
+  font-size: 14px;
+  color: #333 !important;
+  text-decoration: none;
+  transition: all 200ms;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.back-list-wrap {
+  position: fixed;
+  top: 80px;
+  left: 24px;
+  z-index: 1000;
+}
+
+.back-list-btn:hover {
+  background: rgba(232,133,56,0.15);
+  color: var(--c-orange);
+}
+
+/* ═══════════════════════════════
+   商品主体
+═══════════════════════════════ */
+#detail-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 64px 80px;
+}
+
+.product-main {
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 32px;
+  margin-bottom: 48px;
+  max-width: 1400px;
+  margin: 0 auto 48px;
+}
+
+/* 媒体展示 */
+.product-media { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  max-width: 700px;
+}
+
+.media-main {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #4A7A38 0%, #2A5A18 100%);
+}
+
+.media-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-placeholder span {
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.25);
+}
+
+.media-tags {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.media-tag {
+  font-family: "Noto Serif SC", serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: var(--c-orange);
+  color: var(--c-text);
+}
+
+.media-tag.discount-tag {
+  background: var(--c-red);
+}
+
+.media-zoom-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  color: var(--c-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 200ms;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.media-zoom-btn:hover {
+  transform: scale(1.1);
+  background: var(--c-orange);
+  color: white;
+}
+
+.media-thumbs {
+  display: flex;
+  gap: 12px;
+}
+
+.thumb-item {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(74,74,53,0.08);
+  cursor: pointer;
+  transition: all 200ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.thumb-item span {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.4);
+}
+
+.thumb-icon {
+  font-size: 24px;
+  opacity: 0.7;
+}
+
+.thumb-item.active .thumb-icon {
+  opacity: 1;
+}
+
+.thumb-item.active {
+  border-color: var(--c-orange);
+}
+
+.thumb-item:hover {
+  background: rgba(232,133,56,0.1);
+}
+
+/* 商品信息 */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.product-title {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 2rem;
+  letter-spacing: 0.08em;
+  color: var(--c-ink);
+  line-height: 1.4;
+}
+
+.product-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.product-region {
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: rgba(74,74,53,0.08);
+}
+
+/* 顶部常驻黄色风险条 */
+.risk-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-bottom: 1px solid rgba(245,158,11,0.3);
+  font-size: 13px;
+  color: #92400E;
+}
+
+.risk-banner svg {
+  color: #F59E0B;
+  flex-shrink: 0;
+}
+
+/* 风险标签 - 卡片上的小标签 */
+.risk-tag {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(245,158,11,0.06) 100%);
+  border: 1px solid rgba(245,158,11,0.25);
+  font-size: 12px;
+  color: #B45309;
+  margin-top: 8px;
+}
+
+.risk-tag svg {
+  color: #F59E0B;
+}
+
+/* 售后保障卡片 */
+.guarantee-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 18px;
+  padding-top: 32px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(34,197,94,0.02) 100%);
+  border: 1px solid rgba(34,197,94,0.15);
+}
+
+.guarantee-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #15803d;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 0 0 8px 0;
+}
+
+.guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--c-ink);
+}
+
+.guarantee-item.warning {
+  background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(245,158,11,0.02) 100%);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.guarantee-item.warning span {
+  color: #d97706;
+}
+
+.guarantee-note {
+  font-size: 11px;
+  margin-top: 6px;
+  color: rgba(44,44,42,0.5);
+  padding-left: 24px;
+}
+
+/* 物流预估文字样式 */
+.delivery-section {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.6);
+}
+
+/* 滞销时间和存储方式合并卡片 - 浅橘色纵向排列 */
+.stagnant-storage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(232,133,56,0.12) 0%, rgba(232,133,56,0.06) 100%);
+  border: 1px solid rgba(232,133,56,0.2);
+}
+
+.stagnant-mini, .storage-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stagnant-mini svg, .storage-mini svg {
+  flex-shrink: 0;
+  color: var(--c-orange);
+}
+
+.stagnant-mini .stagnant-label, .storage-mini .storage-label {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: rgba(44,44,42,0.6);
+  font-weight: 500;
+}
+
+.stagnant-mini .stagnant-time {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  color: var(--c-ink);
+}
+
+.stagnant-mini .stagnant-duration {
+  font-size: 14px;
+  color: rgba(44,44,42,0.7);
+  margin-left: 4px;
+}
+
+.storage-mini .storage-method {
+  font-size: 14px;
+  color: var(--c-ink);
+}
+
+.storage-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.storage-method {
+  font-size: 13px;
+  color: var(--c-ink);
+  line-height: 1.5;
+}
+
+/* 售后保障卡片 */
+.guarantee-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 20px 16px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(34,197,94,0.2);
+}
+
+.guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--c-ink);
+}
+
+.guarantee-item.warning {
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.guarantee-item.warning span {
+  color: #b45309;
+  font-weight: 500;
+}
+
+.guarantee-note {
+  font-size: 11px;
+  margin-top: 6px;
+  color: rgba(44,44,42,0.5);
+  padding-left: 26px;
+}
+
+/* 物流预估卡片 - 浅橘色 */
+.delivery-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(232,133,56,0.1) 0%, rgba(232,133,56,0.04) 100%);
+  border: 1px solid rgba(232,133,56,0.18);
+}
+
+/* 价格区域 */
+.price-section {
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(232,133,56,0.08) 0%, rgba(232,216,160,0.15) 100%);
+}
+
+.price-main {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-symbol {
+  font-size: 18px;
+  color: var(--c-orange);
+}
+
+.price-value {
+  font-family: "Noto Serif SC", serif;
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--c-orange);
+  letter-spacing: 0.02em;
+}
+
+.price-unit {
+  font-size: 14px;
+  color: rgba(44,44,42,0.5);
+  margin-left: 4px;
+}
+
+.price-original {
+  font-size: 13px;
+  color: rgba(44,44,42,0.4);
+  text-decoration: line-through;
+  margin-top: 4px;
+}
+
+.price-discount {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--c-red);
+  color: white;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* 起批件数 */
+.moq-section {
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--c-warm-gray);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.moq-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.moq-value {
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  color: var(--c-orange);
+  font-weight: 500;
+}
+
+.moq-note {
+  font-size: 11px;
+  color: rgba(44,44,42,0.4);
+  margin-left: auto;
+}
+
+/* 起批+库存合并区块 */
+.moq-stock-section {
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--c-warm-gray);
+}
+
+/* 物流预估文字 */
+.delivery-text {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.6);
+}
+
+.moq-stock-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.moq-block, .stock-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moq-block .moq-label, .stock-block .stock-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.moq-block .moq-value, .stock-block .stock-count {
+  font-family: "Noto Serif SC", serif;
+  font-size: 20px;
+  color: var(--c-orange);
+  font-weight: 400;
+}
+
+.stock-block .stock-unit {
+  font-size: 12px;
+  color: rgba(44,44,42,0.5);
+}
+
+.stock-block .stock-total {
+  font-size: 11px;
+  color: rgba(44,44,42,0.4);
+  margin-left: 8px;
+}
+
+.stock-progress-mini {
+  width: 60px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(74,74,53,0.1);
+  overflow: hidden;
+}
+
+.stock-sold-text {
+  font-size: 11px;
+  color: rgba(44,44,42,0.4);
+  margin-left: 8px;
+}
+
+/* 滞销时间和存储方式合并卡片 - 浅橘色纵向排列 */
+.stagnant-storage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(232,133,56,0.12) 0%, rgba(232,133,56,0.06) 100%);
+  border: 1px solid rgba(232,133,56,0.2);
+}
+
+.stagnant-mini, .storage-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stagnant-mini svg, .storage-mini svg {
+  flex-shrink: 0;
+  color: var(--c-orange);
+}
+
+.stagnant-mini .stagnant-label, .storage-mini .storage-label {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: rgba(44,44,42,0.6);
+  font-weight: 500;
+}
+
+.stagnant-mini .stagnant-time {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  color: var(--c-ink);
+}
+
+.stagnant-mini .stagnant-duration {
+  font-size: 14px;
+  color: rgba(44,44,42,0.7);
+  margin-left: 4px;
+}
+
+.storage-mini .storage-method {
+  font-size: 14px;
+  color: var(--c-ink);
+}
+
+/* 库存/销量 - 浅橘色 */
+.stock-section {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(232,133,56,0.1) 0%, rgba(232,133,56,0.04) 100%);
+  border: 1px solid rgba(232,133,56,0.18);
+}
+
+.stock-info {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.stock-label {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: rgba(44,44,42,0.6);
+  font-weight: 500;
+}
+
+.stock-count {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 24px;
+  color: var(--c-orange);
+}
+
+.stock-unit {
+  font-size: 13px;
+  color: rgba(44,44,42,0.6);
+}
+
+.stock-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(232,133,56,0.15);
+  overflow: hidden;
+}
+
+.stock-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--c-orange) 0%, #D09058 100%);
+  transition: width 500ms ease;
+}
+
+.stock-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.55);
+}
+
+/* 交互按钮 */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: none;
+  font-family: "Noto Serif SC", serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 200ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-cart {
+  background: transparent;
+  border: 2px solid var(--c-orange);
+  color: var(--c-orange);
+}
+
+.btn-cart:hover {
+  background: var(--c-orange);
+  color: white;
+}
+
+.btn-buy {
+  background: var(--c-orange);
+  color: white;
+}
+
+.btn-buy:hover {
+  background: #C87028;
+}
+
+.btn-favorite {
+  flex: 0 0 56px;
+  padding: 0;
+  border: 2px solid rgba(74,74,53,0.2);
+  background: transparent;
+  color: rgba(44,44,42,0.4);
+}
+
+.btn-favorite:hover {
+  border-color: #E85A5A;
+  color: #E85A5A;
+}
+
+/* ═══════════════════════════════
+   详情内容区
+═══════════════════════════════ */
+.detail-content { }
+
+.detail-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(74,74,53,0.1);
+  margin-bottom: 32px;
+}
+
+.tab-btn {
+  padding: 16px 32px;
+  border: none;
+  background: transparent;
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  color: rgba(44,44,42,0.5);
+  cursor: pointer;
+  position: relative;
+  transition: color 200ms;
+}
+
+.tab-btn:hover { color: var(--c-ink); }
+
+.tab-btn.active {
+  color: var(--c-orange);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--c-orange);
+  border-radius: 3px 3px 0 0;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* 产品详情 */
+.product-detail-content h3 {
+  font-family: "Noto Serif SC", serif;
+  font-size: 16px;
+  letter-spacing: 0.15em;
+  color: var(--c-ink);
+  margin-bottom: 20px;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detail-table tr {
+  border-bottom: 1px solid rgba(74,74,53,0.08);
+}
+
+.detail-table td {
+  padding: 14px 0;
+  font-size: 13px;
+}
+
+.detail-table td:first-child {
+  width: 140px;
+  color: rgba(44,44,42,0.5);
+  letter-spacing: 0.1em;
+}
+
+.detail-table td:last-child {
+  color: var(--c-ink);
+}
+
+/* 存放说明 */
+.storage-detail h3 {
+  font-family: "Noto Serif SC", serif;
+  font-size: 16px;
+  letter-spacing: 0.15em;
+  color: var(--c-ink);
+  margin-bottom: 20px;
+}
+
+.storage-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.storage-info-card .storage-section {
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(232,160,56,0.06) 0%, rgba(232,160,56,0.02) 100%);
+  border: 1px solid rgba(232,160,56,0.12);
+}
+
+.storage-info-card .storage-section h4 {
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  color: var(--c-ink);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.storage-info-card .storage-section p {
+  font-size: 13px;
+  color: rgba(44,44,42,0.7);
+  line-height: 1.7;
+}
+
+/* 用户评价 */
+.review-scores {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--c-warm-gray);
+  margin-bottom: 32px;
+}
+
+.score-main {
+  text-align: center;
+}
+
+.score-value {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 48px;
+  color: var(--c-ink);
+  display: block;
+}
+
+.score-stars {
+  margin: 8px 0;
+}
+
+.star {
+  font-size: 16px;
+  color: #E8A838;
+}
+
+.star.empty {
+  color: rgba(74,74,53,0.15);
+}
+
+.star.half {
+  background: linear-gradient(90deg, #E8A838 50%, rgba(74,74,53,0.15) 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.score-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(44,44,42,0.5);
+}
+
+.score-dimensions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 40px;
+  border-left: 1px solid rgba(74,74,53,0.1);
+}
+
+.score-dim {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.dim-label {
+  font-size: 12px;
+  color: rgba(44,44,42,0.5);
+  white-space: nowrap;
+  width: 32px;
+}
+
+.dim-value {
+  width: 30px;
+  font-size: 13px;
+  color: var(--c-ink);
+}
+
+.dim-stars {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.dim-stars .star {
+  font-size: 11px;
+  color: #E8A838;
+}
+
+.dim-stars .star.empty {
+  color: rgba(74,74,53,0.15);
+}
+
+.dim-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(74,74,53,0.1);
+  overflow: hidden;
+}
+
+.dim-bar span {
+  display: block;
+  height: 100%;
+  background: var(--c-orange);
+  border-radius: 3px;
+  transition: width 800ms ease;
+}
+
+.score-compare {
+  text-align: center;
+  padding-left: 40px;
+  border-left: 1px solid rgba(74,74,53,0.1);
+  font-size: 13px;
+  color: rgba(44,44,42,0.6);
+}
+
+.score-compare strong {
+  font-size: 24px;
+  color: var(--c-orange);
+  margin: 0 4px;
+}
+
+.review-list { }
+
+.review-item {
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(74,74,53,0.08);
+}
+
+.review-item:last-child { border-bottom: none; }
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--c-millet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--c-ink);
+}
+
+.review-user {
+  flex: 1;
+}
+
+.review-name {
+  font-size: 13px;
+  color: var(--c-ink);
+  margin-bottom: 2px;
+}
+
+.review-date {
+  font-size: 11px;
+  color: rgba(44,44,42,0.4);
+}
+
+.review-stars {
+  color: #E8A838;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.review-avg-score {
+  margin-left: 4px;
+  font-size: 12px;
+  color: #E8A838;
+  font-weight: 600;
+}
+
+.review-detail-scores {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(74,74,53,0.08);
+}
+
+.detail-score {
+  font-size: 11px;
+  color: rgba(44,44,42,0.6);
+  background: rgba(74,74,53,0.06);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.review-body {
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(44,44,42,0.7);
+}
+
+.review-images {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.review-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: rgba(74,74,53,0.08);
+}
+
+/* ═══════════════════════════════
+   购买弹窗
+═══════════════════════════════ */
+.modal-top-hint {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  margin: -16px -16px 16px -16px;
+  border-radius: 0;
+  border-top: 1px solid rgba(245, 158, 11, 0.4);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  font-size: 12px;
+  color: #92400E;
+  text-align: center;
+}
+
+.purchase-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+
+.purchase-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: modalFadeIn 200ms ease;
+  margin: auto;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(74,74,53,0.08);
+  font-size: 20px;
+  color: rgba(44,44,42,0.5);
+  cursor: pointer;
+  transition: all 200ms;
+}
+
+.modal-close:hover {
+  background: rgba(74,74,53,0.15);
+  color: var(--c-ink);
+}
+
+.modal-product {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.modal-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4A7A38 0%, #2A5A18 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-img span {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+}
+
+.modal-info { flex: 1; }
+
+.modal-title {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: var(--c-ink);
+  margin-bottom: 4px;
+}
+
+.modal-price {
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  color: var(--c-orange);
+}
+
+.modal-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-quantity label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 24px;
+  border: 1px solid rgba(74,74,53,0.2);
+  overflow: hidden;
+}
+
+.qty-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.qty-btn:hover {
+  background: rgba(74,74,53,0.08);
+}
+
+.qty-input {
+  width: 50px;
+  height: 40px;
+  border: none;
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  color: var(--c-ink);
+  outline: none;
+}
+
+.modal-moq-hint {
+  font-size: 12px;
+  color: var(--c-orange);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.modal-risk-hint {
+  display: none;
+  background: linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(245,158,11,0.06) 100%);
+  border: 1px solid rgba(245,158,11,0.25);
+  color: #B45309;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.modal-risk-hint {
+  background: #fff3e0;
+  color: #e65100;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.modal-stock-bar {
+  margin-bottom: 24px;
+}
+
+.modal-stock-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+  margin-bottom: 8px;
+}
+
+.modal-stock-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(74,74,53,0.1);
+  overflow: hidden;
+}
+
+.modal-stock-fill {
+  height: 100%;
+  background: var(--c-orange);
+  border-radius: 3px;
+}
+
+.modal-stock-text {
+  font-size: 11px;
+  color: rgba(44,44,42,0.5);
+  margin-top: 6px;
+}
+
+.modal-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: rgba(44,44,42,0.6);
+}
+
+.modal-total-price {
+  font-family: "Noto Serif SC", serif;
+  font-size: 24px;
+  color: var(--c-orange);
+}
+
+.modal-submit {
+  width: 100%;
+  padding: 18px;
+  border-radius: 30px;
+  border: none;
+  background: var(--c-orange);
+  font-family: "Noto Serif SC", serif;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: white;
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.modal-submit:hover {
+  background: #C87028;
+}
+
+/* ═══════════════════════════════
+   图片预览弹窗
+═══════════════════════════════ */
+.preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-modal.active {
+  display: flex;
+}
+
+.preview-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.preview-close:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.preview-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.preview-nav:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.preview-nav.prev { left: 20px; }
+.preview-nav.next { right: 20px; }
+
+.preview-content {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.preview-img {
+  max-width: 90%;
+  max-height: 80vh;
+  min-width: 300px;
+  min-height: 300px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #4A7A38 0%, #2A5A18 100%);
+}
+
+.preview-img img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.preview-img-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.2em;
+}
+
+.preview-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+}
+
+/* ═══════════════════════════════
+   店铺详情板块
+═══════════════════════════════ */
+.shop-detail-section {
+  margin-top: 32px;
+}
+
+.shop-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--c-warm-gray);
+}
+
+.shop-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.shop-detail-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--c-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-family: "Ma Shan Zheng", serif;
+  flex-shrink: 0;
+}
+
+.shop-detail-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.shop-detail-name {
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--c-ink);
+  margin-bottom: 4px;
+}
+
+.shop-detail-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-detail-rating .trust-score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #E8A838;
+}
+
+.shop-detail-rating .certified-badge {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--c-orange);
+  color: white;
+}
+
+.shop-detail-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(74,74,53,0.2);
+  background: transparent;
+  font-family: "Noto Serif SC", serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: all 200ms;
+}
+
+.shop-detail-btn:hover {
+  background: var(--c-orange);
+  color: white;
+  border-color: var(--c-orange);
+}
+
+.shop-detail-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  gap: 24px;
+}
+
+.shop-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.shop-stat-value {
+  font-family: "Noto Serif SC", serif;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  color: var(--c-ink);
+}
+
+.shop-stat-label {
+  font-family: "Noto Serif SC", serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.shop-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(74,74,53,0.15);
+}
+
+.shop-detail-certifications {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shop-cert-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(74,74,53,0.08);
+  font-family: "Noto Serif SC", serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.6);
+}
+
+.shop-cert-tag span:first-child {
+  font-size: 10px;
+}
+
+.shop-cert-tag svg {
+  width: 10px;
+  height: 10px;
+  fill: var(--c-orange);
+}
+
+/* ═══════════════════════════════
+   响应式
+═══════════════════════════════ */
+@media (max-width: 1200px) {
+  .product-main {
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .product-main {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-media {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  #detail-main {
+    padding: 24px 24px 60px;
+  }
+  
+  .detail-breadcrumb {
+    padding: 16px 24px 0;
+  }
+  
+  .score-compare {
+    border-left: none;
+    padding-left: 0;
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .btn-cart, .btn-buy {
+    flex: 1 1 calc(50% - 6px);
+  }
+  
+  .btn-favorite {
+    flex: 0 0 100%;
+    padding: 14px;
+  }
+  
+  .detail-tabs {
+    overflow-x: auto;
+  }
+  
+  .tab-btn {
+    padding: 12px 20px;
+    white-space: nowrap;
+  }
+  
+  /* 用户评价板块移动端保持横向 */
+  .review-scores {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .score-compare {
+    border-left: none;
+    border-top: none;
+    padding-left: 16px;
+  }
+}
+
+/* ═══════════════════════════════
+   购物车弹窗样式（复用购买弹窗样式）
+═══════════════════════════════ */
+.cart-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-modal.active {
+  display: flex;
+}
+
+.cart-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.cart-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  animation: modalFadeIn 200ms ease;
+  margin: auto;
+}
+
+.cart-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(74,74,53,0.08);
+  font-size: 20px;
+  color: rgba(44,44,42,0.5);
+  cursor: pointer;
+  transition: all 200ms;
+}
+
+.cart-modal-close:hover {
+  background: rgba(74,74,53,0.15);
+  color: var(--c-ink);
+}
+
+.cart-modal-product {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cart-modal-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4A7A38 0%, #2A5A18 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-modal-img span {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+}
+
+.cart-modal-info {
+  flex: 1;
+}
+
+.cart-modal-title {
+  font-family: "Ma Shan Zheng", serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: var(--c-ink);
+  margin-bottom: 4px;
+}
+
+.cart-modal-price {
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  color: var(--c-orange);
+}
+
+.cart-modal-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cart-modal-quantity label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+}
+
+.cart-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 24px;
+  border: 1px solid rgba(74,74,53,0.2);
+  overflow: hidden;
+}
+
+.cart-qty-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.cart-qty-btn:hover {
+  background: rgba(74,74,53,0.08);
+}
+
+.cart-qty-input {
+  width: 50px;
+  height: 40px;
+  border: none;
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  color: var(--c-ink);
+  outline: none;
+}
+
+.cart-modal-moq-hint {
+  font-size: 12px;
+  color: var(--c-orange);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.cart-modal-stock-bar {
+  margin-bottom: 24px;
+}
+
+.cart-modal-stock-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(44,44,42,0.5);
+  margin-bottom: 8px;
+}
+
+.cart-modal-stock-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(74,74,53,0.1);
+  overflow: hidden;
+}
+
+.cart-modal-stock-fill {
+  height: 100%;
+  background: var(--c-orange);
+  border-radius: 3px;
+}
+
+.cart-modal-stock-text {
+  font-size: 11px;
+  color: rgba(44,44,42,0.5);
+  margin-top: 6px;
+}
+
+.cart-modal-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: rgba(44,44,42,0.6);
+}
+
+.cart-modal-total-price {
+  font-family: "Noto Serif SC", serif;
+  font-size: 24px;
+  color: var(--c-orange);
+}
+
+.cart-modal-submit {
+  width: 100%;
+  padding: 18px;
+  border-radius: 30px;
+  border: none;
+  background: var(--c-orange);
+  font-family: "Noto Serif SC", serif;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: white;
+  cursor: pointer;
+  transition: background 200ms;
+}
+
+.cart-modal-submit:hover {
+  background: #C87028;
+}

@@ -1,0 +1,221 @@
+:root {
+  --c-dark:   #4A4A35;
+  --c-green:  #4A7A38;
+  --c-millet: #E8D8A0;
+  --c-white:  #F8F5EF;
+  --c-text:   #EDE8DF;
+  --c-ink:    #2C2C2A;
+  --c-earth:  #A0846A;
+  --c-warm-gray: #F2EDE5;
+  --c-red:    #C44;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--c-white);
+  color: var(--c-ink);
+  overflow-x: hidden;
+  font-family: "Noto Serif SC", serif;
+}
+
+/* 导航栏 */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 2000;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 48px; height: 64px;
+  background: rgba(248,245,239,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(74,74,53,0.1);
+}
+.nav-left { display: flex; align-items: center; gap: 48px; }
+.nav-logo { font-family: "Ma Shan Zheng", serif; font-size: 22px; letter-spacing: 0.2em; text-decoration: none; color: var(--c-ink); }
+.nav-links { display: flex; gap: 32px; }
+.nav-link { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; text-decoration: none; opacity: 0.75; color: var(--c-ink); }
+.nav-link:hover { opacity: 1; }
+.nav-link.active { opacity: 1; border-bottom: 1px solid currentColor; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-search-wrap { flex: 1; max-width: 600px; margin: 0 24px; position: relative; }
+.nav-search-input { width: 100%; padding: 8px 16px 8px 40px; border-radius: 24px; border: 1px solid rgba(74,74,53,0.25); background: var(--c-white); font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; color: var(--c-ink); outline: none; }
+.nav-search-input::placeholder { color: rgba(74,74,53,0.4); }
+.nav-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; pointer-events: none; color: rgba(74,74,53,0.5); }
+.nav-search-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: color 200ms; color: rgba(74,74,53,0.5); }
+.nav-search-btn svg { width: 14px; height: 14px; }
+.nav-search-btn:hover { color: var(--c-green); }
+.nav-btn { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; letter-spacing: 0.12em; padding: 8px 22px; border-radius: 24px; text-decoration: none; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.3); }
+.nav-btn:hover { background: var(--c-green); color: var(--c-text); border-color: var(--c-green); }
+
+/* Hero区 */
+#hero {
+  position: relative; height: 60vh; min-height: 480px;
+  display: flex; align-items: center;
+  overflow: hidden;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.hero-content {
+  position: relative; z-index: 2;
+  padding-left: 10vw;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.hero-label { font-size: 10px; letter-spacing: 0.5em; color: rgba(232,216,160,0.6); opacity: 0; filter: blur(8px); }
+.hero-title { font-family: "Ma Shan Zheng", serif; font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 0.15em; color: var(--c-text); opacity: 0; filter: blur(20px); }
+.hero-sub { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: clamp(0.85rem, 1.3vw, 1rem); letter-spacing: 0.2em; color: rgba(237,232,223,0.7); opacity: 0; filter: blur(12px); }
+.hero-scroll-hint {
+  position: absolute; bottom: 40px; left: 50%;
+  z-index: 3; display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+}
+.hero-scroll-hint .scroll-content {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  animation: scrollBounce 1.5s ease infinite 1.5s;
+}
+.hero-scroll-hint span {
+  font-family: "Noto Serif SC", serif; font-weight: 300;
+  font-size: 0.72rem; letter-spacing: 0.3em;
+  color: rgba(232,216,160,0.6);
+}
+.hero-scroll-arrow {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, rgba(232,216,160,0.5), transparent);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes scrollBounce {
+  0%,100% { transform: translateY(0); opacity: 0.5; }
+  50%      { transform: translateY(-8px); opacity: 1; }
+}
+
+/* 定位提示条 */
+.location-bar {
+  padding: 14px 64px;
+  display: flex; align-items: center; gap: 16px;
+  font-size: 13px; letter-spacing: 0.08em;
+}
+.location-bar.warn { background: #F5E6B8; color: #6A5A20; }
+.location-bar.ok { background: rgba(74,122,56,0.12); color: var(--c-green); }
+.location-bar-icon { font-size: 16px; }
+.location-bar-text { flex: 1; }
+.location-btn { padding: 6px 16px; border-radius: 16px; border: 1px solid currentColor; background: transparent; font-family: "Noto Serif SC", serif; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; transition: all 200ms; }
+.location-btn:hover { background: currentColor; color: #fff; }
+
+/* 商品列表 */
+#products { background: var(--c-white); padding: 48px 0 80px; }
+.prod-wrap { max-width: 1400px; margin: 0 auto; padding: 0 64px; }
+
+.prod-header { margin-bottom: 24px; }
+.prod-label-top { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.4em; color: var(--c-green); margin-bottom: 10px; }
+.prod-title { font-family: "Ma Shan Zheng", serif; font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: 0.15em; color: var(--c-ink); opacity: 0; filter: blur(12px); }
+
+.prod-controls { display: flex; gap: 16px; align-items: center; margin-top: 16px; }
+.prod-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.prod-filter { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 13px; letter-spacing: 0.1em; padding: 7px 16px; border-radius: 20px; border: 1px solid rgba(74,74,53,0.2); background: transparent; color: rgba(44,44,42,0.6); cursor: pointer; transition: all 200ms; }
+.prod-filter:hover { border-color: var(--c-green); color: var(--c-green); }
+.prod-filter.active { background: var(--c-green); color: #fff; border-color: var(--c-green); }
+.prod-sort { display: flex; align-items: center; gap: 8px; }
+.prod-sort-label { font-size: 12px; letter-spacing: 0.1em; color: rgba(44,44,42,0.4); }
+.prod-sort-select { padding: 7px 12px; border-radius: 16px; border: 1px solid rgba(74,74,53,0.2); background: transparent; font-family: "Noto Serif SC", serif; font-size: 12px; color: var(--c-ink); cursor: pointer; outline: none; }
+
+.prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.prod-card {
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 16px rgba(74,74,53,0.07);
+  cursor: pointer; opacity: 0; transform: translateY(20px);
+}
+.prod-card:hover { box-shadow: 0 8px 28px rgba(74,74,53,0.12); }
+.prod-img-wrap { position: relative; height: 220px; overflow: hidden; background: linear-gradient(135deg, #3A4A2A, #2A3A1A); }
+.prod-img-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.prod-img-placeholder span { font-family: monospace; font-size: 10px; color: rgba(255,255,255,0.3); }
+/* 各类别背景 */
+.prod-card[data-cat="fruit"] .prod-img-placeholder { background: linear-gradient(135deg, #3A4A2A, #2A3A1A); }
+.prod-card[data-cat="meat"] .prod-img-placeholder { background: linear-gradient(135deg, #4A3A2A, #3A2A1A); }
+.prod-card[data-cat="fish"] .prod-img-placeholder { background: linear-gradient(135deg, #2A3A4A, #1A2A3A); }
+.prod-card[data-cat="grain"] .prod-img-placeholder { background: linear-gradient(135deg, #4A4A2A, #3A3A1A); }
+
+.prod-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.badge-urgent { background: #E85A5A; color: #fff; font-size: 10px; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 8px; }
+.badge-discount { background: var(--c-red); color: #fff; font-size: 10px; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 8px; }
+.badge-dist { background: rgba(74,74,53,0.7); color: #fff; font-size: 10px; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 8px; backdrop-filter: blur(4px); }
+.badge-risk { background: rgba(232,160,56,0.9); color: #fff; font-size: 10px; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 8px; }
+.shelf-tip { font-size: 11px; color: var(--c-green); margin-bottom: 8px; display: block; }
+
+.prod-card-body { padding: 16px 18px 18px; }
+.prod-name { font-family: "Ma Shan Zheng", serif; font-size: 1.15rem; letter-spacing: 0.1em; color: var(--c-ink); margin-bottom: 8px; }
+.prod-meta { display: flex; gap: 10px; margin-bottom: 8px; }
+.prod-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.prod-meta-item { font-size: 11px; letter-spacing: 0.06em; color: rgba(44,44,42,0.5); }
+.prod-meta-dist { font-size: 12px; letter-spacing: 0.06em; color: var(--c-green); font-weight: 400; background: rgba(74,122,56,0.1); padding: 3px 10px; border-radius: 12px; }
+.prod-stale { font-size: 12px; letter-spacing: 0.06em; color: #E8A038; margin-bottom: 10px; padding: 6px 10px; background: rgba(232,160,56,0.1); border-radius: 6px; display: inline-block; }
+.prod-storage { font-size: 11px; letter-spacing: 0.04em; line-height: 1.6; color: rgba(44,44,42,0.5); margin-bottom: 14px; min-height: 32px; }
+.prod-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px; }
+.prod-price-original { font-size: 14px; color: rgba(44,44,42,0.35); text-decoration: line-through; }
+.prod-price { font-size: 22px; letter-spacing: 0.05em; color: var(--c-red); font-weight: 400; }
+.prod-price small { font-size: 13px; color: rgba(44,44,42,0.5); }
+.prod-min { font-size: 12px; letter-spacing: 0.06em; color: rgba(44,44,42,0.45); margin-bottom: 14px; display: inline-block; padding: 3px 10px; background: rgba(74,122,56,0.12); border-radius: 12px; }
+.prod-add-btn { width: 100%; padding: 10px; border-radius: 20px; border: 1px solid rgba(74,122,56,0.4); background: transparent; color: var(--c-green); font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 12px; letter-spacing: 0.15em; cursor: pointer; transition: all 200ms; }
+.prod-add-btn:hover { background: var(--c-green); color: #fff; }
+
+/* Footer */
+#footer { background: #2D5A1E; padding: 40px 0 0; margin-top: 80px; }
+.footer-wrap { max-width: 1400px; margin: 0 auto; padding: 0 64px 40px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(237,232,223,0.08); }
+.footer-logo { font-family: "Ma Shan Zheng", serif; font-size: 2rem; letter-spacing: 0.25em; color: var(--c-text); margin-bottom: 16px; }
+.footer-slogan { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.8rem; letter-spacing: 0.2em; line-height: 2; color: rgba(237,232,223,0.7); }
+.footer-links { display: flex; gap: 80px; }
+.footer-col { display: flex; flex-direction: column; gap: 14px; }
+.footer-col-title { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.4em; color: rgba(237,232,223,0.6); margin-bottom: 4px; }
+.footer-col a { font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.875rem; letter-spacing: 0.12em; color: rgba(237,232,223,0.85); text-decoration: none; }
+.footer-col a:hover { color: var(--c-text); }
+.footer-bottom { text-align: center; padding: 24px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.2em; color: rgba(237,232,223,0.5); }
+
+/* 弹窗 */
+#modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 300ms; }
+#modal.show { opacity: 1; pointer-events: auto; }
+.modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.modal-content { position: relative; z-index: 1; width: 90%; max-width: 420px; background: var(--c-white); border-radius: 20px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(74,74,53,0.08); color: var(--c-ink); font-size: 18px; cursor: pointer; }
+.modal-product { display: flex; gap: 14px; margin-bottom: 20px; }
+.modal-product-img { width: 72px; height: 72px; border-radius: 10px; background: linear-gradient(135deg, #3A4A2A, #2A3A1A); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.modal-product-img span { font-family: monospace; font-size: 8px; color: rgba(255,255,255,0.3); }
+.modal-product-info { flex: 1; }
+.modal-product-name { font-family: "Ma Shan Zheng", serif; font-size: 1.05rem; letter-spacing: 0.1em; color: var(--c-ink); margin-bottom: 6px; }
+.modal-product-meta { font-size: 11px; color: rgba(44,44,42,0.5); margin-bottom: 4px; }
+.modal-product-price { font-size: 16px; color: var(--c-red); }
+.modal-info { font-size: 12px; letter-spacing: 0.05em; line-height: 1.8; color: rgba(44,44,42,0.7); margin-bottom: 20px; padding: 14px; background: var(--c-warm-gray); border-radius: 10px; }
+.modal-info strong { color: var(--c-red); }
+.modal-stock-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.modal-stock-bar { height: 4px; background: rgba(74,74,53,0.1); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+.modal-stock-fill { height: 100%; background: var(--c-green); }
+.modal-btns { display: flex; gap: 12px; }
+.modal-btn { flex: 1; padding: 12px; border-radius: 10px; font-family: "Noto Serif SC", serif; font-size: 13px; letter-spacing: 0.12em; cursor: pointer; transition: all 200ms; }
+.modal-btn-secondary { background: transparent; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.2); }
+.modal-btn-secondary:hover { border-color: var(--c-green); color: var(--c-green); }
+.modal-btn-primary { background: var(--c-green); color: #fff; border: 1px solid var(--c-green); }
+.modal-btn-primary:hover { background: #3A6A28; }
+
+/* 风险提示弹窗 */
+#riskModal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 300ms; }
+#riskModal.show { opacity: 1; pointer-events: auto; }
+.risk-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.risk-content { position: relative; z-index: 1; width: 90%; max-width: 400px; background: var(--c-white); border-radius: 20px; padding: 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.risk-icon { font-size: 48px; margin-bottom: 16px; }
+.risk-title { font-family: "Ma Shan Zheng", serif; font-size: 1.4rem; letter-spacing: 0.12em; color: var(--c-ink); margin-bottom: 12px; }
+.risk-text { font-weight: 300; font-size: 13px; letter-spacing: 0.04em; line-height: 1.8; color: rgba(44,44,42,0.7); margin-bottom: 24px; }
+.risk-btns { display: flex; flex-direction: column; gap: 10px; }
+.risk-btn { padding: 12px; border-radius: 24px; font-family: "Noto Serif SC", serif; font-size: 13px; letter-spacing: 0.12em; cursor: pointer; transition: all 200ms; }
+.risk-btn-primary { background: var(--c-green); color: #fff; border: none; }
+.risk-btn-primary:hover { background: #3A6A28; }
+.risk-btn-secondary { background: transparent; color: var(--c-ink); border: 1px solid rgba(74,74,53,0.25); }
+.risk-btn-secondary:hover { border-color: var(--c-green); color: var(--c-green); }
+
+#toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--c-ink); color: var(--c-text); padding: 14px 32px; border-radius: 40px; font-family: "Noto Serif SC", serif; font-weight: 300; font-size: 14px; letter-spacing: 0.15em; box-shadow: 0 8px 32px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 300ms, transform 300ms; z-index: 9999; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

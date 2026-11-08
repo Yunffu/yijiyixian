@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品详情 · 一季一鲜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn">
+  <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin>
+  <link href="https://fonts.googleapis.cn/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="css/product-detail-styles.css">
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <nav id="nav" class="on-light">
+    <div class="nav-left">
+      <a class="nav-logo" href="index.html">一季一鲜</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="farm-adopt.html" class="nav-link">认养农场</a>
+        <a href="whole-sale.html" class="nav-link">滞留物批发</a>
+        <a href="profile.html" class="nav-link">我的</a>
+        <a href="join.html" class="nav-link">加入我们</a>
+      </div>
+    </div>
+    <div class="nav-search-wrap">
+      <svg class="nav-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="6.5" cy="6.5" r="5"/>
+        <line x1="10.5" y1="10.5" x2="14" y2="14"/>
+      </svg>
+      <input class="nav-search-input" type="text" id="searchInput" placeholder="搜索农产品、农户、产地…" autocomplete="off">
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-btn">登录 / 注册</a>
+    </div>
+  </nav>
+
+  <!-- 返回按钮 -->
+  <div class="back-list-wrap" id="backBtnWrap">
+    <a href="#" class="back-list-btn" id="backBtn" onclick="history.back(); return false;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+      <span id="backBtnText">返回列表</span>
+    </a>
+  </div>
+
+  <!-- 页面内容 -->
+  <main id="detail-main">
+    <!-- 面包屑 -->
+    <div class="detail-breadcrumb">
+      <a href="index.html">首页</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>农产品</span>
+      <span class="breadcrumb-sep">/</span>
+      <span id="breadcrumbName">商品详情</span>
+    </div>
+
+    <!-- 商品主体 -->
+    <section class="product-main">
+      <!-- 左侧：媒体展示 -->
+      <div class="product-media">
+        <div class="media-main" id="mediaMain">
+          <div class="media-placeholder" id="mediaPlaceholder">
+            <span id="mediaPlaceholderText">商品主图</span>
+          </div>
+          <div class="media-tags">
+            <span class="media-tag" id="mainTag">推荐</span>
+          </div>
+          <button class="media-zoom-btn" id="zoomBtn" title="点击预览">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="9" cy="9" r="7"/>
+              <line x1="14" y1="14" x2="18" y2="18"/>
+              <line x1="12.5" y1="7.5" x2="14.5" y2="7.5"/>
+              <line x1="9" y1="12.5" x2="9" y2="14.5"/>
+            </svg>
+          </button>
+        </div>
+        <div class="media-thumbs" id="mediaThumbs">
+          <button class="thumb-item active" data-index="0"><span>产地全景</span></button>
+          <button class="thumb-item" data-index="1"><span>产品近照</span></button>
+          <button class="thumb-item" data-index="2"><span>农户工作</span></button>
+        </div>
+      </div>
+
+      <!-- 右侧：商品信息 -->
+      <div class="product-info">
+        <!-- 产品标签 -->
+        <div class="product-tags" id="productTags">
+          <span class="product-tag-badge" id="productTag">深山守望者</span>
+          <span class="product-region-badge" id="productRegion">东北</span>
+        </div>
+
+        <!-- 产品标题 -->
+        <h1 class="product-title" id="productName">商品名称</h1>
+
+        <!-- 农户信息 -->
+        <div class="product-meta">
+          <span class="product-region">产地：<span id="productLocation">—</span></span>
+          <span class="product-farmer">农户：<span id="farmerName">—</span></span>
+        </div>
+
+        <!-- 价格区域 -->
+        <div class="price-section">
+          <div class="price-main">
+            <span class="price-symbol">¥</span>
+            <span class="price-value" id="totalPrice">0</span>
+            <span class="price-unit" id="priceUnit">/ 斤</span>
+          </div>
+        </div>
+
+        <!-- 规格/属性展示 -->
+        <div class="spec-section">
+          <div class="spec-label">产品描述</div>
+          <div class="product-desc-text" id="productDesc">—</div>
+        </div>
+
+        <!-- 库存/销量 -->
+        <div class="stock-section">
+          <div class="stock-info">
+            <span class="stock-label">剩余可购</span>
+            <span class="stock-count" id="stockCount">-</span>
+            <span class="stock-unit" id="stockUnit">份</span>
+          </div>
+          <div class="stock-progress-wrap">
+            <div class="stock-progress-bar">
+              <div class="stock-progress-fill" id="stockFill"></div>
+            </div>
+            <div class="stock-stats">
+              <span class="stock-sold">已售 <span id="soldCount">0</span></span>
+              <span class="stock-total">总库存 <span id="totalStock">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+          <button class="btn btn-cart" id="addCartBtn" onclick="openCartModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            加入待付款
+          </button>
+          <button class="btn btn-buy" id="buyNowBtn" onclick="showModal()">
+            立即购买
+          </button>
+          <button class="btn btn-favorite" id="favoriteBtn" onclick="toggleFav()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+
+        </div>
+    </section>
+
+    <!-- 详情内容区 -->
+    <section class="detail-content">
+      <!-- Tab 导航 -->
+      <div class="detail-tabs">
+        <button class="tab-btn active" data-tab="product">产品详情</button>
+        <button class="tab-btn" data-tab="review">用户评价</button>
+      </div>
+
+      <!-- Tab 内容 -->
+      <div class="tab-contents">
+        <!-- 产品详情 -->
+        <div class="tab-content active" id="tab-product">
+          <div class="product-detail-content">
+            <h3>产品信息</h3>
+            <table class="detail-table" id="detailTable">
+              <!-- JS渲染 -->
+            </table>
+          </div>
+        </div>
+
+        <!-- 用户评价 -->
+        <div class="tab-content" id="tab-review">
+          <!-- 评分维度 -->
+          <div class="review-scores">
+            <div class="score-main">
+              <span class="score-value" id="avgScore">4.8</span>
+              <div class="score-stars" id="scoreStars">
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star filled">★</span>
+                <span class="star half">★</span>
+              </div>
+              <span class="score-label">综合评分</span>
+            </div>
+            <div class="score-dimensions">
+              <div class="score-dim">
+                <span class="dim-label">质量</span>
+                <span class="dim-value" id="qualityScore">4.8</span>
+                <span class="dim-stars" id="qualityStars">
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star half">★</span>
+                </span>
+                <span class="dim-bar"><span id="qualityFill" style="width: 96%"></span></span>
+              </div>
+              <div class="score-dim">
+                <span class="dim-label">售后</span>
+                <span class="dim-value" id="serviceScore">4.6</span>
+                <span class="dim-stars" id="serviceStars">
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star empty">★</span>
+                </span>
+                <span class="dim-bar"><span id="serviceFill" style="width: 92%"></span></span>
+              </div>
+              <div class="score-dim">
+                <span class="dim-label">物流</span>
+                <span class="dim-value" id="deliveryScore">4.7</span>
+                <span class="dim-stars" id="deliveryStars">
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star filled">★</span>
+                  <span class="star half">★</span>
+                </span>
+                <span class="dim-bar"><span id="deliveryFill" style="width: 94%"></span></span>
+              </div>
+            </div>
+            <div class="score-compare">
+              <span>高于平台</span>
+              <strong>92%</strong>
+              <span>的农户</span>
+            </div>
+          </div>
+
+          <!-- 评价列表 -->
+          <div class="review-list" id="reviewList">
+            <!-- JS渲染 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 店铺信息卡片 - 置于Tab内容下方 -->
+      <div class="detail-shop-card">
+        <div class="shop-detail-header">
+          <div class="shop-detail-avatar" id="detailShopAvatar">
+            <span>-</span>
+          </div>
+          <div class="shop-detail-info">
+            <div class="shop-detail-name" id="detailShopName">农户名称</div>
+            <div class="shop-detail-rating">
+              <span class="trust-score">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="#E8A838">
+                  <path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/>
+                </svg>
+                <span id="detailShopScore">4.8</span>
+              </span>
+              <span class="certified-badge" id="detailShopBadge">已认证</span>
+            </div>
+          </div>
+          <button class="shop-detail-btn" id="detailShopBtn">进店逛逛</button>
+        </div>
+        <div class="shop-detail-stats">
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="detailShopProductCount">5</span>
+            <span class="shop-stat-label">在售商品</span>
+          </div>
+          <div class="shop-stat-divider"></div>
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="detailShopTotalSales">1280</span>
+            <span class="shop-stat-label">总销量</span>
+          </div>
+          <div class="shop-stat-divider"></div>
+          <div class="shop-stat-item">
+            <span class="shop-stat-value" id="detailShopFans">860</span>
+            <span class="shop-stat-label">粉丝数</span>
+          </div>
+        </div>
+        <div class="shop-detail-certifications" id="detailShopCertifications">
+          <span class="shop-cert-tag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+            平台认证农户
+          </span>
+          <span class="shop-cert-tag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+            产品质量保证
+          </span>
+          <span class="shop-cert-tag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.5l-4.5 2.2.9-5L.8 6.2l5-.7z"/></svg>
+            产地直发保障
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 购买弹窗 -->
+  <div class="purchase-modal" id="purchaseModal">
+    <div class="modal-overlay" onclick="hideModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideModal()">×</button>
+      <div class="modal-product">
+        <div class="modal-img" id="modalImg"><span>商品图</span></div>
+        <div class="modal-info">
+          <h3 class="modal-title" id="modalTitle">-</h3>
+          <div class="modal-price" id="modalPrice">¥-</div>
+        </div>
+      </div>
+      <div class="modal-spec">
+        <label class="modal-spec-label">购买数量</label>
+        <div class="modal-quantity">
+          <button class="qty-btn minus" id="modalQtyMinus">-</button>
+          <input type="number" class="qty-input" id="modalQtyInput" value="1" min="1">
+          <button class="qty-btn plus" id="modalQtyPlus">+</button>
+        </div>
+      </div>
+      <div class="modal-spec" style="margin-top:12px;">
+        <label class="modal-spec-label">收货人</label>
+        <input type="text" id="modalReceiverName" placeholder="请输入收货人姓名" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div class="modal-spec" style="margin-top:12px;">
+        <label class="modal-spec-label">联系电话</label>
+        <input type="tel" id="modalReceiverPhone" placeholder="请输入手机号" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div class="modal-spec" style="margin-top:12px;">
+        <label class="modal-spec-label">收货地址</label>
+        <input type="text" id="modalReceiverAddress" placeholder="请输入详细地址" style="width:100%;padding:8px 12px;border:1px solid rgba(74,74,53,0.2);border-radius:8px;font-size:13px;font-family:inherit;outline:none;">
+      </div>
+      <div class="modal-stock-bar">
+        <div class="modal-stock-label">剩余库存</div>
+        <div class="modal-stock-progress">
+          <div class="modal-stock-fill" id="modalStockFill"></div>
+        </div>
+        <div class="modal-stock-text" id="modalStockText">剩余 - 份</div>
+      </div>
+      <div class="modal-total">
+        <span>合计</span>
+        <span class="modal-total-price" id="modalTotalPrice">¥-</span>
+      </div>
+      <button class="modal-submit" id="modalSubmit" onclick="confirmOrder()">确认购买</button>
+    </div>
+  </div>
+
+  <!-- 图片预览弹窗 -->
+  <div class="preview-modal" id="previewModal">
+    <button class="preview-close" id="previewClose">×</button>
+    <button class="preview-nav prev" id="previewPrev">‹</button>
+    <div class="preview-content" id="previewContent">
+      <div class="preview-img" id="previewImg"></div>
+    </div>
+    <button class="preview-nav next" id="previewNext">›</button>
+    <div class="preview-counter" id="previewCounter">1 / 3</div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-wrap">
+      <div class="footer-brand">
+        <div class="footer-logo">一季一鲜</div>
+        <p class="footer-slogan">帮助农友 · 助农增收</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-col-title">平台</span>
+          <a href="index.html">首页</a>
+          <a href="farm-adopt.html">认养农场</a>
+          <a href="whole-sale.html">滞留物批发</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">关于</span>
+          <a href="join.html">加入我们</a>
+          <a href="#">联系我们</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 一季一鲜 · 帮助农友平台 版权所有
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script src="js/api.js"></script>
+  <script src="data.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ══════════════════════════════
+       返回按钮（根据来源页面决定返回目标）
+    ══════════════════════════════ */
+    (function initBackButton() {
+      const params = new URLSearchParams(window.location.search);
+      const from = params.get('from');
+      const farmer = params.get('farmer');
+      const id = params.get('id');
+      const anchor = params.get('anchor');
+
+      const backBtn = document.getElementById('backBtn');
+      const backBtnText = document.getElementById('backBtnText');
+
+      if (from === 'store' && farmer) {
+        // 从商铺进入详情页 → 显示"返回列表"
+        const originListUrl = sessionStorage.getItem('originListUrl') || 'products.html';
+        backBtn.href = originListUrl;
+        backBtn.onclick = null;
+        backBtnText.textContent = '返回列表';
+      } else if (from === 'index') {
+        // 从首页进入详情页：显示"返回列表"，跳转到首页#products
+        const targetUrl = anchor ? 'index.html#' + anchor : 'index.html';
+        backBtn.href = targetUrl;
+        backBtn.onclick = null;
+        backBtnText.textContent = '返回列表';
+      } else if (from === 'products') {
+        // 从商品列表进入详情页：显示"返回列表"，跳转回商品列表
+        const searchKey = params.get('searchKey');
+        const searchHash = params.get('searchHash');
+        if (searchKey) {
+          const hashPart = searchHash ? '#' + searchHash : '';
+          backBtn.href = 'products.html?q=' + encodeURIComponent(searchKey) + hashPart;
+        } else {
+          backBtn.href = 'products.html';
+        }
+        backBtn.onclick = null;
+        backBtnText.textContent = '返回列表';
+      } else if (from === 'profile') {
+        // 从个人中心进入详情页：显示"返回我的"，跳转回个人中心
+        backBtn.href = 'profile.html';
+        backBtn.onclick = null;
+        backBtnText.textContent = '返回我的';
+      }
+      // 其他情况（从认养页/滞留页直接进入等）：保持默认 history.back() 行为
+    })();
+
+    /* ══════════════════════════════
+       搜索框
+    ══════════════════════════════ */
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = this.value.trim();
+        if (q) {
+          window.location.href = 'products.html#q=' + encodeURIComponent(q);
+        }
+      }
+    });
+
+    /* ══════════════════════════════
+       获取商品数据
+    ══════════════════════════════ */
+    const productId = new URLSearchParams(window.location.search).get('id');
+    const product = PRODUCTS.find(p => p.id === productId);
+
+    if (!product) {
+      document.getElementById('productName').textContent = '商品不存在';
+    }
+
+    // 页面数据
+    const pageData = {
+      id: product?.id || '',
+      name: product?.name || '未知商品',
+      tag: product?.tag || '',
+      region: product?.region || '',
+      location: product?.loc || '',
+      desc: product?.desc || '',
+      price: parseInt(product?.price?.replace('¥', '') || '0'),
+      quantity: product?.quantity || 0,
+      sold: Math.floor((product?.quantity || 0) * 0.7)
+    };
+
+    /* ══════════════════════════════
+       Tab 切换
+    ══════════════════════════════ */
+    function initTabs() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          tabContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === `tab-${tab}`) {
+              content.classList.add('active');
+            }
+          });
+        });
+      });
+    }
+
+    /* ══════════════════════════════
+       页面渲染
+    ══════════════════════════════ */
+    document.getElementById('productName').textContent = pageData.name;
+    document.getElementById('productTag').textContent = pageData.tag;
+    document.getElementById('productRegion').textContent = pageData.region;
+    document.getElementById('productLocation').textContent = pageData.location;
+    document.getElementById('productDesc').textContent = pageData.desc;
+    document.getElementById('totalPrice').textContent = pageData.price;
+    document.title = `${pageData.name} · 一季一鲜`;
+    document.getElementById('breadcrumbName').textContent = pageData.name;
+
+    // 库存显示
+    const remaining = pageData.quantity - pageData.sold;
+    document.getElementById('stockCount').textContent = remaining;
+    document.getElementById('soldCount').textContent = pageData.sold;
+    document.getElementById('totalStock').textContent = pageData.quantity;
+    const stockPercent = pageData.quantity > 0 ? (pageData.sold / pageData.quantity * 100) : 0;
+    document.getElementById('stockFill').style.width = stockPercent + '%';
+
+    // 渲染农户信息
+    if (product?.farmer) {
+      document.getElementById('farmerName').textContent = product.farmer;
+      document.getElementById('detailShopName').textContent = product.farmer;
+      document.getElementById('detailShopAvatar').innerHTML = `<span>${product.farmer.charAt(0)}</span>`;
+    }
+    if (product?.rating) {
+      document.getElementById('detailShopScore').textContent = product.rating;
+    }
+
+    // 渲染产品详情表格
+    function renderProductDetails() {
+      const details = {
+        '产品名称': pageData.name,
+        '产地': pageData.location,
+        '产品标签': pageData.tag,
+        '产品描述': pageData.desc,
+        '库存状态': pageData.quantity > 0 ? '有货' : '缺货',
+        '产品分类': product?.cat === 'fruit' ? '水果' : product?.cat === 'veg' ? '蔬菜' : product?.cat === 'meat' ? '蛋奶肉' : product?.cat === 'fish' ? '水产' : '其他'
+      };
+      const table = document.getElementById('detailTable');
+      table.innerHTML = Object.entries(details).map(([key, value]) => `
+        <tr><td>${key}</td><td>${value}</td></tr>
+      `).join('');
+    }
+
+    /* ══════════════════════════════
+       店铺信息渲染
+    ══════════════════════════════ */
+    function renderShopInfo() {
+      // 统计该农户在售商品数量
+      const farmerProducts = PRODUCTS.filter(p => p.farmer === product?.farmer);
+      document.getElementById('detailShopProductCount').textContent = farmerProducts.length || 5;
+      // 模拟总销量
+      document.getElementById('detailShopTotalSales').textContent = Math.floor(Math.random() * 2000 + 500);
+      // 模拟粉丝数
+      document.getElementById('detailShopFans').textContent = Math.floor(Math.random() * 1000 + 200);
+      // 店铺按钮跳转链接
+      const shopBtn = document.getElementById('detailShopBtn');
+      const farmerName = product?.farmer;
+      if (shopBtn && farmerName) {
+        shopBtn.style.cursor = 'pointer';
+        shopBtn.onclick = function() {
+          window.location.href = 'store.html?farmer=' + encodeURIComponent(farmerName) + '&from=detail&id=' + encodeURIComponent(pageData.id);
+        };
+      } else if (shopBtn) {
+        shopBtn.onclick = function() {
+          window.location.href = 'store.html';
+        };
+      }
+    }
+
+    /* ══════════════════════════════
+       评论数据 - 评分逻辑与 farm-detail.js 一致
+       使用3个维度: 质量、售后、物流
+    ══════════════════════════════ */
+    // 模拟评分数据（实际应从产品数据获取）
+    const reviewScores = { quality: 4.8, service: 4.6, delivery: 4.7 };
+    const reviews = [
+      { name: '张**', avatar: '张', score: 5, date: '2026-02-20', content: '收到货了，品质很好，跟描述的一致，会再次购买！', hasImg: false },
+      { name: '李**', avatar: '李', score: 4, date: '2026-01-15', content: '包装很讲究，发货速度快，收到后立刻尝了，口感不错！', hasImg: false },
+      { name: '王**', avatar: '王', score: 5, date: '2025-12-28', content: '已经是第三次购买了，品质一直很稳定，值得推荐！', hasImg: true },
+    ];
+
+    function renderReviews() {
+      const p = product;
+
+      // 使用产品自带的分类评分（如果没有则使用默认值），与 farm-detail.js 一致
+      const quality = p?.reviewScores?.quality || reviewScores.quality;
+      const service = p?.reviewScores?.service || reviewScores.service;
+      const delivery = p?.reviewScores?.delivery || reviewScores.delivery;
+
+      // 综合评分 = 三个分类评分的平均值，与 farm-detail.js 一致
+      const avgScore = ((quality + service + delivery) / 3).toFixed(1);
+      document.getElementById('avgScore').textContent = avgScore;
+
+      // 更新各维度分数和进度条
+      document.getElementById('qualityScore').textContent = quality.toFixed(1);
+      document.getElementById('qualityFill').style.width = (quality / 5 * 100) + '%';
+      document.getElementById('serviceScore').textContent = service.toFixed(1);
+      document.getElementById('serviceFill').style.width = (service / 5 * 100) + '%';
+      document.getElementById('deliveryScore').textContent = delivery.toFixed(1);
+      document.getElementById('deliveryFill').style.width = (delivery / 5 * 100) + '%';
+
+      // 更新综合评分星星（使用 farm-detail.js 的 generateStars 逻辑）
+      const scoreStarsContainer = document.getElementById('scoreStars');
+      if (scoreStarsContainer) {
+        scoreStarsContainer.innerHTML = generateStars(parseFloat(avgScore));
+      }
+
+      // 渲染评价列表
+      const list = document.getElementById('reviewList');
+      const productReviews = p?.reviews || reviews;
+      list.innerHTML = productReviews.length > 0 ? productReviews.map(r => `
+        <div class="review-item">
+          <div class="review-header">
+            <div class="review-avatar">${r.avatar || r.name?.charAt(0) || '-'}</div>
+            <div class="review-user">
+              <div class="review-name">${r.name || r.user || '-'}</div>
+              <div class="review-date">${r.date || '-'}</div>
+            </div>
+            <div class="review-stars">${'★'.repeat(r.score || 5)}</div>
+          </div>
+          <div class="review-body">${r.content || ''}</div>
+          ${r.hasImg || (r.images && r.images.length > 0) ? '<div class="review-images"><div class="review-img"></div></div>' : ''}
+        </div>
+      `).join('') : '<p style="text-align:center;color:rgba(44,44,42,0.5);padding:40px;">暂无评价</p>';
+    }
+
+    function generateStars(score) {
+      const fullStars = Math.floor(score);
+      const hasHalf = score % 1 >= 0.5;
+      let html = '';
+      for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+          html += '<span class="star filled">★</span>';
+        } else if (i === fullStars && hasHalf) {
+          html += '<span class="star half">★</span>';
+        } else {
+          html += '<span class="star empty">★</span>';
+        }
+      }
+      return html;
+    }
+
+    /* ══════════════════════════════
+       图片切换 & 预览
+    ══════════════════════════════ */
+    let currentImgIdx = 0;
+    const totalImages = 3;
+    const thumbs = document.querySelectorAll('.thumb-item');
+    const imgLabels = ['产地全景', '产品近照', '农户工作'];
+    const imgColors = [
+      'linear-gradient(135deg, #4A7A38 0%, #2A5A18 100%)',
+      'linear-gradient(135deg, #6B8E23 0%, #3A5A10 100%)',
+      'linear-gradient(135deg, #8B7355 0%, #5A4030 100%)'
+    ];
+
+    function switchImg(idx) {
+      currentImgIdx = idx;
+      const placeholder = document.getElementById('mediaPlaceholder');
+      const label = document.getElementById('mediaPlaceholderText');
+      placeholder.style.background = imgColors[idx];
+      label.textContent = imgLabels[idx];
+      thumbs.forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+      });
+    }
+
+    thumbs.forEach((thumb, i) => {
+      thumb.addEventListener('click', () => switchImg(i));
+    });
+
+    // 预览弹窗
+    const previewModal = document.getElementById('previewModal');
+    const previewClose = document.getElementById('previewClose');
+    const previewPrev = document.getElementById('previewPrev');
+    const previewNext = document.getElementById('previewNext');
+    const previewImg = document.getElementById('previewImg');
+    const previewCounter = document.getElementById('previewCounter');
+
+    function updatePreview() {
+      previewImg.style.background = imgColors[currentImgIdx];
+      previewImg.innerHTML = `<span style="color:rgba(255,255,255,0.3);font-family:'Noto Serif SC',serif;font-size:16px;letter-spacing:0.2em;">${imgLabels[currentImgIdx]}</span>`;
+      previewCounter.textContent = `${currentImgIdx + 1} / ${totalImages}`;
+    }
+
+    document.getElementById('zoomBtn').addEventListener('click', () => {
+      updatePreview();
+      previewModal.classList.add('active');
+    });
+
+    previewClose.addEventListener('click', () => {
+      previewModal.classList.remove('active');
+    });
+
+    previewModal.addEventListener('click', (e) => {
+      if (e.target === previewModal) previewModal.classList.remove('active');
+    });
+
+    previewPrev.addEventListener('click', () => {
+      currentImgIdx = (currentImgIdx - 1 + totalImages) % totalImages;
+      switchImg(currentImgIdx);
+      updatePreview();
+    });
+
+    previewNext.addEventListener('click', () => {
+      currentImgIdx = (currentImgIdx + 1) % totalImages;
+      switchImg(currentImgIdx);
+      updatePreview();
+    });
+
+    // 初始化
+    switchImg(0);
+
+    /* ══════════════════════════════
+       购买逻辑
+    ══════════════════════════════ */
+    let qty = 1;
+    let currentPrice = pageData.price;
+
+    function updatePrice() {
+      document.getElementById('totalPrice').textContent = currentPrice * qty;
+    }
+
+    /* ══════════════════════════════
+       Toast 提示
+    ══════════════════════════════ */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function addCart() {
+      showToast('已加入待付款');
+    }
+
+    let isCartMode = false;
+
+    function openCartModal() {
+      // 检查是否登录
+      if (!AuthAPI.isLoggedIn()) {
+        showToast('请先登录');
+        setTimeout(() => window.location.href = 'profile.html', 1000);
+        return;
+      }
+      // 检查收货地址
+      (async () => {
+        try {
+          const addrData = await UserAPI.getAddress();
+          if (!addrData.receiver_name || !addrData.receiver_phone || !addrData.receiver_address) {
+            showToast('请先到"我的-账户设置"填写完整收货地址');
+            setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+            return;
+          }
+        } catch (e) {
+          const saved = localStorage.getItem('receiverInfo');
+          if (saved) {
+            try {
+              const info = JSON.parse(saved);
+              if (!info.name || !info.phone || !info.address) {
+                showToast('请先到"我的-账户设置"填写完整收货地址');
+                setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+                return;
+              }
+            } catch (e2) {
+              showToast('请先到"我的-账户设置"填写完整收货地址');
+              setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+              return;
+            }
+          } else {
+            showToast('请先到"我的-账户设置"填写完整收货地址');
+            setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+            return;
+          }
+        }
+        isCartMode = true;
+        document.getElementById('modalTitle').textContent = pageData.name;
+        document.getElementById('modalPrice').textContent = `¥ ${currentPrice * qty}`;
+        document.getElementById('modalQtyInput').value = qty;
+        document.getElementById('modalStockText').textContent = `${remaining} 份`;
+        document.getElementById('modalStockFill').style.width = stockPercent + '%';
+        document.getElementById('modalTotalPrice').textContent = `¥ ${currentPrice * qty}`;
+        document.getElementById('modalSubmit').textContent = '加入待付款';
+        document.getElementById('purchaseModal').classList.add('active');
+        loadSavedAddress();
+      })();
+    }
+
+    async function toggleFav() {
+      const btn = document.getElementById('favoriteBtn');
+      if (!window.AuthAPI?.isLoggedIn()) {
+        showToast('请先登录');
+        return;
+      }
+      try {
+        const result = await window.FavoriteAPI.toggle(pageData.id);
+        btn.style.color = result.favorited ? '#E85A5A' : 'rgba(44,44,42,0.4)';
+        btn.style.borderColor = result.favorited ? '#E85A5A' : 'rgba(74,74,53,0.2)';
+        showToast(result.favorited ? '已收藏' : '取消收藏');
+        // 更新 profile 页面的收藏数
+        updateFavoriteCountInProfile(result.favorited ? 1 : -1);
+      } catch (e) {
+        showToast('操作失败');
+      }
+    }
+
+    // 更新 profile 页面的收藏数统计（通过 localStorage 事件）
+    function updateFavoriteCountInProfile(delta) {
+      localStorage.setItem('favoriteCountUpdate', JSON.stringify({ delta, time: Date.now() }));
+    }
+
+    // 页面加载时检查收藏状态
+    async function checkFavoriteStatus() {
+      if (!window.AuthAPI?.isLoggedIn()) return;
+      const btn = document.getElementById('favoriteBtn');
+      try {
+        const { favorited } = await window.FavoriteAPI.check(pageData.id);
+        btn.style.color = favorited ? '#E85A5A' : 'rgba(44,44,42,0.4)';
+        btn.style.borderColor = favorited ? '#E85A5A' : 'rgba(74,74,53,0.2)';
+      } catch (e) {}
+    }
+
+    /* ══════════════════════════════
+       购买弹窗
+    ══════════════════════════════ */
+    function showModal() {
+      // 检查是否登录
+      if (!AuthAPI.isLoggedIn()) {
+        showToast('请先登录');
+        setTimeout(() => window.location.href = 'profile.html', 1000);
+        return;
+      }
+      // 检查收货地址
+      (async () => {
+        try {
+          const addrData = await UserAPI.getAddress();
+          if (!addrData.receiver_name || !addrData.receiver_phone || !addrData.receiver_address) {
+            showToast('请先到"我的-账户设置"填写完整收货地址');
+            setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+            return;
+          }
+        } catch (e) {
+          const saved = localStorage.getItem('receiverInfo');
+          if (saved) {
+            try {
+              const info = JSON.parse(saved);
+              if (!info.name || !info.phone || !info.address) {
+                showToast('请先到"我的-账户设置"填写完整收货地址');
+                setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+                return;
+              }
+            } catch (e2) {
+              showToast('请先到"我的-账户设置"填写完整收货地址');
+              setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+              return;
+            }
+          } else {
+            showToast('请先到"我的-账户设置"填写完整收货地址');
+            setTimeout(() => window.location.href = 'http://localhost:3001/profile.html#section-settings', 5000);
+            return;
+          }
+        }
+        isCartMode = false;
+        document.getElementById('modalTitle').textContent = pageData.name;
+        document.getElementById('modalPrice').textContent = `¥ ${currentPrice * qty}`;
+        document.getElementById('modalQtyInput').value = qty;
+        document.getElementById('modalStockText').textContent = `${remaining} 份`;
+        document.getElementById('modalStockFill').style.width = stockPercent + '%';
+        document.getElementById('modalTotalPrice').textContent = `¥ ${currentPrice * qty}`;
+        document.getElementById('modalSubmit').textContent = '确认购买';
+        document.getElementById('purchaseModal').classList.add('active');
+        loadSavedAddress();
+      })();
+    }
+
+    function hideModal() {
+      document.getElementById('purchaseModal').classList.remove('active');
+    }
+
+    // 加载收货地址（从服务器获取）
+    async function loadSavedAddress() {
+      if (!window.AuthAPI?.isLoggedIn()) return;
+
+      try {
+        const data = await window.UserAPI.getAddress();
+        document.getElementById('modalReceiverName').value = data.receiver_name || '';
+        document.getElementById('modalReceiverPhone').value = data.receiver_phone || '';
+        document.getElementById('modalReceiverAddress').value = data.receiver_address || '';
+      } catch (e) {
+        // 如果获取失败，尝试从本地存储加载
+        const saved = localStorage.getItem('receiverInfo');
+        if (saved) {
+          try {
+            const info = JSON.parse(saved);
+            document.getElementById('modalReceiverName').value = info.name || '';
+            document.getElementById('modalReceiverPhone').value = info.phone || '';
+            document.getElementById('modalReceiverAddress').value = info.address || '';
+          } catch (e2) {}
+        }
+      }
+    }
+
+    // 保存收货地址
+    function saveReceiverInfo(name, phone, address) {
+      localStorage.setItem('receiverInfo', JSON.stringify({
+        name: name,
+        phone: phone,
+        address: address
+      }));
+      // 同时保存到服务器
+      window.UserAPI?.updateAddress(name, phone, address);
+    }
+
+    document.getElementById('modalQtyMinus').addEventListener('click', () => {
+      const input = document.getElementById('modalQtyInput');
+      let val = parseInt(input.value) || 1;
+      if (val > 1) { val--; input.value = val; document.getElementById('modalTotalPrice').textContent = `¥ ${currentPrice * val}`; }
+    });
+
+    document.getElementById('modalQtyPlus').addEventListener('click', () => {
+      const input = document.getElementById('modalQtyInput');
+      let val = parseInt(input.value) || 1;
+      if (val < remaining) { val++; input.value = val; document.getElementById('modalTotalPrice').textContent = `¥ ${currentPrice * val}`; }
+    });
+
+    async function confirmOrder() {
+      const receiverName = document.getElementById('modalReceiverName').value.trim();
+      const receiverPhone = document.getElementById('modalReceiverPhone').value.trim();
+      const receiverAddress = document.getElementById('modalReceiverAddress').value.trim();
+
+      if (!receiverName || !receiverPhone || !receiverAddress) {
+        showToast('请填写完整的收货信息');
+        return;
+      }
+
+      // 检查是否登录
+      if (!AuthAPI.isLoggedIn()) {
+        showToast('请先登录');
+        setTimeout(() => window.location.href = 'profile.html', 1000);
+        return;
+      }
+
+      const quantity = parseInt(document.getElementById('modalQtyInput').value) || 1;
+
+      // 保存收货信息
+      saveReceiverInfo(receiverName, receiverPhone, receiverAddress);
+
+      if (isCartMode) {
+        // 加入待付款（创建订单）
+        try {
+          await OrderAPI.create({
+            product_id: pageData.id,
+            quantity: quantity,
+            receiver_name: receiverName,
+            receiver_phone: receiverPhone,
+            receiver_address: receiverAddress
+          });
+          hideModal();
+          showToast('已加入待付款');
+        } catch (err) {
+          showToast('添加失败：' + err.message);
+        }
+      } else {
+        // 直接购买
+        hideModal();
+        showToast('支付功能正在开发中');
+      }
+    }
+
+    /* ══════════════════════════════
+       初始化
+    ══════════════════════════════ */
+    function init() {
+      initTabs();
+      renderProductDetails();
+      renderShopInfo();
+      renderReviews();
+      updatePrice();
+      checkFavoriteStatus();
+
+      // 标题入场动效
+      gsap.from('.product-title', {
+        opacity: 0, x: -20, duration: 0.5, ease: 'power2.out',
+        scrollTrigger: { trigger: '#detail-main', start: 'top 80%', once: true }
+      });
+    }
+    init();
+
+    /* ══════════════════════════════
+       动画
+    ══════════════════════════════ */
+    gsap.from('.product-media', { opacity: 0, x: -30, duration: 0.6, ease: 'power2.out' });
+    gsap.from('.product-info', { opacity: 0, x: 30, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+
+    // Tab导航和内容区 - 滚动触发渐入
+    gsap.from('.detail-tabs', {
+      scrollTrigger: {
+        trigger: '.detail-content',
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.tab-contents', {
+      scrollTrigger: {
+        trigger: '.detail-content',
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      delay: 0.1
+    });
+
+    // 农户卡片 - 滚动触发渐入
+    gsap.from('.detail-shop-card', {
+      scrollTrigger: {
+        trigger: '.detail-shop-card',
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out'
+    });
+  </script>
+</body>
+</html>
